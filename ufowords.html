@@ -1,0 +1,2438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UFO Word Invaders - Raiden Spelling Shooter</title>
+    <!-- Tailwind CSS for modern responsive layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for iconic arcade components -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for retro arcade styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        .arcade-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+        /* Custom scrollbars for menus */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 3px;
+        }
+        /* Glow animations */
+        @keyframes pulse-glow {
+            0%, 100% { filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.7)); }
+            50% { filter: drop-shadow(0 0 12px rgba(239, 68, 68, 1)); }
+        }
+        .boss-glow {
+            animation: pulse-glow 2s infinite;
+        }
+        /* Shake animation for science stage */
+        @keyframes shake {
+            0% { transform: translate(0, 0); }
+            10% { transform: translate(-3px, 2px); }
+            20% { transform: translate(3px, -2px); }
+            30% { transform: translate(-2px, -1px); }
+            40% { transform: translate(2px, 2px); }
+            50% { transform: translate(-1px, -2px); }
+            60% { transform: translate(3px, 1px); }
+            70% { transform: translate(-2px, 2px); }
+            80% { transform: translate(1px, -1px); }
+            90% { transform: translate(-1px, 2px); }
+            100% { transform: translate(0, 0); }
+        }
+        .screen-shake {
+            animation: shake 0.4s infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 overflow-hidden min-h-screen flex flex-col items-center justify-center">
+
+    <!-- Main Outer Container -->
+    <div class="relative w-full max-w-6xl h-screen flex flex-col md:flex-row items-center justify-center p-2 md:p-4 gap-4">
+        
+        <!-- Left Side: Informative Side Panel -->
+        <div class="hidden lg:flex flex-col w-72 bg-slate-900/80 border border-slate-800 rounded-2xl p-4 gap-4 self-stretch h-full overflow-y-auto z-10">
+            <div class="text-center">
+                <span class="text-xs font-bold text-indigo-400 tracking-wider uppercase">Ontario Curriculum</span>
+                <h2 class="text-xl font-black text-white tracking-tight flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-ranking-star text-yellow-500"></i> GRADE K-4 HERO
+                </h2>
+            </div>
+            
+            <div class="border-t border-slate-800 my-1"></div>
+
+            <!-- How To Play Instructions -->
+            <div class="flex flex-col gap-2">
+                <span class="text-sm font-semibold text-slate-300"><i class="fa-solid fa-gamepad text-indigo-400"></i> CONTROLS</span>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="bg-slate-950 p-2 rounded-lg border border-slate-800 col-span-2">
+                        <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">▲▼◀▶</kbd> / <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">WASD</kbd>
+                        <p class="text-[10px] text-slate-400 mt-1">Move UFO in any direction</p>
+                    </div>
+                    <div class="bg-slate-950 p-2 rounded-lg border border-slate-800 col-span-2">
+                        <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">Left Ctrl</kbd> / <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">Space</kbd>
+                        <p class="text-[10px] text-slate-400 mt-1">Tap to shoot glowing hearts</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 my-1"></div>
+
+            <!-- Scoring and Spelling Guidelines -->
+            <div class="flex flex-col gap-2 text-xs text-slate-300">
+                <span class="font-semibold text-slate-300"><i class="fa-solid fa-spell-check text-green-400"></i> CHALLENGE RULES</span>
+                <ul class="list-disc pl-4 space-y-1">
+                    <li>Hit <span class="text-white font-bold">correct words</span> with 3 hearts to explode them! Correct words have no green borders.</li>
+                    <li>Hit <span class="text-pink-400 font-bold">pink bonus words</span> for huge score multipliers.</li>
+                    <li>Hitting <span class="text-red-400 font-bold">incorrect words</span> 2 times triggers a self-destruct that costs you 1 heart!</li>
+                    <li>Pop the <span class="text-blue-400 font-bold">Narwhal Word</span> to clear the entire screen with an earthquake blast!</li>
+                </ul>
+            </div>
+
+            <!-- Audio Controller Node -->
+            <div class="mt-auto pt-4 border-t border-slate-800 flex flex-col gap-2">
+                <div class="flex justify-between items-center text-xs text-slate-400">
+                    <span>Midi Synth Music</span>
+                    <button id="musicToggleBtn" class="bg-slate-800 hover:bg-slate-700 text-rose-400 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1">
+                        <i class="fa-solid fa-volume-xmark"></i> Muted
+                    </button>
+                </div>
+                <div class="flex justify-between items-center text-xs text-slate-400">
+                    <span>Audio FX</span>
+                    <button id="muteBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1">
+                        <i class="fa-solid fa-volume-high"></i> Active
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle: Primary Playable Screen Section -->
+        <div class="relative flex-1 flex flex-col items-center justify-center w-full max-w-2xl h-full">
+            
+            <!-- Game HUD Top Bar -->
+            <div id="hudBar" class="hidden w-full absolute top-4 left-0 right-0 z-20 px-4 flex justify-between items-center pointer-events-none">
+                <div class="flex items-center gap-2 bg-slate-900/95 border border-slate-800 px-3 py-1.5 rounded-full pointer-events-auto shadow-lg backdrop-blur">
+                    <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Stage</span>
+                    <span id="hudLevel" class="text-xs font-bold text-cyan-400 tracking-wider">1/7</span>
+                    <span id="hudSubject" class="text-[10px] bg-cyan-950 text-cyan-300 border border-cyan-800 px-2 py-0.5 rounded-full capitalize">Science</span>
+                </div>
+
+                <!-- Word progress counter -->
+                <div class="flex items-center gap-2 bg-slate-900/95 border border-slate-800 px-3 py-1.5 rounded-full pointer-events-auto shadow-lg backdrop-blur">
+                    <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Progress</span>
+                    <span id="hudProgressCounter" class="text-xs font-bold text-indigo-400 arcade-font">0 / 15</span>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <!-- Heart HP Bar -->
+                    <div class="flex items-center gap-1 bg-slate-900/95 border border-slate-800 px-3 py-1.5 rounded-full pointer-events-auto shadow-lg backdrop-blur">
+                        <span id="hpHearts" class="flex gap-1 text-red-500 text-xs">
+                            <i class="fa-solid fa-heart"></i>
+                            <i class="fa-solid fa-heart"></i>
+                            <i class="fa-solid fa-heart"></i>
+                        </span>
+                    </div>
+
+                    <!-- Power-up Tracker -->
+                    <div class="flex items-center gap-1 bg-slate-900/95 border border-slate-800 px-3 py-1.5 rounded-full pointer-events-auto shadow-lg backdrop-blur">
+                        <div id="hudPower" class="flex gap-1 text-emerald-400 text-[10px]">
+                            <i class="fa-regular fa-star"></i>
+                            <i class="fa-regular fa-star"></i>
+                            <i class="fa-regular fa-star"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-900/95 border border-slate-800 px-3 py-1.5 rounded-full pointer-events-auto shadow-lg backdrop-blur text-right">
+                        <span id="hudScore" class="text-xs font-black text-yellow-400 tracking-widest arcade-font">00000</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canvas Outer Frame wrapper to constraint proportions -->
+            <div id="canvasContainer" class="relative w-full aspect-[4/5] bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl shadow-indigo-500/10 flex flex-col items-center justify-center">
+                
+                <!-- Main Game Rendering Canvas -->
+                <canvas id="gameCanvas" class="w-full h-full block bg-transparent"></canvas>
+
+                <!-- Screen 1: Splash/Subject Selector Menu (Now fully clickable) -->
+                <div id="menuScreen" class="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-4 text-center z-40 overflow-y-auto">
+                    <!-- Cosmic background decor inside menu -->
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-950/40 via-transparent to-transparent opacity-60 pointer-events-none"></div>
+
+                    <div class="relative z-50 max-w-lg flex flex-col items-center gap-3 w-full py-2">
+                        <div class="flex items-center gap-2 px-3 py-1 bg-indigo-950/60 border border-indigo-500/30 rounded-full text-xs text-indigo-400 font-semibold uppercase tracking-widest">
+                            <i class="fa-solid fa-shuttle-space animate-bounce"></i> Space-Typing Arcade
+                        </div>
+                        <h1 class="text-3xl md:text-4xl font-black text-white tracking-tighter leading-none flex flex-col">
+                            <span class="bg-gradient-to-r from-cyan-400 via-indigo-400 to-pink-500 bg-clip-text text-transparent">UFO WORD ARCADE</span>
+                            <span class="text-xs font-bold tracking-widest text-slate-400 uppercase mt-1">Ontario K-4 Spell-Shooter Elite</span>
+                        </h1>
+
+                        <!-- Difficulty Selection Panel -->
+                        <div class="w-full mt-1">
+                            <label class="text-[11px] font-bold text-slate-400 text-left uppercase tracking-wider block mb-1">Select Difficulty</label>
+                            <div id="difficultyContainer" class="grid grid-cols-5 gap-1.5 w-full">
+                                <button data-diff="easy" class="diff-btn bg-indigo-600/20 border border-indigo-500 text-white px-1.5 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-indigo-600/30">
+                                    Easy
+                                </button>
+                                <button data-diff="medium" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1.5 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800">
+                                    Medium
+                                </button>
+                                <button data-diff="hard" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1.5 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800">
+                                    Hard
+                                </button>
+                                <button id="eagleModeBtn" data-diff="eagle" class="diff-btn relative bg-slate-900 border border-slate-800 text-slate-500 px-1.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i class="fa-solid fa-lock text-[10px]"></i> Eagle
+                                </button>
+                                <button id="upsideDownModeBtn" data-diff="upsidedown" class="diff-btn relative bg-slate-900 border border-slate-800 text-slate-500 px-1.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i class="fa-solid fa-lock text-[10px]"></i> U-Down
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Subject Choices Selection -->
+                        <div class="w-full">
+                            <label class="text-[11px] font-bold text-slate-400 text-left uppercase tracking-wider block mb-1">Choose Subject Vocabulary</label>
+                            <div id="subjectsContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 w-full max-h-44 overflow-y-auto pr-1">
+                                <button data-subject="all" class="subject-btn bg-indigo-600/30 border border-indigo-500 text-white px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-indigo-600/40 flex items-center justify-between">
+                                    <span>Everything</span> <i class="fa-solid fa-star text-[9px] text-yellow-400"></i>
+                                </button>
+                                <button data-subject="math" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
+                                    <span>Math</span> <i class="fa-solid fa-calculator text-[9px] text-red-400"></i>
+                                </button>
+                                <button data-subject="language" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
+                                    <span>Language</span> <i class="fa-solid fa-book-open text-[9px] text-blue-400"></i>
+                                </button>
+                                <button data-subject="social" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
+                                    <span>Social Studies</span> <i class="fa-solid fa-globe text-[9px] text-emerald-400"></i>
+                                </button>
+                                <button data-subject="science" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
+                                    <span>Science</span> <i class="fa-solid fa-flask text-[9px] text-yellow-400"></i>
+                                </button>
+                                <button data-subject="music" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
+                                    <span>Music</span> <i class="fa-solid fa-music text-[9px] text-purple-400"></i>
+                                </button>
+                                <button data-subject="physed" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
+                                    <span>Phys-Ed</span> <i class="fa-solid fa-volleyball text-[9px] text-orange-400"></i>
+                                </button>
+                                <button data-subject="drama" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
+                                    <span>Drama</span> <i class="fa-solid fa-masks-theater text-[9px] text-pink-400"></i>
+                                </button>
+                                <button data-subject="dance" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
+                                    <span>Dance</span> <i class="fa-solid fa-shoe-prints text-[9px] text-violet-400"></i>
+                                </button>
+                                <button data-subject="health" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
+                                    <span>Health</span> <i class="fa-solid fa-heart-pulse text-[9px] text-rose-400"></i>
+                                </button>
+                                <button data-subject="art" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
+                                    <span>Art</span> <i class="fa-solid fa-palette text-[9px] text-teal-400"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Big Play Action Button -->
+                        <button id="startGameBtn" class="w-full mt-2 bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600 text-white font-black py-2.5 rounded-xl tracking-widest text-xs uppercase shadow-lg shadow-pink-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+                            LAUNCH UFO SHUTTLE <i class="fa-solid fa-circle-play"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Screen 2: Level Transition Overlay Banner -->
+                <div id="transitionScreen" class="hidden absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center p-6 text-center z-30">
+                    <div class="relative z-10 max-w-sm flex flex-col items-center gap-4">
+                        <div id="transStageLabel" class="px-3 py-1 bg-cyan-950 border border-cyan-800 rounded-full text-xs text-cyan-400 font-bold uppercase tracking-widest">
+                            STAGE COMPLETED
+                        </div>
+                        <h2 id="transStageTitle" class="text-3xl font-black text-white tracking-tight">GET READY FOR NEXT LEVEL</h2>
+                        
+                        <!-- Mini Card for upcoming Stage Boss -->
+                        <div class="w-full bg-slate-900/80 border border-slate-800 p-4 rounded-2xl flex flex-col items-center gap-2">
+                            <span class="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Warning: Imminent Threat</span>
+                            <div class="text-sm font-black text-white flex items-center gap-2">
+                                <i class="fa-solid fa-skull-crossbones text-rose-500"></i>
+                                <span id="transBossName">Boss Max</span>
+                            </div>
+                            <p id="transStageDesc" class="text-xs text-slate-400">Avoid incoming hazards and target the correctly spelled word clusters to blast through!</p>
+                        </div>
+
+                        <button id="nextStageBtn" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl tracking-wider text-xs uppercase shadow-md transition-all">
+                            ENTER SECTOR <i class="fa-solid fa-chevron-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Screen 3: Victory / Result Overlay Screen -->
+                <div id="victoryScreen" class="hidden absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center z-30 overflow-y-auto">
+                    <div class="relative z-10 max-w-md flex flex-col items-center gap-4 w-full">
+                        <div class="w-16 h-16 bg-yellow-500/10 border border-yellow-500/30 rounded-full flex items-center justify-center text-yellow-400 text-3xl animate-bounce">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <h2 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500 uppercase tracking-tight leading-none">
+                            Cosmic Master Champion!
+                        </h2>
+                        <p id="unlockedMessage" class="text-xs text-slate-300 font-semibold"></p>
+
+                        <!-- Scoreboard card stats -->
+                        <div class="w-full bg-slate-900/80 border border-slate-800 p-4 rounded-2xl grid grid-cols-3 gap-2 text-center">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] text-slate-500 uppercase font-semibold">Total Score</span>
+                                <span id="vicScore" class="text-sm font-bold text-yellow-400 arcade-font">0000</span>
+                            </div>
+                            <div class="flex flex-col border-x border-slate-800">
+                                <span class="text-[10px] text-slate-500 uppercase font-semibold">Accuracy</span>
+                                <span id="vicAccuracy" class="text-sm font-bold text-cyan-400 arcade-font">0%</span>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-[10px] text-slate-500 uppercase font-semibold">Total Time</span>
+                                <span id="vicTime" class="text-sm font-bold text-emerald-400 arcade-font">0:00</span>
+                            </div>
+                        </div>
+
+                        <button id="restartVicBtn" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl tracking-wider text-xs uppercase transition-all">
+                            RETURN TO MAIN MENU <i class="fa-solid fa-rotate-left ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Screen 4: Game Over Overlay Screen -->
+                <div id="gameOverScreen" class="hidden absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center z-30">
+                    <div class="relative z-10 max-w-sm flex flex-col items-center gap-4">
+                        <div class="w-16 h-16 bg-red-500/10 border border-red-500/30 rounded-full flex items-center justify-center text-red-500 text-3xl">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                        </div>
+                        <h2 class="text-3xl font-black text-rose-500 uppercase tracking-tight leading-none">
+                            UFO SHUTDOWN
+                        </h2>
+                        <p class="text-xs text-slate-400">You received fatal shields damage. Recharge and try again!</p>
+
+                        <div class="w-full bg-slate-900/80 border border-slate-800 p-3 rounded-2xl text-center">
+                            <span class="text-[10px] text-slate-500 uppercase font-semibold">Score Achieved</span>
+                            <div id="goScore" class="text-xl font-bold text-slate-200 arcade-font">0000</div>
+                        </div>
+
+                        <button id="restartGoBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl tracking-wider text-xs uppercase transition-all">
+                            RELAUNCH SHUTTLE <i class="fa-solid fa-rotate-left ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Boss Approaching Warning Bar -->
+                <div id="bossWarning" class="hidden absolute inset-x-0 top-1/3 bg-rose-950/90 border-y-2 border-rose-500 py-3 text-center z-10 pointer-events-none boss-glow">
+                    <h3 class="text-rose-400 text-lg font-black tracking-widest uppercase flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation animate-pulse"></i> BOSS INCOMING! PREPARE DEPLOY <i class="fa-solid fa-triangle-exclamation animate-pulse"></i>
+                    </h3>
+                </div>
+
+            </div>
+
+            <!-- Mobile Virtual Controllers (Touch Screens) -->
+            <div id="touchControllers" class="relative mt-3 w-full grid grid-cols-2 gap-4 h-24 px-1 md:hidden pointer-events-auto">
+                <!-- Left Touch Area: Slide / Joystick Zone Info -->
+                <div class="relative bg-slate-900/60 border border-slate-800 rounded-2xl flex items-center justify-center p-2 text-center select-none cursor-pointer">
+                    <div class="pointer-events-none flex flex-col items-center gap-1">
+                        <i class="fa-solid fa-up-down-left-right text-indigo-400 text-lg"></i>
+                        <span class="text-[10px] text-slate-400">Touch Screen & Drag UFO</span>
+                    </div>
+                </div>
+                <!-- Right Touch Area: Quick Fire Heart Button -->
+                <button id="touchFireBtn" class="bg-gradient-to-r from-red-500 to-rose-600 active:from-red-600 active:to-rose-700 border border-red-500/20 text-white rounded-2xl flex flex-col items-center justify-center gap-1 font-extrabold select-none shadow-lg shadow-rose-500/20">
+                    <i class="fa-solid fa-heart text-2xl animate-pulse"></i>
+                    <span class="text-xs uppercase tracking-wider">SHOOT HEART</span>
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        /* Retro Web Audio Synthesizer Class to generate arcade tones and retro loops */
+        class AudioSynth {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+                this.musicMuted = true; // Starts muted as requested
+                this.musicVolume = 0.05; // Starts with low volume if unmuted
+                this.midiTimer = null;
+                this.midiTempo = 115; // BPM
+                this.midiStep = 0;
+                
+                // Classic MIDI Chiptune chord and lead progression: K-4 Space-Vibe
+                this.melodySeq = [
+                    261.63, 293.66, 329.63, 392.00, 329.63, 349.23, 392.00, 440.00,
+                    440.00, 392.00, 349.23, 329.63, 293.66, 329.63, 261.63, 293.66
+                ];
+                this.bassSeq = [
+                    130.81, 130.81, 164.81, 164.81, 174.61, 174.61, 196.00, 196.00,
+                    220.00, 220.00, 196.00, 196.00, 174.61, 174.61, 146.83, 196.00
+                ];
+            }
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    this.startMidiSequencer();
+                }
+            }
+            playTone(freq, type, duration, vol = 0.1) {
+                if (this.muted) return;
+                this.init();
+                try {
+                    let osc = this.ctx.createOscillator();
+                    let gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch (e) {}
+            }
+            playShoot() {
+                this.playTone(880, 'sine', 0.1, 0.08);
+                setTimeout(() => this.playTone(1320, 'sine', 0.08, 0.04), 30);
+            }
+            playExplode() {
+                this.playTone(150, 'triangle', 0.4, 0.15);
+                this.playTone(80, 'sawtooth', 0.6, 0.1);
+            }
+            playNarwhalExplode() {
+                this.playTone(100, 'sawtooth', 0.8, 0.3);
+                this.playTone(60, 'triangle', 1.2, 0.3);
+            }
+            playHitCorrect() {
+                this.playTone(600, 'sine', 0.15, 0.1);
+            }
+            playHitWrong() {
+                this.playTone(180, 'sawtooth', 0.3, 0.12);
+            }
+            playPowerup() {
+                this.playTone(440, 'sine', 0.1, 0.1);
+                setTimeout(() => this.playTone(660, 'sine', 0.1, 0.1), 80);
+                setTimeout(() => this.playTone(880, 'sine', 0.2, 0.1), 160);
+            }
+            playBossWarning() {
+                this.playTone(200, 'sawtooth', 0.5, 0.15);
+                setTimeout(() => this.playTone(150, 'sawtooth', 0.5, 0.15), 500);
+            }
+
+            startMidiSequencer() {
+                const interval = 60000 / this.midiTempo / 2; // Eighth notes
+                setInterval(() => {
+                    if (this.musicMuted || this.muted) return;
+                    this.playMidiStep();
+                }, interval);
+            }
+
+            playMidiStep() {
+                this.init();
+                const step = this.midiStep;
+                
+                // Bass Note (Sub-triangle rhythm)
+                const bassFreq = this.bassSeq[step % this.bassSeq.length];
+                this.playTone(bassFreq, 'triangle', 0.2, this.musicVolume * 1.5);
+
+                // Alternating Melody (Sine chiptune voice)
+                if (step % 2 === 0) {
+                    const melFreq = this.melodySeq[step % this.melodySeq.length];
+                    this.playTone(melFreq, 'sine', 0.15, this.musicVolume * 0.7);
+                }
+
+                // Cyber beat on step 4
+                if (step % 4 === 0) {
+                    this.playTone(60, 'sawtooth', 0.05, this.musicVolume * 0.3);
+                }
+
+                this.midiStep = (step + 1) % 32;
+            }
+        }
+
+        const audio = new AudioSynth();
+        const muteBtn = document.getElementById('muteBtn');
+        const musicToggleBtn = document.getElementById('musicToggleBtn');
+
+        muteBtn.addEventListener('click', () => {
+            audio.muted = !audio.muted;
+            muteBtn.innerHTML = audio.muted ? '<i class="fa-solid fa-volume-xmark"></i> Muted' : '<i class="fa-solid fa-volume-high"></i> Active';
+            muteBtn.className = audio.muted ? "bg-slate-800 hover:bg-slate-700 text-rose-400 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs" : "bg-slate-800 hover:bg-slate-700 text-slate-200 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs";
+        });
+
+        musicToggleBtn.addEventListener('click', () => {
+            audio.init();
+            if (audio.musicMuted) {
+                // Set low volume
+                audio.musicMuted = false;
+                audio.musicVolume = 0.05;
+                musicToggleBtn.innerHTML = '<i class="fa-solid fa-volume-low"></i> Low';
+                musicToggleBtn.className = "bg-indigo-950 text-indigo-300 border border-indigo-700 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs";
+            } else if (audio.musicVolume === 0.05) {
+                // Set mid volume
+                audio.musicVolume = 0.12;
+                musicToggleBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> Mid';
+                musicToggleBtn.className = "bg-indigo-900 text-indigo-200 border border-indigo-600 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs";
+            } else if (audio.musicVolume === 0.12) {
+                // Set high volume
+                audio.musicVolume = 0.22;
+                musicToggleBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> High';
+                musicToggleBtn.className = "bg-indigo-600 text-white p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs";
+            } else {
+                // Mute
+                audio.musicMuted = true;
+                musicToggleBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i> Muted';
+                musicToggleBtn.className = "bg-slate-800 hover:bg-slate-700 text-rose-400 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs";
+            }
+        });
+
+        /* Comprehensive K-4 Ontario Curriculum Word Bank */
+        const VOCABULARY_BANK = {
+            math: [
+                { ok: "addition", bad: "addision" }, { ok: "subtraction", bad: "subtration" },
+                { ok: "triangle", bad: "triangel" }, { ok: "number", bad: "nomber" },
+                { ok: "fraction", bad: "fracktion" }, { ok: "pattern", bad: "patternn" },
+                { ok: "measure", bad: "meazure" }, { ok: "graph", bad: "graf" },
+                { ok: "multiply", bad: "multipli" }, { ok: "divide", bad: "devide" },
+                { ok: "shape", bad: "shaipe" }, { ok: "circle", bad: "sircle" },
+                { ok: "square", bad: "skuare" }, { ok: "equal", bad: "equall" },
+                { ok: "count", bad: "cownt" }, { ok: "decimal", bad: "decimel" },
+                { ok: "percent", bad: "persent" }, { ok: "symmetry", bad: "simmetry" },
+                { ok: "perimeter", bad: "perimeteur" }, { ok: "area", bad: "aria" },
+                { ok: "total", bad: "totle" }, { ok: "plus", bad: "pluss" },
+                { ok: "minus", bad: "minis" }, { ok: "zero", bad: "zeero" },
+                { ok: "height", bad: "hight" }, { ok: "weight", bad: "wayght" },
+                { ok: "length", bad: "lenth" }, { ok: "width", bad: "widthe" },
+                { ok: "ruler", bad: "rooler" }, { ok: "clock", bad: "clok" },
+                { ok: "minute", bad: "minit" }, { ok: "second", bad: "sekond" },
+                { ok: "hour", bad: "owre" }, { ok: "calendar", bad: "calender" },
+                { ok: "month", bad: "munth" }, { ok: "year", bad: "yeer" },
+                { ok: "money", bad: "muni" }, { ok: "coin", bad: "coyn" },
+                { ok: "dollar", bad: "doler" }, { ok: "penny", bad: "peny" },
+                { ok: "dime", bad: "diyme" }, { ok: "nickel", bad: "nikel" },
+                { ok: "quarter", bad: "corter" }, { ok: "math", bad: "maths" },
+                { ok: "solve", bad: "solv" }, { ok: "rule", bad: "rool" },
+                { ok: "group", bad: "groop" }, { ok: "sort", bad: "soort" },
+                { ok: "more", bad: "moor" }, { ok: "less", bad: "les" }
+            ],
+            language: [
+                { ok: "alphabet", bad: "alfabat" }, { ok: "sentence", bad: "sentanse" },
+                { ok: "reading", bad: "reeding" }, { ok: "writing", bad: "writeing" },
+                { ok: "grammar", bad: "grammer" }, { ok: "phonics", bad: "fonics" },
+                { ok: "spelling", bad: "speling" }, { ok: "letter", bad: "lettr" },
+                { ok: "word", bad: "wurd" }, { ok: "story", bad: "storey" },
+                { ok: "book", bad: "buk" }, { ok: "noun", bad: "nown" },
+                { ok: "verb", bad: "vurb" }, { ok: "adjective", bad: "adjektive" },
+                { ok: "pronoun", bad: "pronown" }, { ok: "poem", bad: "poam" },
+                { ok: "read", bad: "reed" }, { ok: "speak", bad: "speek" },
+                { ok: "listen", bad: "lissen" }, { ok: "write", bad: "rite" },
+                { ok: "sound", bad: "sownd" }, { ok: "page", bad: "paige" },
+                { ok: "chapter", bad: "shapter" }, { ok: "library", bad: "libery" },
+                { ok: "author", bad: "auther" }, { ok: "title", bad: "tytle" },
+                { ok: "pencil", bad: "pensil" }, { ok: "paper", bad: "payper" },
+                { ok: "marker", bad: "marcer" }, { ok: "erase", bad: "eraze" },
+                { ok: "school", bad: "skool" }, { ok: "teacher", bad: "teecher" },
+                { ok: "friend", bad: "frend" }, { ok: "learn", bad: "lern" },
+                { ok: "think", bad: "thynk" }, { ok: "know", bad: "noa" },
+                { ok: "quest", bad: "qwest" }, { ok: "answer", bad: "anser" },
+                { ok: "ask", bad: "asc" }, { ok: "talk", bad: "tok" },
+                { ok: "vowel", bad: "vowle" }, { ok: "comma", bad: "coma" },
+                { ok: "period", bad: "peeriod" }, { ok: "space", bad: "spase" },
+                { ok: "capital", bad: "capitle" }, { ok: "rhyme", bad: "ryme" },
+                { ok: "lesson", bad: "leson" }, { ok: "quiet", bad: "kwiet" },
+                { ok: "loud", bad: "lowd" }, { ok: "talk", bad: "taulk" }
+            ],
+            social: [
+                { ok: "map", bad: "mapp" }, { ok: "community", bad: "comuniti" },
+                { ok: "globe", bad: "gloab" }, { ok: "canada", bad: "kanada" },
+                { ok: "history", bad: "histry" }, { ok: "culture", bad: "kulcher" },
+                { ok: "heritage", bad: "heritige" }, { ok: "country", bad: "cuntry" },
+                { ok: "leader", bad: "leeder" }, { ok: "rules", bad: "rools" },
+                { ok: "laws", bad: "loz" }, { ok: "citizen", bad: "citizan" },
+                { ok: "region", bad: "reajon" }, { ok: "land", bad: "laind" },
+                { ok: "ocean", bad: "oshan" }, { ok: "river", bad: "rivver" },
+                { ok: "lake", bad: "layk" }, { ok: "pioneer", bad: "pyoneer" },
+                { ok: "native", bad: "nativ" }, { ok: "chart", bad: "shart" },
+                { ok: "town", bad: "towne" }, { ok: "city", bad: "sity" },
+                { ok: "province", bad: "provins" }, { ok: "capital", bad: "capitall" },
+                { ok: "world", bad: "wurld" }, { ok: "earth", bad: "erth" },
+                { ok: "north", bad: "northe" }, { ok: "south", bad: "sowth" },
+                { ok: "east", bad: "eest" }, { ok: "west", bad: "wesst" },
+                { ok: "flag", bad: "flagg" }, { ok: "symbol", bad: "simbol" },
+                { ok: "settler", bad: "setler" }, { ok: "chief", bad: "cheif" },
+                { ok: "treaty", bad: "treety" }, { ok: "trade", bad: "traid" },
+                { ok: "travel", bad: "travle" }, { ok: "forest", bad: "forrest" },
+                { ok: "mountain", bad: "mountin" }, { ok: "island", bad: "iland" },
+                { ok: "people", bad: "peepel" }, { ok: "family", bad: "famly" },
+                { ok: "home", bad: "howm" }, { ok: "job", bad: "jobb" },
+                { ok: "work", bad: "wurk" }, { ok: "help", bad: "helpp" },
+                { ok: "care", bad: "cair" }, { ok: "share", bad: "shair" },
+                { ok: "peace", bad: "peese" }, { ok: "earth", bad: "urth" }
+            ],
+            science: [
+                { ok: "animal", bad: "animle" }, { ok: "plant", bad: "plaint" },
+                { ok: "energy", bad: "energe" }, { ok: "force", bad: "forse" },
+                { ok: "weather", bad: "wether" }, { ok: "space", bad: "spase" },
+                { ok: "gravity", bad: "gravety" }, { ok: "magnet", bad: "magnett" },
+                { ok: "liquid", bad: "likwid" }, { ok: "solid", bad: "sollid" },
+                { ok: "gas", bad: "gase" }, { ok: "insect", bad: "insekt" },
+                { ok: "habitat", bad: "habittat" }, { ok: "soil", bad: "soyl" },
+                { ok: "rock", bad: "rok" }, { ok: "cycle", bad: "sicle" },
+                { ok: "water", bad: "watter" }, { ok: "human", bad: "yooman" },
+                { ok: "health", bad: "helth" }, { ok: "shadow", bad: "shaddow" },
+                { ok: "sun", bad: "sunn" }, { ok: "moon", bad: "moone" },
+                { ok: "star", bad: "starr" }, { ok: "planet", bad: "plannet" },
+                { ok: "cloud", bad: "clowd" }, { ok: "rain", bad: "rane" },
+                { ok: "snow", bad: "sno" }, { ok: "wind", bad: "wynd" },
+                { ok: "storm", bad: "stoorm" }, { ok: "heat", bad: "heet" },
+                { ok: "cold", bad: "coald" }, { ok: "stem", bad: "stimm" },
+                { ok: "leaf", bad: "leef" }, { ok: "root", bad: "rootte" },
+                { ok: "seed", bad: "sead" }, { ok: "flower", bad: "flowr" },
+                { ok: "mammal", bad: "mamal" }, { ok: "bird", bad: "byrd" },
+                { ok: "fish", bad: "fysh" }, { ok: "reptile", bad: "reptil" },
+                { ok: "frog", bad: "frogg" }, { ok: "bug", bad: "bugg" },
+                { ok: "nature", bad: "nacher" }, { ok: "tree", bad: "tre" },
+                { ok: "grass", bad: "gras" }, { ok: "dirt", bad: "durt" },
+                { ok: "stone", bad: "stohn" }, { ok: "light", bad: "lite" },
+                { ok: "sound", bad: "sownd" }, { ok: "taste", bad: "taist" }
+            ],
+            music: [
+                { ok: "rhythm", bad: "rythm" }, { ok: "melody", bad: "mellody" },
+                { ok: "beat", bad: "beet" }, { ok: "tempo", bad: "temppo" },
+                { ok: "song", bad: "songe" }, { ok: "instrument", bad: "instrumant" },
+                { ok: "pitch", bad: "pich" }, { ok: "note", bad: "noot" },
+                { ok: "voice", bad: "voyce" }, { ok: "sing", bad: "syng" },
+                { ok: "sound", bad: "sownd" }, { ok: "guitar", bad: "gitar" },
+                { ok: "piano", bad: "peano" }, { ok: "drum", bad: "drumb" },
+                { ok: "flute", bad: "floot" }, { ok: "chord", bad: "kord" },
+                { ok: "scale", bad: "scail" }, { ok: "music", bad: "muzic" },
+                { ok: "band", bad: "bannd" }, { ok: "choir", bad: "quire" },
+                { ok: "clef", bad: "cleff" }, { ok: "horn", bad: "horne" },
+                { ok: "bell", bad: "bel" }, { ok: "harp", bad: "harpe" },
+                { ok: "string", bad: "stryng" }, { ok: "brass", bad: "bras" },
+                { ok: "play", bad: "plae" }, { ok: "practice", bad: "practis" },
+                { ok: "loud", bad: "lowd" }, { ok: "soft", bad: "sofft" },
+                { ok: "slow", bad: "sloe" }, { ok: "fast", bad: "fasst" },
+                { ok: "listen", bad: "lisn" }, { ok: "hear", bad: "heer" },
+                { ok: "clap", bad: "clapp" }, { ok: "dance", bad: "dans" },
+                { ok: "tune", bad: "toone" }, { ok: "key", bad: "keey" },
+                { ok: "stage", bad: "stayge" }, { ok: "lyrics", bad: "lyrix" },
+                { ok: "jazz", bad: "jaz" }, { ok: "rock", bad: "rok" },
+                { ok: "pop", bad: "popp" }, { ok: "solo", bad: "soloe" },
+                { ok: "duet", bad: "duett" }, { ok: "trio", bad: "trioe" },
+                { ok: "woodwind", bad: "woodwynd" }, { ok: "brass", bad: "braas" },
+                { ok: "violin", bad: "violen" }, { ok: "composer", bad: "composser" }
+            ],
+            physed: [
+                { ok: "run", bad: "runn" }, { ok: "jump", bad: "jomp" },
+                { ok: "catch", bad: "cach" }, { ok: "throw", bad: "thro" },
+                { ok: "ball", bad: "bal" }, { ok: "team", bad: "teem" },
+                { ok: "game", bad: "gamme" }, { ok: "sport", bad: "spoort" },
+                { ok: "active", bad: "activ" }, { ok: "fitness", bad: "fitnes" },
+                { ok: "exercise", bad: "exersise" }, { ok: "stretch", bad: "strech" },
+                { ok: "soccer", bad: "socker" }, { ok: "hockey", bad: "hoki" },
+                { ok: "rules", bad: "rulls" }, { ok: "play", bad: "plai" },
+                { ok: "safety", bad: "saftey" }, { ok: "health", bad: "helthe" },
+                { ok: "energy", bad: "enargy" }, { ok: "win", bad: "winn" },
+                { ok: "kick", bad: "kik" }, { ok: "pass", bad: "pas" },
+                { ok: "score", bad: "scoar" }, { ok: "goal", bad: "gole" },
+                { ok: "skip", bad: "skyp" }, { ok: "hop", bad: "hopp" },
+                { ok: "slide", bad: "slyde" }, { ok: "climb", bad: "clime" },
+                { ok: "swim", bad: "swym" }, { ok: "race", bad: "rayce" },
+                { ok: "fast", bad: "fasst" }, { ok: "quick", bad: "qwik" },
+                { ok: "strong", bad: "stronge" }, { ok: "body", bad: "boddy" },
+                { ok: "heart", bad: "hart" }, { ok: "lungs", bad: "lunges" },
+                { ok: "muscle", bad: "mussel" }, { ok: "bone", bad: "boan" },
+                { ok: "gym", bad: "gim" }, { ok: "field", bad: "feeld" },
+                { ok: "track", bad: "trak" }, { ok: "shoes", bad: "shooes" },
+                { ok: "water", bad: "watre" }, { ok: "fun", bad: "funn" },
+                { ok: "fair", bad: "fare" }, { ok: "friend", bad: "frend" },
+                { ok: "group", bad: "groop" }, { ok: "jog", bad: "jogg" },
+                { ok: "push", bad: "puss" }, { ok: "pull", bad: "pul" }
+            ],
+            drama: [
+                { ok: "actor", bad: "acter" }, { ok: "play", bad: "plae" },
+                { ok: "stage", bad: "staige" }, { ok: "mask", bad: "masque" },
+                { ok: "voice", bad: "voise" }, { ok: "role", bad: "roal" },
+                { ok: "scene", bad: "sene" }, { ok: "costume", bad: "costoom" },
+                { ok: "puppet", bad: "pupet" }, { ok: "story", bad: "storrie" },
+                { ok: "act", bad: "ack" }, { ok: "theater", bad: "theaterr" },
+                { ok: "show", bad: "sho" }, { ok: "character", bad: "caracter" },
+                { ok: "script", bad: "scrypt" }, { ok: "mood", bad: "mude" },
+                { ok: "sound", bad: "sownd" }, { ok: "light", bad: "lyte" },
+                { ok: "action", bad: "axion" }, { ok: "mimic", bad: "mimick" },
+                { ok: "pretend", bad: "pretendd" }, { ok: "imagine", bad: "imajine" },
+                { ok: "props", bad: "propps" }, { ok: "dressup", bad: "dresup" },
+                { ok: "dialogue", bad: "dialog" }, { ok: "funny", bad: "funy" },
+                { ok: "sad", bad: "sadd" }, { ok: "happy", bad: "happie" },
+                { ok: "scary", bad: "scari" }, { ok: "brave", bad: "braiv" },
+                { ok: "friend", bad: "frend" }, { ok: "clown", bad: "clowne" },
+                { ok: "mime", bad: "myme" }, { ok: "audience", bad: "audiense" },
+                { ok: "performance", bad: "performanse" }, { ok: "cast", bad: "casst" },
+                { ok: "star", bad: "starr" }, { ok: "makeup", bad: "makeupp" },
+                { ok: "smile", bad: "smyle" }, { ok: "frown", bad: "frowne" },
+                { ok: "gesture", bad: "jester" }, { ok: "curtain", bad: "curtin" },
+                { ok: "script", bad: "skript" }, { ok: "clapping", bad: "claping" },
+                { ok: "laugh", bad: "laf" }, { ok: "cry", bad: "crye" },
+                { ok: "scream", bad: "screem" }, { ok: "whisper", bad: "wisper" },
+                { ok: "shout", bad: "showt" }, { ok: "mimic", bad: "mimyc" }
+            ],
+            dance: [
+                { ok: "dance", bad: "danse" }, { ok: "move", bad: "moove" },
+                { ok: "step", bad: "stepp" }, { ok: "rhythm", bad: "rythum" },
+                { ok: "music", bad: "muzik" }, { ok: "ballet", bad: "balet" },
+                { ok: "spin", bad: "spinn" }, { ok: "twist", bad: "twyst" },
+                { ok: "jump", bad: "jamp" }, { ok: "grace", bad: "grayce" },
+                { ok: "style", bad: "stile" }, { ok: "energy", bad: "enerjie" },
+                { ok: "body", bad: "boddy" }, { ok: "space", bad: "spayce" },
+                { ok: "time", bad: "tyme" }, { ok: "flow", bad: "floe" },
+                { ok: "shape", bad: "shayp" }, { ok: "beat", bad: "beete" },
+                { ok: "gesture", bad: "jester" }, { ok: "swing", bad: "swyng" },
+                { ok: "pose", bad: "poas" }, { ok: "stretch", bad: "strech" },
+                { ok: "bend", bad: "bennd" }, { ok: "shake", bad: "shaik" },
+                { ok: "slide", bad: "slyde" }, { ok: "hop", bad: "hopp" },
+                { ok: "leap", bad: "leeap" }, { ok: "fast", bad: "fasst" },
+                { ok: "slow", bad: "sloe" }, { ok: "happy", bad: "happie" },
+                { ok: "music", bad: "muzic" }, { ok: "class", bad: "clase" },
+                { ok: "teacher", bad: "teecher" }, { ok: "friend", bad: "frend" },
+                { ok: "stage", bad: "stayge" }, { ok: "shoes", bad: "shooes" },
+                { ok: "costume", bad: "costoom" }, { ok: "partner", bad: "partnr" },
+                { ok: "group", bad: "groop" }, { ok: "circle", bad: "sircle" },
+                { ok: "line", bad: "lyne" }, { ok: "floor", bad: "flor" },
+                { ok: "jump", bad: "jumpp" }, { ok: "wiggle", bad: "wigel" },
+                { ok: "bounce", bad: "bounse" }, { ok: "tap", bad: "tapp" },
+                { ok: "hiphop", bad: "hip-hop" }, { ok: "jazz", bad: "jaz" },
+                { ok: "clog", bad: "clogg" }, { ok: "march", bad: "marche" }
+            ],
+            health: [
+                { ok: "food", bad: "fude" }, { ok: "fruit", bad: "froot" },
+                { ok: "water", bad: "watre" }, { ok: "clean", bad: "cleen" },
+                { ok: "sleep", bad: "slepe" }, { ok: "strong", bad: "stronge" },
+                { ok: "body", bad: "bodie" }, { ok: "teeth", bad: "teethe" },
+                { ok: "brush", bad: "bruss" }, { ok: "wash", bad: "wosh" },
+                { ok: "safe", bad: "saife" }, { ok: "mind", bad: "mynd" },
+                { ok: "happy", bad: "happie" }, { ok: "active", bad: "aktive" },
+                { ok: "milk", bad: "mylk" }, { ok: "apple", bad: "apel" },
+                { ok: "carrot", bad: "carot" }, { ok: "bread", bad: "bred" },
+                { ok: "grain", bad: "grane" }, { ok: "fit", bad: "fitt" },
+                { ok: "soap", bad: "sope" }, { ok: "germ", bad: "jurm" },
+                { ok: "sick", bad: "sik" }, { ok: "well", bad: "wel" },
+                { ok: "doctor", bad: "docter" }, { ok: "nurse", bad: "nurrs" },
+                { ok: "dentist", bad: "dentyst" }, { ok: "safety", bad: "saftey" },
+                { ok: "helmet", bad: "helmit" }, { ok: "seatbelt", bad: "seetbelt" },
+                { ok: "healthy", bad: "helthy" }, { ok: "energy", bad: "enargy" },
+                { ok: "grow", bad: "gro" }, { ok: "height", bad: "hight" },
+                { ok: "weight", bad: "wayght" }, { ok: "feel", bad: "fele" },
+                { ok: "angry", bad: "angrie" }, { ok: "scared", bad: "skared" },
+                { ok: "proud", bad: "prowd" }, { ok: "share", bad: "shair" },
+                { ok: "friend", bad: "frend" }, { ok: "family", bad: "famly" },
+                { ok: "smile", bad: "smyle" }, { ok: "play", bad: "plae" },
+                { ok: "rest", bad: "resst" }, { ok: "water", bad: "watter" },
+                { ok: "meat", bad: "meete" }, { ok: "egg", bad: "egge" },
+                { ok: "cheese", bad: "cheese" }, { ok: "bean", bad: "beene" }
+            ],
+            art: [
+                { ok: "paint", bad: "paynt" }, { ok: "draw", bad: "dro" },
+                { ok: "color", bad: "coler" }, { ok: "paper", bad: "payper" },
+                { ok: "brush", bad: "bruss" }, { ok: "pencil", bad: "pensil" },
+                { ok: "clay", bad: "clai" }, { ok: "crayon", bad: "crayen" },
+                { ok: "line", bad: "lyne" }, { ok: "shape", bad: "shayp" },
+                { ok: "space", bad: "spase" }, { ok: "texture", bad: "texcher" },
+                { ok: "form", bad: "fourm" }, { ok: "craft", bad: "crafte" },
+                { ok: "picture", bad: "pikcher" }, { ok: "frame", bad: "fraim" },
+                { ok: "scissors", bad: "scisors" }, { ok: "glue", bad: "gloo" },
+                { ok: "canvas", bad: "canvasse" }, { ok: "artist", bad: "artyst" },
+                { ok: "red", bad: "redd" }, { ok: "blue", bad: "blew" },
+                { ok: "yellow", bad: "yelo" }, { ok: "green", bad: "grene" },
+                { ok: "orange", bad: "oranje" }, { ok: "purple", bad: "purplee" },
+                { ok: "pink", bad: "pynk" }, { ok: "brown", bad: "browne" },
+                { ok: "black", bad: "blak" }, { ok: "white", bad: "whyte" },
+                { ok: "mix", bad: "myx" }, { ok: "shade", bad: "shaid" },
+                { ok: "bright", bad: "bryte" }, { ok: "dark", bad: "darck" },
+                { ok: "sketch", bad: "skech" }, { ok: "create", bad: "creayt" },
+                { ok: "sculpt", bad: "sculp" }, { ok: "gallery", bad: "galery" },
+                { ok: "museum", bad: "muzium" }, { ok: "idea", bad: "idear" },
+                { ok: "pattern", bad: "patren" }, { ok: "cutting", bad: "cuting" },
+                { ok: "folding", bad: "foldingg" }, { ok: "gluing", bad: "gluingg" },
+                { ok: "imagination", bad: "imajination" }, { ok: "easel", bad: "eezel" },
+                { ok: "chalk", bad: "chawk" }, { ok: "charcoal", bad: "charcole" },
+                { ok: "pastels", bad: "pastells" }, { ok: "sculpture", bad: "sculpcher" }
+            ]
+        };
+
+        const BOSS_TEMPLATES = {
+            math: { name: "Math Max", obstacle: "eagle", desc: "Dodge diving eagles! Hit correct words to damage Max." },
+            social: { name: "Great Lakes Leela", obstacle: "narwhal", desc: "Avoid fast swimming narwhals! Pop correct spelling." },
+            language: { name: "Fast Forward", obstacle: "letter", desc: "Watch out for floating alphabet debris." },
+            art: { name: "Australian Izzy", obstacle: "kangaroo", desc: "Dodge bouncy kangaroos and paint palettes!" },
+            health: { name: "Mad Caramel", obstacle: "candy", desc: "Beware of spinning sugar candies!" },
+            physed: { name: "La Velcro", obstacle: "soccer", desc: "Deflect heavy bouncing soccer balls." },
+            science: { name: "Earthquake", obstacle: "stone", desc: "Brace for shaky screen quakes & falling stones!" },
+            drama: { name: "Thunder Kirby", obstacle: "mask", desc: "Beware of falling drama masks and heavy lightning strikes!" },
+            dance: { name: "Whisper", obstacle: "shoes", desc: "Spin around floating ballet slippers!" },
+            music: { name: "Melody Maestro", obstacle: "note", desc: "Evade falling musical note beams!" }
+        };
+
+        let canvas, ctx;
+        let lastTime = 0;
+        let scaleFactor = 1;
+        
+        let levelOrder = []; 
+        let currentLevelIdx = 0; 
+        let totalScore = 0;
+        let gameTimeElapsed = 0; 
+        let wordHitsAttempted = 0;
+        let wordHitsCorrect = 0;
+        let state = 'MENU'; // 'MENU', 'PLAYING', 'TRANSITION', 'WARNING', 'VICTORY', 'GAMEOVER'
+        
+        let selectedSubject = 'all';
+        let selectedDifficulty = 'easy'; // 'easy', 'medium', 'hard', 'eagle', 'upsidedown'
+
+        // Stage progress tracking
+        let correctWordsDestroyedCount = 0;
+        let narwhalWordSpawnedThisLevel = false;
+
+        let player = {
+            x: 400, y: 800,
+            width: 70, height: 45,
+            speed: 380,
+            power: 1, 
+            powerStreak: 0, 
+            hp: 3, maxHp: 3,
+            invulnTimer: 0
+        };
+
+        let keys = {};
+        let bullets = [];
+        let words = [];
+        let obstacles = [];
+        let activePowerups = [];
+        let particles = [];
+        let boss = null;
+        let earthquakeTimer = 0;
+        let lightningStrikes = [];
+
+        // Annoying Chasing UFO Enemy Ship
+        let enemyUfo = null;
+        let enemyUfoSpawnTimer = 15; // Spawns every 15 seconds
+
+        let levelStartRealTime = 0;
+
+        // Firework Particle
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 8;
+                this.vy = (Math.random() - 0.5) * 8 - 2;
+                this.color = color;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.03 + 0.01;
+                this.size = Math.random() * 3 + 2;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.08; 
+                this.alpha -= this.decay;
+            }
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        window.addEventListener('load', () => {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // Set up local storage checks
+            checkUnlockedModes();
+
+            // Bind game menu choices dynamically & securely
+            bindMenuSelectionHandlers();
+
+            window.addEventListener('keydown', e => {
+                keys[e.key] = true;
+                if ((e.key === 'Control' || e.key === ' ') && state === 'PLAYING') {
+                    fireHeartBullet();
+                    e.preventDefault();
+                }
+            });
+            window.addEventListener('keyup', e => {
+                keys[e.key] = false;
+            });
+
+            window.addEventListener('keydown', e => {
+                if(["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(e.code) > -1) {
+                    e.preventDefault();
+                }
+            }, false);
+
+            document.getElementById('startGameBtn').addEventListener('click', startNewGame);
+            document.getElementById('nextStageBtn').addEventListener('click', enterNextSector);
+            document.getElementById('restartVicBtn').addEventListener('click', resetToMenu);
+            document.getElementById('restartGoBtn').addEventListener('click', resetToMenu);
+            
+            setupTouchSupport();
+            requestAnimationFrame(gameLoop);
+        });
+
+        function checkUnlockedModes() {
+            // Check if user has beaten previous modes
+            const easyBeat = localStorage.getItem('ufo_arcade_easy_beat') === 'true';
+            const medBeat = localStorage.getItem('ufo_arcade_medium_beat') === 'true';
+            const hardBeat = localStorage.getItem('ufo_arcade_hard_beat') === 'true';
+            const eagleBeat = localStorage.getItem('ufo_arcade_eagle_beat') === 'true';
+
+            const eagleBtn = document.getElementById('eagleModeBtn');
+            const udBtn = document.getElementById('upsideDownModeBtn');
+
+            // Eagle unlocks after Easy, Medium, AND Hard are all beaten
+            if (easyBeat && medBeat && hardBeat) {
+                eagleBtn.removeAttribute('disabled');
+                eagleBtn.innerHTML = 'Eagle';
+                eagleBtn.className = "diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1.5 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800";
+            }
+
+            // Upside Down unlocks after Eagle Mode is beaten
+            if (eagleBeat) {
+                udBtn.removeAttribute('disabled');
+                udBtn.innerHTML = 'U-Down';
+                udBtn.className = "diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1.5 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800";
+            }
+        }
+
+        function bindMenuSelectionHandlers() {
+            // Difficulties selection click handlers
+            const diffButtons = document.querySelectorAll('#difficultyContainer button');
+            diffButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (btn.hasAttribute('disabled')) return;
+                    diffButtons.forEach(b => {
+                        b.classList.remove('bg-indigo-600/20', 'border-indigo-500', 'text-white');
+                        b.classList.add('bg-slate-900', 'border-slate-800', 'text-slate-400');
+                    });
+                    btn.classList.remove('bg-slate-900', 'border-slate-800', 'text-slate-400');
+                    btn.classList.add('bg-indigo-600/20', 'border-indigo-500', 'text-white');
+                    selectedDifficulty = btn.getAttribute('data-diff');
+                    audio.playTone(400, 'sine', 0.1, 0.05);
+                });
+            });
+
+            // Subjects selection click handlers
+            const subButtons = document.querySelectorAll('#subjectsContainer button');
+            subButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    subButtons.forEach(b => {
+                        b.classList.remove('bg-indigo-600/30', 'border-indigo-500', 'text-white');
+                        b.classList.add('bg-slate-900', 'border-slate-850', 'text-slate-300');
+                    });
+                    btn.classList.remove('bg-slate-900', 'border-slate-850', 'text-slate-300');
+                    btn.classList.add('bg-indigo-600/30', 'border-indigo-500', 'text-white');
+                    selectedSubject = btn.getAttribute('data-subject');
+                    audio.playTone(480, 'sine', 0.1, 0.05);
+                });
+            });
+        }
+
+        function resizeCanvas() {
+            const container = document.getElementById('canvasContainer');
+            const width = container.clientWidth;
+            canvas.width = 800;
+            canvas.height = 1000;
+            scaleFactor = width / 800;
+        }
+
+        function setupTouchSupport() {
+            let touchActive = false;
+            canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+            canvas.addEventListener('touchend', () => { touchActive = false; });
+
+            function handleTouchStart(e) {
+                if (state !== 'PLAYING') return;
+                touchActive = true;
+                movePlayerToTouch(e);
+                e.preventDefault();
+            }
+
+            function handleTouchMove(e) {
+                if (!touchActive || state !== 'PLAYING') return;
+                movePlayerToTouch(e);
+                e.preventDefault();
+            }
+
+            function movePlayerToTouch(e) {
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                const touchX = (touch.clientX - rect.left) / (rect.right - rect.left) * 800;
+                const touchY = (touch.clientY - rect.top) / (rect.bottom - rect.top) * 1000;
+                
+                player.x = Math.max(player.width, Math.min(800 - player.width, touchX));
+                player.y = Math.max(player.height, Math.min(1000 - player.height, touchY));
+            }
+
+            const touchBtn = document.getElementById('touchFireBtn');
+            touchBtn.addEventListener('touchstart', (e) => {
+                if (state === 'PLAYING') {
+                    fireHeartBullet();
+                }
+                e.preventDefault();
+            });
+        }
+
+        function startNewGame() {
+            audio.init();
+            
+            // Randomize curriculum subject list for stage sequence
+            const keysList = selectedSubject === 'all' ? Object.keys(VOCABULARY_BANK) : [selectedSubject];
+            levelOrder = [];
+            let temp = [...keysList];
+            
+            // Generate 7 randomized levels
+            while (levelOrder.length < 7) {
+                if (temp.length === 0) {
+                    temp = [...keysList];
+                }
+                const randIdx = Math.floor(Math.random() * temp.length);
+                levelOrder.push(temp.splice(randIdx, 1)[0]);
+            }
+
+            currentLevelIdx = 0;
+            totalScore = 0;
+            gameTimeElapsed = 0;
+            wordHitsAttempted = 0;
+            wordHitsCorrect = 0;
+            
+            initLevel();
+        }
+
+        function getRequiredWordsForLevel(stageIdx) {
+            // Level 1 = 15 words, up to Level 7 = 30 words
+            return 15 + Math.round((stageIdx) * (15 / 6));
+        }
+
+        function initLevel() {
+            const subject = levelOrder[currentLevelIdx];
+            
+            // Easy mode sets initial health to 4, others stay at 3
+            player.maxHp = selectedDifficulty === 'easy' ? 4 : 3;
+            player.hp = player.maxHp;
+            
+            // Upside Down Mode: Player is placed at top of screen
+            if (selectedDifficulty === 'upsidedown') {
+                player.x = 400;
+                player.y = 150;
+            } else {
+                player.x = 400;
+                player.y = 850;
+            }
+            
+            player.power = 1;
+            player.powerStreak = 0;
+            
+            bullets = [];
+            words = [];
+            obstacles = [];
+            activePowerups = [];
+            particles = [];
+            boss = null;
+            enemyUfo = null;
+            enemyUfoSpawnTimer = 10;
+            correctWordsDestroyedCount = 0;
+            narwhalWordSpawnedThisLevel = false;
+            lightningStrikes = [];
+            earthquakeTimer = 0;
+            levelStartRealTime = Date.now();
+
+            document.getElementById('hudLevel').textContent = `${currentLevelIdx + 1}/7`;
+            let subjectDisplayName = subject === 'language' ? 'Language' : subject;
+            document.getElementById('hudSubject').textContent = subjectDisplayName;
+            
+            updateHUDProgress();
+            updateHPIndicator();
+            updatePowerIndicator();
+
+            document.getElementById('hudBar').classList.remove('hidden');
+            document.getElementById('menuScreen').classList.add('hidden');
+            document.getElementById('transitionScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('victoryScreen').classList.add('hidden');
+
+            state = 'PLAYING';
+        }
+
+        function updateHUDProgress() {
+            const target = getRequiredWordsForLevel(currentLevelIdx);
+            document.getElementById('hudProgressCounter').textContent = `${correctWordsDestroyedCount} / ${target}`;
+        }
+
+        function triggerBossApproach() {
+            state = 'WARNING';
+            audio.playBossWarning();
+            const warningEl = document.getElementById('bossWarning');
+            warningEl.classList.remove('hidden');
+            
+            setTimeout(() => {
+                warningEl.classList.add('hidden');
+                spawnBoss();
+                state = 'PLAYING';
+            }, 3000);
+        }
+
+        function spawnBoss() {
+            const subject = levelOrder[currentLevelIdx];
+            const template = BOSS_TEMPLATES[subject] || { name: "Nebula Lord", obstacle: "stone" };
+            const maxHp = BOSS_REQ_HITS[currentLevelIdx];
+
+            boss = {
+                name: template.name,
+                obstacleType: template.obstacle,
+                x: 400,
+                y: selectedDifficulty === 'upsidedown' ? 1150 : -150,
+                targetY: selectedDifficulty === 'upsidedown' ? 820 : 180,
+                width: 150,
+                height: 100,
+                hp: maxHp,
+                maxHp: maxHp,
+                shootCooldown: 1.5,
+                wordSpawnCooldown: 0.5,
+                direction: 1
+            };
+        }
+
+        const BOSS_REQ_HITS = [2, 3, 4, 5, 6, 9, 12];
+
+        function updateHPIndicator() {
+            const container = document.getElementById('hpHearts');
+            container.innerHTML = '';
+            for (let i = 0; i < player.maxHp; i++) {
+                if (i < player.hp) {
+                    container.innerHTML += '<i class="fa-solid fa-heart text-rose-500 animate-pulse"></i>';
+                } else {
+                    container.innerHTML += '<i class="fa-regular fa-heart text-slate-700"></i>';
+                }
+            }
+        }
+
+        function updatePowerIndicator() {
+            const container = document.getElementById('hudPower');
+            container.innerHTML = '';
+            for (let i = 1; i <= 3; i++) {
+                if (player.powerStreak >= i) {
+                    container.innerHTML += '<i class="fa-solid fa-star text-emerald-400"></i>';
+                } else {
+                    container.innerHTML += '<i class="fa-regular fa-star text-slate-700"></i>';
+                }
+            }
+        }
+
+        function fireHeartBullet() {
+            audio.playShoot();
+            
+            // Adjust heart vector direction depending on Upside Down mode
+            const bulletVy = selectedDifficulty === 'upsidedown' ? 650 : -650;
+            const offsetY = selectedDifficulty === 'upsidedown' ? 20 : -20;
+
+            if (player.powerStreak >= 3) {
+                bullets.push({ x: player.x, y: player.y + offsetY, vx: 0, vy: bulletVy, size: 8 });
+                bullets.push({ x: player.x - 12, y: player.y + offsetY, vx: -120, vy: bulletVy * 0.95, size: 8 });
+                bullets.push({ x: player.x + 12, y: player.y + offsetY, vx: 120, vy: bulletVy * 0.95, size: 8 });
+            } else if (player.powerStreak === 2) {
+                bullets.push({ x: player.x - 12, y: player.y + offsetY, vx: 0, vy: bulletVy, size: 8 });
+                bullets.push({ x: player.x + 12, y: player.y + offsetY, vx: 0, vy: bulletVy, size: 8 });
+            } else {
+                bullets.push({ x: player.x, y: player.y + offsetY, vx: 0, vy: bulletVy, size: 8 });
+            }
+        }
+
+        function fetchWordForLevel() {
+            const subject = levelOrder[currentLevelIdx];
+            const list = VOCABULARY_BANK[subject] || VOCABULARY_BANK.math;
+            const pair = list[Math.floor(Math.random() * list.length)];
+            
+            const isCorrect = Math.random() > 0.4;
+            const wordText = isCorrect ? pair.ok : pair.bad;
+
+            // Spelling shooter patterns
+            const patterns = ['straight', 'zigzag', 'diagonal', 'circle', 'upside_down', 'horizontal'];
+            const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+
+            // Difficulty Speed Multipliers
+            let diffSpeedMult = 1.0;
+            if (selectedDifficulty === 'medium') diffSpeedMult = 1.25;
+            if (selectedDifficulty === 'hard') diffSpeedMult = 1.55;
+            if (selectedDifficulty === 'eagle') diffSpeedMult = 2.0;
+            if (selectedDifficulty === 'upsidedown') diffSpeedMult = 2.0;
+
+            // Direction configuration depending on Upside Down mode
+            const isUD = selectedDifficulty === 'upsidedown';
+            let x = Math.random() * 500 + 150;
+            let y = isUD ? 1040 : -40;
+            let vx = 0;
+            let vy = (Math.random() * 60 + 50 + currentLevelIdx * 10) * diffSpeedMult;
+            
+            // Negate vertical movement direction for Upside Down mode
+            if (isUD) {
+                vy = -vy;
+            }
+
+            if (pattern === 'diagonal') {
+                x = Math.random() > 0.5 ? 20 : 780;
+                vx = x === 20 ? 80 : -80;
+            } else if (pattern === 'horizontal') {
+                x = 10;
+                y = Math.random() * 200 + 100;
+                vx = 100;
+                vy = 0;
+            }
+
+            // Occasional pink outlined high speed bonus word (Only spawned on correctly spelled ones)
+            const isPinkBonus = isCorrect && Math.random() < 0.15;
+            if (isPinkBonus) {
+                vy *= 1.4;
+                vx *= 1.4;
+            }
+
+            return {
+                text: wordText,
+                correctSpelling: pair.ok,
+                isCorrect: isCorrect,
+                x: x,
+                y: y,
+                vx: vx,
+                vy: vy,
+                hits: 0,
+                maxHits: isCorrect ? 3 : 2, // Incorrect words require only 2 hits to detonate (causing heart loss)
+                pattern: pattern,
+                width: 0, 
+                height: 35,
+                angle: 0,
+                colorFillMeter: 0, 
+                scale: 1,
+                creationTime: Date.now(),
+                isPinkBonus: isPinkBonus,
+                isNarwhalWord: false,
+                shootCooldown: Math.random() * 2 + 1.5 // some words shoot red Xs back
+            };
+        }
+
+        function spawnNarwhalWord() {
+            // Once per level, a super fast blue-outlined Narwhal word spawns
+            const isUD = selectedDifficulty === 'upsidedown';
+            let vy = isUD ? -200 : 200;
+            
+            words.push({
+                text: "★ NARWHAL ★",
+                correctSpelling: "★ NARWHAL ★",
+                isCorrect: true,
+                x: Math.random() * 400 + 200,
+                y: isUD ? 1040 : -40,
+                vx: 0,
+                vy: vy,
+                hits: 0,
+                maxHits: 1, // Only 1 shot to pop!
+                pattern: 'straight',
+                width: 0,
+                height: 35,
+                angle: 0,
+                colorFillMeter: 0,
+                scale: 1,
+                creationTime: Date.now(),
+                isPinkBonus: false,
+                isNarwhalWord: true,
+                shootCooldown: 9999
+            });
+            narwhalWordSpawnedThisLevel = true;
+        }
+
+        function spawnPowerup(x, y) {
+            // Significantly bigger powerups
+            activePowerups.push({
+                x: x,
+                y: y,
+                vy: selectedDifficulty === 'upsidedown' ? -80 : 80,
+                width: 48,
+                height: 48,
+                pulse: 0
+            });
+        }
+
+        function spawnObstacle() {
+            const subject = levelOrder[currentLevelIdx];
+            const template = BOSS_TEMPLATES[subject] || { obstacle: "stone" };
+            const isUD = selectedDifficulty === 'upsidedown';
+            
+            let x = Math.random() * 700 + 50;
+            let y = isUD ? 1050 : -50;
+            let vx = 0;
+            let vy = Math.random() * 100 + 120 + currentLevelIdx * 15;
+            
+            if (isUD) vy = -vy;
+
+            let rotateSpeed = (Math.random() - 0.5) * 4;
+
+            if (template.obstacle === 'narwhal') {
+                x = -50;
+                y = Math.random() * 400 + 200;
+                vx = Math.random() * 120 + 100;
+                vy = 0;
+            }
+
+            obstacles.push({
+                type: template.obstacle,
+                x: x, y: y,
+                vx: vx, vy: vy,
+                width: 45, height: 45,
+                rotation: 0,
+                rotateSpeed: rotateSpeed
+            });
+        }
+
+        function handleStageSpecialEvents(dt) {
+            const subject = levelOrder[currentLevelIdx];
+            
+            if (subject === 'science' && Math.random() < 0.01) {
+                earthquakeTimer = 0.5; 
+            }
+
+            if (subject === 'drama' && Math.random() < 0.006) {
+                const targetX = Math.random() * 700 + 50;
+                lightningStrikes.push({
+                    x: targetX,
+                    duration: 0.4,
+                    alpha: 1
+                });
+                audio.playTone(100, 'sawtooth', 0.4, 0.1);
+                
+                if (Math.abs(player.x - targetX) < 40 && player.invulnTimer <= 0) {
+                    damagePlayer();
+                }
+            }
+        }
+
+        function damagePlayer() {
+            player.hp--;
+            player.invulnTimer = 1.5; 
+            player.powerStreak = 0; // Reset power streak back to 1 heart shoot
+            updatePowerIndicator();
+            updateHPIndicator();
+            audio.playHitWrong();
+
+            if (player.hp <= 0) {
+                triggerGameOver();
+            }
+        }
+
+        function triggerGameOver() {
+            state = 'GAMEOVER';
+            document.getElementById('goScore').textContent = totalScore.toString().padStart(5, '0');
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+            document.getElementById('hudBar').classList.add('hidden');
+        }
+
+        function handleLevelVictory() {
+            const levelDuration = (Date.now() - levelStartRealTime) / 1000;
+            gameTimeElapsed += levelDuration;
+
+            if (currentLevelIdx < 6) {
+                state = 'TRANSITION';
+                currentLevelIdx++;
+                
+                const nextSubject = levelOrder[currentLevelIdx];
+                const nextBoss = BOSS_TEMPLATES[nextSubject] || { name: "The Void" };
+
+                document.getElementById('transStageLabel').textContent = `STAGE ${currentLevelIdx} COMPLETED`;
+                document.getElementById('transBossName').textContent = nextBoss.name;
+                document.getElementById('transStageDesc').textContent = nextBoss.desc;
+                document.getElementById('transitionScreen').classList.remove('hidden');
+            } else {
+                state = 'VICTORY';
+                document.getElementById('vicScore').textContent = totalScore.toString().padStart(5, '0');
+                
+                const accuracy = wordHitsAttempted > 0 ? Math.round((wordHitsCorrect / wordHitsAttempted) * 100) : 100;
+                document.getElementById('vicAccuracy').textContent = `${accuracy}%`;
+                
+                const minutes = Math.floor(gameTimeElapsed / 60);
+                const seconds = Math.floor(gameTimeElapsed % 60);
+                document.getElementById('vicTime').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Track Difficulty completion to unlock next tiers
+                updateUnlockStates();
+
+                document.getElementById('victoryScreen').classList.remove('hidden');
+                document.getElementById('hudBar').classList.add('hidden');
+            }
+        }
+
+        function updateUnlockStates() {
+            const unlockedMsg = document.getElementById('unlockedMessage');
+            unlockedMsg.textContent = "";
+
+            if (selectedDifficulty === 'easy') {
+                localStorage.setItem('ufo_arcade_easy_beat', 'true');
+            } else if (selectedDifficulty === 'medium') {
+                localStorage.setItem('ufo_arcade_medium_beat', 'true');
+            } else if (selectedDifficulty === 'hard') {
+                localStorage.setItem('ufo_arcade_hard_beat', 'true');
+            } else if (selectedDifficulty === 'eagle') {
+                localStorage.setItem('ufo_arcade_eagle_beat', 'true');
+                unlockedMsg.textContent = "🏆 NEW UNLOCK: Upside Down Mode is now fully accessible!";
+            }
+
+            const easyBeat = localStorage.getItem('ufo_arcade_easy_beat') === 'true';
+            const medBeat = localStorage.getItem('ufo_arcade_medium_beat') === 'true';
+            const hardBeat = localStorage.getItem('ufo_arcade_hard_beat') === 'true';
+
+            if (easyBeat && medBeat && hardBeat && selectedDifficulty !== 'eagle' && selectedDifficulty !== 'upsidedown') {
+                unlockedMsg.textContent = "🦅 NEW UNLOCK: Eagle Mode has been unlocked!";
+            }
+
+            checkUnlockedModes();
+        }
+
+        function enterNextSector() {
+            initLevel();
+        }
+
+        function resetToMenu() {
+            state = 'MENU';
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('victoryScreen').classList.add('hidden');
+            document.getElementById('menuScreen').classList.remove('hidden');
+        }
+
+        function update(dt) {
+            if (state !== 'PLAYING') return;
+
+            if (player.invulnTimer > 0) player.invulnTimer -= dt;
+            if (earthquakeTimer > 0) earthquakeTimer -= dt;
+
+            // 1. UFO Keyboard Controls
+            let dx = 0;
+            let dy = 0;
+            if (keys['ArrowLeft'] || keys['a'] || keys['A']) dx = -1;
+            if (keys['ArrowRight'] || keys['d'] || keys['D']) dx = 1;
+            if (keys['ArrowUp'] || keys['w'] || keys['W']) dy = -1;
+            if (keys['ArrowDown'] || keys['s'] || keys['S']) dy = 1;
+
+            if (dx !== 0 && dy !== 0) {
+                dx *= 0.7071;
+                dy *= 0.7071;
+            }
+
+            player.x += dx * player.speed * dt;
+            player.y += dy * player.speed * dt;
+
+            player.x = Math.max(player.width / 2, Math.min(800 - player.width / 2, player.x));
+            player.y = Math.max(player.height / 2, Math.min(1000 - player.height / 2, player.y));
+
+            // 2. Specialized stage actions
+            handleStageSpecialEvents(dt);
+            for (let i = lightningStrikes.length - 1; i >= 0; i--) {
+                lightningStrikes[i].duration -= dt;
+                lightningStrikes[i].alpha = lightningStrikes[i].duration / 0.4;
+                if (lightningStrikes[i].duration <= 0) {
+                    lightningStrikes.splice(i, 1);
+                }
+            }
+
+            // 3. Spawner Tracker
+            const requiredWords = getRequiredWordsForLevel(currentLevelIdx);
+            if (!boss && correctWordsDestroyedCount < requiredWords) {
+                if (words.length < 3 && Math.random() < 0.015) {
+                    words.push(fetchWordForLevel());
+                }
+                if (obstacles.length < 4 && Math.random() < 0.015) {
+                    spawnObstacle();
+                }
+
+                // Spawn Special Narwhal word if half of the level target is reached
+                if (!narwhalWordSpawnedThisLevel && correctWordsDestroyedCount >= requiredWords / 2) {
+                    spawnNarwhalWord();
+                }
+            } else if (!boss && correctWordsDestroyedCount >= requiredWords) {
+                triggerBossApproach();
+            }
+
+            // 4. Word Movement & Projectile Actions
+            for (let i = words.length - 1; i >= 0; i--) {
+                let w = words[i];
+                
+                if (w.pattern === 'zigzag') {
+                    w.angle += dt * 3;
+                    w.x += Math.sin(w.angle) * 120 * dt;
+                    w.y += w.vy * dt;
+                } else if (w.pattern === 'circle') {
+                    w.angle += dt * 2;
+                    w.x += Math.sin(w.angle) * 80 * dt;
+                    w.y += (w.vy + Math.cos(w.angle) * 30) * dt;
+                } else {
+                    w.x += w.vx * dt;
+                    w.y += w.vy * dt;
+                }
+
+                // Words shoot red Xs downwards
+                if (!w.isNarwhalWord) {
+                    w.shootCooldown -= dt;
+                    if (w.shootCooldown <= 0) {
+                        obstacles.push({
+                            type: 'redX',
+                            x: w.x,
+                            y: w.y + 15,
+                            vx: 0,
+                            vy: selectedDifficulty === 'upsidedown' ? -250 : 250,
+                            width: 25,
+                            height: 25,
+                            rotation: 0,
+                            rotateSpeed: 3
+                        });
+                        w.shootCooldown = Math.random() * 3 + 2;
+                    }
+                }
+
+                if (w.y > 1050 || w.y < -50 || w.x < -100 || w.x > 900) {
+                    words.splice(i, 1);
+                }
+            }
+
+            // 5. Boss Actions
+            if (boss) {
+                if (selectedDifficulty === 'upsidedown') {
+                    // Boss rises from bottom to top target
+                    if (boss.y > boss.targetY) {
+                        boss.y -= 100 * dt;
+                    }
+                } else {
+                    // Boss moves downwards
+                    if (boss.y < boss.targetY) {
+                        boss.y += 100 * dt;
+                    }
+                }
+
+                if (Math.abs(boss.y - boss.targetY) < 10) {
+                    boss.x += boss.direction * 120 * dt;
+                    if (boss.x > 700) boss.direction = -1;
+                    if (boss.x < 100) boss.direction = 1;
+
+                    boss.shootCooldown -= dt;
+                    if (boss.shootCooldown <= 0) {
+                        spawnBossProjectiles();
+                        boss.shootCooldown = 1.3 - (currentLevelIdx * 0.08); 
+                    }
+
+                    boss.wordSpawnCooldown -= dt;
+                    if (boss.wordSpawnCooldown <= 0 && words.length < 4) {
+                        spawnBossWordCluster();
+                        boss.wordSpawnCooldown = 3.5;
+                    }
+                }
+            }
+
+            // 6. Chasing Enemy UFO Spawner
+            enemyUfoSpawnTimer -= dt;
+            if (enemyUfoSpawnTimer <= 0 && !enemyUfo) {
+                spawnAnnoyingUfo();
+            }
+
+            if (enemyUfo) {
+                // Steer towards player
+                const angle = Math.atan2(player.y - enemyUfo.y, player.x - enemyUfo.x);
+                const chaseSpeed = 160 + currentLevelIdx * 10;
+                enemyUfo.x += Math.cos(angle) * chaseSpeed * dt;
+                enemyUfo.y += Math.sin(angle) * chaseSpeed * dt;
+
+                // Collision with player
+                if (player.invulnTimer <= 0 && Math.abs(enemyUfo.x - player.x) < 45 && Math.abs(enemyUfo.y - player.y) < 35) {
+                    damagePlayer();
+                    triggerFireworksExplosion(enemyUfo.x, enemyUfo.y);
+                    enemyUfo = null;
+                    enemyUfoSpawnTimer = 15;
+                }
+            }
+
+            // 7. Bullet Actions
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                let b = bullets[i];
+                b.x += b.vx * dt;
+                b.y += b.vy * dt;
+
+                if (b.y < -20 || b.y > 1020 || b.x < -20 || b.x > 820) {
+                    bullets.splice(i, 1);
+                }
+            }
+
+            // 8. Powerup Tracker Actions
+            for (let i = activePowerups.length - 1; i >= 0; i--) {
+                let p = activePowerups[i];
+                p.y += p.vy * dt;
+                p.pulse += dt * 5;
+
+                if (Math.abs(p.x - player.x) < 45 && Math.abs(p.y - player.y) < 35) {
+                    player.powerStreak = Math.min(3, player.powerStreak + 1);
+                    totalScore += 150;
+                    document.getElementById('hudScore').textContent = totalScore.toString().padStart(5, '0');
+                    updatePowerIndicator();
+                    audio.playPowerup();
+                    activePowerups.splice(i, 1);
+                    continue;
+                }
+
+                if (p.y > 1020 || p.y < -20) {
+                    activePowerups.splice(i, 1);
+                }
+            }
+
+            // 9. Obstacle Elements
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                let o = obstacles[i];
+                o.x += o.vx * dt;
+                o.y += o.vy * dt;
+                o.rotation += o.rotateSpeed * dt;
+
+                if (player.invulnTimer <= 0 && Math.abs(o.x - player.x) < 35 && Math.abs(o.y - player.y) < 30) {
+                    damagePlayer();
+                    obstacles.splice(i, 1);
+                    continue;
+                }
+
+                if (o.y > 1050 || o.y < -50 || o.x > 850 || o.x < -80) {
+                    obstacles.splice(i, 1);
+                }
+            }
+
+            // 10. Particles update
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                if (particles[i].alpha <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            processGameCollisions();
+        }
+
+        function spawnAnnoyingUfo() {
+            const isUD = selectedDifficulty === 'upsidedown';
+            enemyUfo = {
+                x: Math.random() * 600 + 100,
+                y: isUD ? 850 : 150,
+                width: 60,
+                height: 40,
+                hp: 3,
+                maxHp: 3
+            };
+        }
+
+        function spawnBossProjectiles() {
+            const angle = Math.atan2(player.y - boss.y, player.x - boss.x);
+            const speed = 250 + (currentLevelIdx * 25);
+            
+            obstacles.push({
+                type: 'redX',
+                x: boss.x,
+                y: boss.y + (selectedDifficulty === 'upsidedown' ? -30 : 30),
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                width: 30,
+                height: 30,
+                rotation: 0,
+                rotateSpeed: 4
+            });
+        }
+
+        function spawnBossWordCluster() {
+            const subject = levelOrder[currentLevelIdx];
+            const list = VOCABULARY_BANK[subject] || VOCABULARY_BANK.math;
+            const chosenPair = list[Math.floor(Math.random() * list.length)];
+
+            const positions = [200, 400, 600];
+            const shuffledPos = positions.sort(() => Math.random() - 0.5);
+
+            const isUD = selectedDifficulty === 'upsidedown';
+            const vy = isUD ? -70 : 70;
+
+            // Correct word choice
+            words.push({
+                text: chosenPair.ok,
+                correctSpelling: chosenPair.ok,
+                isCorrect: true,
+                x: shuffledPos[0],
+                y: boss.y + (isUD ? -40 : 40),
+                vx: 0,
+                vy: vy,
+                hits: 0,
+                maxHits: 3,
+                pattern: 'straight',
+                width: 0,
+                height: 35,
+                angle: 0,
+                colorFillMeter: 0,
+                scale: 1,
+                creationTime: Date.now(),
+                isPinkBonus: false,
+                isNarwhalWord: false,
+                shootCooldown: 9999
+            });
+
+            // Incorrect ones
+            for (let i = 1; i <= 2; i++) {
+                const wrongPair = list[Math.floor(Math.random() * list.length)];
+                words.push({
+                    text: wrongPair.bad,
+                    correctSpelling: wrongPair.ok,
+                    isCorrect: false,
+                    x: shuffledPos[i],
+                    y: boss.y + (isUD ? -40 : 40),
+                    vx: 0,
+                    vy: vy,
+                    hits: 0,
+                    maxHits: 2, // 2 hits to detonate and damage player
+                    pattern: 'straight',
+                    width: 0,
+                    height: 35,
+                    angle: 0,
+                    colorFillMeter: 0,
+                    scale: 1,
+                    creationTime: Date.now(),
+                    isPinkBonus: false,
+                    isNarwhalWord: false,
+                    shootCooldown: 9999
+                });
+            }
+        }
+
+        function processGameCollisions() {
+            // Heart bullets vs chasing UFO
+            if (enemyUfo) {
+                for (let bIdx = bullets.length - 1; bIdx >= 0; bIdx--) {
+                    let bullet = bullets[bIdx];
+                    if (Math.abs(bullet.x - enemyUfo.x) < 40 && Math.abs(bullet.y - enemyUfo.y) < 30) {
+                        bullets.splice(bIdx, 1);
+                        enemyUfo.hp--;
+                        audio.playHitCorrect();
+                        if (enemyUfo.hp <= 0) {
+                            triggerFireworksExplosion(enemyUfo.x, enemyUfo.y);
+                            enemyUfo = null;
+                            enemyUfoSpawnTimer = 18; // wait 18 seconds to spawn another
+                            totalScore += 500;
+                            document.getElementById('hudScore').textContent = totalScore.toString().padStart(5, '0');
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // Heart bullets vs vocabulary words
+            for (let bIdx = bullets.length - 1; bIdx >= 0; bIdx--) {
+                let bullet = bullets[bIdx];
+
+                for (let wIdx = words.length - 1; wIdx >= 0; wIdx--) {
+                    let word = words[wIdx];
+
+                    const padX = word.width / 2 + 10;
+                    const padY = word.height / 2 + 10;
+
+                    if (Math.abs(bullet.x - word.x) < padX && Math.abs(bullet.y - word.y) < padY) {
+                        bullets.splice(bIdx, 1);
+                        wordHitsAttempted++;
+
+                        if (word.isNarwhalWord) {
+                            // Instant screen wipe
+                            triggerNarwhalScreenWipe(word.x, word.y);
+                            words.splice(wIdx, 1);
+                            wordHitsCorrect++;
+                            break;
+                        }
+
+                        if (word.isCorrect) {
+                            word.hits++;
+                            word.colorFillMeter = word.hits / word.maxHits;
+                            word.scale = 1.15;
+                            audio.playHitCorrect();
+
+                            if (word.hits >= word.maxHits) {
+                                triggerFireworksExplosion(word.x, word.y);
+                                words.splice(wIdx, 1);
+                                wordHitsCorrect++;
+
+                                // Double points for correct word
+                                let pointsAwarded = word.isPinkBonus ? 1000 : 300;
+                                totalScore += pointsAwarded;
+                                document.getElementById('hudScore').textContent = totalScore.toString().padStart(5, '0');
+
+                                if (!boss) {
+                                    correctWordsDestroyedCount++;
+                                    updateHUDProgress();
+                                } else {
+                                    boss.hp--;
+                                    if (boss.hp <= 0) {
+                                        triggerFireworksExplosion(boss.x, boss.y);
+                                        boss = null;
+                                        handleLevelVictory();
+                                    }
+                                }
+
+                                if (Math.random() < 0.3) {
+                                    spawnPowerup(word.x, word.y);
+                                }
+                            }
+                        } else {
+                            // Incorrect Word Action: Gains red meter on 1st hit, explodes and costs life on 2nd hit
+                            word.hits++;
+                            word.colorFillMeter = word.hits / word.maxHits;
+                            word.scale = 1.15;
+                            audio.playHitWrong();
+
+                            if (word.hits >= word.maxHits) {
+                                triggerFireworksExplosion(word.x, word.y);
+                                words.splice(wIdx, 1);
+                                damagePlayer(); // Lose 1 Heart!
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // UFO direct physical collision with falling words
+            for (let wIdx = words.length - 1; wIdx >= 0; wIdx--) {
+                let word = words[wIdx];
+                const padX = word.width / 2 + 15;
+                const padY = word.height / 2 + 15;
+
+                if (player.invulnTimer <= 0 && Math.abs(player.x - word.x) < padX && Math.abs(player.y - word.y) < padY) {
+                    damagePlayer();
+                    words.splice(wIdx, 1);
+                }
+            }
+        }
+
+        // SPECIAL EVENT: Blue Narwhal Word destroys all targets on screen
+        function triggerNarwhalScreenWipe(nx, ny) {
+            audio.playNarwhalExplode();
+            triggerFireworksExplosion(nx, ny);
+            earthquakeTimer = 1.5; // Strong shake screen
+
+            // Explode all correct words
+            for (let i = words.length - 1; i >= 0; i--) {
+                let w = words[i];
+                if (w.isCorrect && !w.isNarwhalWord) {
+                    triggerFireworksExplosion(w.x, w.y);
+                    totalScore += w.isPinkBonus ? 1000 : 300;
+                    correctWordsDestroyedCount++;
+                    words.splice(i, 1);
+                } else if (!w.isCorrect) {
+                    // Vaporize incorrect words without self-destruction
+                    triggerFireworksExplosion(w.x, w.y);
+                    words.splice(i, 1);
+                }
+            }
+
+            // Clear obstacles
+            obstacles = [];
+            updateHUDProgress();
+            document.getElementById('hudScore').textContent = totalScore.toString().padStart(5, '0');
+        }
+
+        function triggerFireworksExplosion(x, y) {
+            audio.playExplode();
+            const colors = ['#f43f5e', '#ec4899', '#d946ef', '#a855f7', '#06b6d4', '#eab308'];
+            for (let i = 0; i < 40; i++) {
+                const randCol = colors[Math.floor(Math.random() * colors.length)];
+                particles.push(new Particle(x, y, randCol));
+            }
+        }
+
+        function gameLoop(time) {
+            const dt = Math.min((time - lastTime) / 1000, 0.1);
+            lastTime = time;
+
+            update(dt);
+            render();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, 800, 1000);
+
+            ctx.save();
+            if (earthquakeTimer > 0) {
+                const shakeX = (Math.random() - 0.5) * 18;
+                const shakeY = (Math.random() - 0.5) * 18;
+                ctx.translate(shakeX, shakeY);
+            }
+
+            drawBackground();
+
+            for (let strike of lightningStrikes) {
+                drawLightningBolt(strike.x, strike.alpha);
+            }
+
+            for (let p of activePowerups) {
+                drawPowerup(p);
+            }
+
+            for (let w of words) {
+                drawVocabularyWord(w);
+            }
+
+            for (let o of obstacles) {
+                drawObstacleElement(o);
+            }
+
+            if (enemyUfo) {
+                drawAnnoyingEnemyUfo();
+            }
+
+            if (player.invulnTimer <= 0 || Math.floor(Date.now() / 100) % 2 === 0) {
+                drawUFOPlayer();
+            }
+
+            for (let b of bullets) {
+                drawHeartBullet(b);
+            }
+
+            if (boss) {
+                drawBossCharacter();
+            }
+
+            for (let p of particles) {
+                p.draw(ctx);
+            }
+
+            ctx.restore();
+        }
+
+        function drawBackground() {
+            const factor = currentLevelIdx / 6; 
+            
+            // Background is bright daylight in 1st stage, transitions to pitch dark in final stage
+            const skyColor1 = interpolateColor('#0ea5e9', '#020617', factor); // Cyan Sky to deep black space
+            const skyColor2 = interpolateColor('#0284c7', '#030712', factor); 
+
+            const grad = ctx.createLinearGradient(0, 0, 0, 1000);
+            grad.addColorStop(0, skyColor1);
+            grad.addColorStop(1, skyColor2);
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 800, 1000);
+
+            // Blinking background stars get brighter as level gets darker
+            if (currentLevelIdx >= 1) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${factor * 0.85})`;
+                for (let i = 0; i < 40; i++) {
+                    const x = (Math.sin(i * 12345.67) + 1) / 2 * 800;
+                    const y = ((Math.cos(i * 98765.43) + 1) / 2 * 1000 + Date.now() * 0.05) % 1000;
+                    const size = ((Math.sin(i + Date.now() * 0.002) + 1) / 2) * 2 + 1;
+                    ctx.fillRect(x, y, size, size);
+                }
+            }
+        }
+
+        function interpolateColor(color1, color2, factor) {
+            const r1 = parseInt(color1.substring(1, 3), 16);
+            const g1 = parseInt(color1.substring(3, 5), 16);
+            const b1 = parseInt(color1.substring(5, 7), 16);
+
+            const r2 = parseInt(color2.substring(1, 3), 16);
+            const g2 = parseInt(color2.substring(3, 5), 16);
+            const b2 = parseInt(color2.substring(5, 7), 16);
+
+            const r = Math.round(r1 + factor * (r2 - r1));
+            const g = Math.round(g1 + factor * (g2 - g1));
+            const b = Math.round(b1 + factor * (b2 - b1));
+
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        function drawLightningBolt(startX, alpha) {
+            ctx.save();
+            ctx.strokeStyle = `rgba(165, 180, 252, ${alpha})`;
+            ctx.lineWidth = 4;
+            ctx.shadowColor = '#818cf8';
+            ctx.shadowBlur = 15;
+            
+            ctx.beginPath();
+            let curX = startX;
+            let curY = 0;
+            ctx.moveTo(curX, curY);
+
+            while (curY < 1000) {
+                curX += (Math.random() - 0.5) * 40;
+                curY += Math.random() * 80 + 30;
+                ctx.lineTo(curX, curY);
+            }
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function drawUFOPlayer() {
+            ctx.save();
+            ctx.translate(player.x, player.y);
+
+            // Engine thruster spark glowing underneath
+            const thrusterGrad = ctx.createRadialGradient(0, 15, 2, 0, 22, 10);
+            thrusterGrad.addColorStop(0, '#38bdf8');
+            thrusterGrad.addColorStop(0.5, '#f43f5e');
+            thrusterGrad.addColorStop(1, 'transparent');
+            ctx.fillStyle = thrusterGrad;
+            ctx.beginPath();
+            ctx.arc(0, 15, 12, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Main Metal UFO Saucer body disc
+            const saucerGrad = ctx.createLinearGradient(0, -20, 0, 15);
+            saucerGrad.addColorStop(0, '#64748b');
+            saucerGrad.addColorStop(0.5, '#475569');
+            saucerGrad.addColorStop(1, '#1e293b');
+            
+            ctx.fillStyle = saucerGrad;
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.ellipse(0, 4, 34, 13, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Neon cyan cabin dome glass window
+            const domeGrad = ctx.createRadialGradient(0, -5, 2, 0, -5, 12);
+            domeGrad.addColorStop(0, '#e0f2fe');
+            domeGrad.addColorStop(0.6, '#38bdf8');
+            domeGrad.addColorStop(1, '#0284c7');
+            
+            ctx.fillStyle = domeGrad;
+            ctx.strokeStyle = '#bae6fd';
+            ctx.beginPath();
+            ctx.arc(0, -6, 14, Math.PI, 0); 
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // UFO Peripheral blinking lights
+            ctx.fillStyle = (Math.floor(Date.now() / 250) % 2 === 0) ? '#10b981' : '#f43f5e';
+            ctx.beginPath();
+            ctx.arc(-22, 4, 2, 0, Math.PI * 2);
+            ctx.arc(22, 4, 2, 0, Math.PI * 2);
+            ctx.arc(0, 9, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function drawAnnoyingEnemyUfo() {
+            ctx.save();
+            ctx.translate(enemyUfo.x, enemyUfo.y);
+
+            // Red menacing cabin glow
+            const cabinGrad = ctx.createRadialGradient(0, -3, 2, 0, -3, 10);
+            cabinGrad.addColorStop(0, '#fee2e2');
+            cabinGrad.addColorStop(0.6, '#ef4444');
+            cabinGrad.addColorStop(1, '#991b1b');
+            ctx.fillStyle = cabinGrad;
+            ctx.beginPath();
+            ctx.arc(0, -4, 12, Math.PI, 0);
+            ctx.closePath();
+            ctx.fill();
+
+            // Dark space steel saucer hull
+            ctx.fillStyle = '#334155';
+            ctx.strokeStyle = '#f43f5e';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(0, 4, 26, 9, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Text tag above it
+            ctx.fillStyle = '#ef4444';
+            ctx.font = '9px "Orbitron", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText("CHASER", 0, -16);
+
+            ctx.restore();
+        }
+
+        function drawHeartBullet(b) {
+            ctx.save();
+            ctx.translate(b.x, b.y);
+            
+            ctx.fillStyle = '#f43f5e';
+            ctx.shadowColor = '#f43f5e';
+            ctx.shadowBlur = 10;
+
+            ctx.beginPath();
+            ctx.moveTo(0, -b.size / 2);
+            ctx.bezierCurveTo(-b.size, -b.size * 1.5, -b.size * 1.5, -b.size / 3, 0, b.size * 1.2);
+            ctx.bezierCurveTo(b.size * 1.5, -b.size / 3, b.size, -b.size * 1.5, 0, -b.size / 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function drawVocabularyWord(w) {
+            ctx.save();
+            
+            ctx.font = 'bold 15px "Orbitron", sans-serif';
+            const textWidth = ctx.measureText(w.text).width;
+            w.width = textWidth + 24; 
+
+            if (w.scale > 1) {
+                w.scale -= 0.015;
+            } else if (w.scale < 1) {
+                w.scale += 0.015;
+            }
+
+            ctx.translate(w.x, w.y);
+            ctx.scale(w.scale, w.scale);
+
+            // Upside Down Mode rotation
+            if (selectedDifficulty === 'upsidedown' || w.pattern === 'upside_down') {
+                ctx.rotate(Math.PI);
+            }
+
+            const boxHeight = 28;
+            const rx = -w.width / 2;
+            const ry = -boxHeight / 2;
+
+            // COLOR BORDERS: Special fast pink bonus, special Narwhal, incorrect red fill metrics, or standard slate
+            let borderCol = '#475569'; // Slate base
+            if (w.isNarwhalWord) {
+                borderCol = '#38bdf8'; // Electric blue
+                ctx.shadowColor = '#06b6d4';
+                ctx.shadowBlur = 12;
+            } else if (w.isPinkBonus) {
+                borderCol = '#ec4899'; // Bright pink bonus outline
+                ctx.shadowColor = '#f472b6';
+                ctx.shadowBlur = 10;
+            }
+
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.9)'; 
+            ctx.strokeStyle = borderCol;
+            ctx.lineWidth = w.isPinkBonus || w.isNarwhalWord ? 3 : 1.5;
+            
+            ctx.beginPath();
+            ctx.roundRect(rx, ry, w.width, boxHeight, 14);
+            ctx.fill();
+            ctx.stroke();
+
+            // Progress meters (Left-to-right filling of words)
+            if (w.colorFillMeter > 0) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.roundRect(rx + 1, ry + 1, w.width - 2, boxHeight - 2, 13);
+                ctx.clip();
+
+                const fillGrad = ctx.createLinearGradient(rx, 0, rx + w.width, 0);
+                if (w.isCorrect) {
+                    // Standard correct words fill blue or purple instead of green borders
+                    fillGrad.addColorStop(0, '#6366f1');
+                    fillGrad.addColorStop(1, '#a855f7');
+                } else {
+                    // INCORRECT words fill with a distinct red danger progress bar
+                    fillGrad.addColorStop(0, '#ef4444');
+                    fillGrad.addColorStop(1, '#991b1b');
+                }
+                ctx.fillStyle = fillGrad;
+                ctx.fillRect(rx, ry, w.width * w.colorFillMeter, boxHeight);
+                ctx.restore();
+            }
+
+            // Word text string drawing
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 3;
+            ctx.strokeText(w.text, 0, 0);
+            ctx.fillText(w.text, 0, 0);
+
+            ctx.restore();
+        }
+
+        function drawPowerup(p) {
+            ctx.save();
+            ctx.translate(p.x, p.y);
+
+            const bounce = Math.sin(p.pulse) * 4;
+
+            // Outer emerald aura ring
+            const rGrad = ctx.createRadialGradient(0, bounce, 2, 0, bounce, p.width / 2 + 5);
+            rGrad.addColorStop(0, '#10b981');
+            rGrad.addColorStop(0.5, 'rgba(16, 185, 129, 0.35)');
+            rGrad.addColorStop(1, 'transparent');
+            ctx.fillStyle = rGrad;
+            ctx.beginPath();
+            ctx.arc(0, bounce, p.width / 2 + 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Power diamond core
+            ctx.fillStyle = '#059669';
+            ctx.strokeStyle = '#a7f3d0';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, -p.height / 2 + bounce);
+            ctx.lineTo(p.width / 2, bounce);
+            ctx.lineTo(0, p.height / 2 + bounce);
+            ctx.lineTo(-p.width / 2, bounce);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Bold "P" indicator
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 16px "Orbitron", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("P", 0, bounce);
+
+            ctx.restore();
+        }
+
+        function drawObstacleElement(o) {
+            ctx.save();
+            ctx.translate(o.x, o.y);
+            ctx.rotate(o.rotation);
+
+            if (o.type === 'redX') {
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 5;
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.moveTo(-10, -10);
+                ctx.lineTo(10, 10);
+                ctx.moveTo(10, -10);
+                ctx.lineTo(-10, 10);
+                ctx.stroke();
+            } else if (o.type === 'eagle') {
+                ctx.fillStyle = '#b45309';
+                ctx.beginPath();
+                ctx.moveTo(0, -18);
+                ctx.lineTo(24, -10); 
+                ctx.lineTo(6, 2);
+                ctx.lineTo(0, 20); 
+                ctx.lineTo(-6, 2);
+                ctx.lineTo(-24, -10); 
+                ctx.closePath();
+                ctx.fill();
+                
+                ctx.fillStyle = '#f59e0b';
+                ctx.beginPath();
+                ctx.moveTo(-3, -16);
+                ctx.lineTo(0, -22);
+                ctx.lineTo(3, -16);
+                ctx.closePath();
+                ctx.fill();
+            } else if (o.type === 'narwhal') {
+                ctx.fillStyle = '#38bdf8';
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 22, 12, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.strokeStyle = '#fef08a';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(20, -3);
+                ctx.lineTo(36, -8);
+                ctx.stroke();
+                
+                ctx.fillStyle = '#0284c7';
+                ctx.beginPath();
+                ctx.moveTo(-18, 0);
+                ctx.lineTo(-28, -8);
+                ctx.lineTo(-24, 0);
+                ctx.lineTo(-28, 8);
+                ctx.closePath();
+                ctx.fill();
+            } else if (o.type === 'soccer') {
+                ctx.fillStyle = '#ffffff';
+                ctx.strokeStyle = '#0f172a';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(0, 0, 18, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+                
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.arc(0, 0, 6, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (o.type === 'candy') {
+                const grad = ctx.createRadialGradient(0, 0, 2, 0, 0, 16);
+                grad.addColorStop(0, '#f43f5e');
+                grad.addColorStop(0.5, '#ffffff');
+                grad.addColorStop(1, '#f43f5e');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(0, 0, 14, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#f43f5e';
+                ctx.beginPath();
+                ctx.moveTo(-14, 0);
+                ctx.lineTo(-22, -8);
+                ctx.lineTo(-22, 8);
+                ctx.closePath();
+                ctx.moveTo(14, 0);
+                ctx.lineTo(22, -8);
+                ctx.lineTo(22, 8);
+                ctx.closePath();
+                ctx.fill();
+            } else if (o.type === 'eiffel') {
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(0, -22);
+                ctx.lineTo(0, -18);
+                ctx.lineTo(-12, 20);
+                ctx.moveTo(0, -18);
+                ctx.lineTo(12, 20);
+                ctx.moveTo(-6, 4);
+                ctx.lineTo(6, 4);
+                ctx.moveTo(-10, 12);
+                ctx.lineTo(10, 12);
+                ctx.stroke();
+            } else if (o.type === 'shoes') {
+                ctx.fillStyle = '#fda4af';
+                ctx.beginPath();
+                ctx.ellipse(-6, 2, 7, 14, Math.PI / 8, 0, Math.PI * 2);
+                ctx.ellipse(6, 2, 7, 14, -Math.PI / 8, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.strokeStyle = '#f43f5e';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(-6, -10);
+                ctx.lineTo(6, -4);
+                ctx.moveTo(6, -10);
+                ctx.lineTo(-6, -4);
+                ctx.stroke();
+            } else if (o.type === 'mask') {
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 14, 18, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.arc(-5, -3, 3, 0, Math.PI * 2);
+                ctx.arc(5, -3, 3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.strokeStyle = '#0f172a';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(0, 10, 5, Math.PI, 0);
+                ctx.stroke();
+            } else {
+                ctx.fillStyle = '#64748b';
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-15, -10);
+                ctx.lineTo(-5, -18);
+                ctx.lineTo(12, -12);
+                ctx.lineTo(18, 5);
+                ctx.lineTo(5, 18);
+                ctx.lineTo(-12, 12);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            ctx.restore();
+        }
+
+        function drawBossCharacter() {
+            ctx.save();
+            ctx.translate(boss.x, boss.y);
+
+            // Red aura warning pulsing around cyber boss
+            const pulseSize = 100 + Math.sin(Date.now() * 0.008) * 15;
+            const auraGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, pulseSize);
+            auraGrad.addColorStop(0, 'rgba(239, 68, 68, 0.45)');
+            auraGrad.addColorStop(0.6, 'rgba(239, 68, 68, 0.1)');
+            auraGrad.addColorStop(1, 'transparent');
+            ctx.fillStyle = auraGrad;
+            ctx.beginPath();
+            ctx.arc(0, 0, pulseSize, 0, Math.PI * 2);
+            ctx.fill();
+
+            const hullGrad = ctx.createLinearGradient(0, -50, 0, 40);
+            hullGrad.addColorStop(0, '#475569');
+            hullGrad.addColorStop(0.5, '#1e293b');
+            hullGrad.addColorStop(1, '#0f172a');
+            ctx.fillStyle = hullGrad;
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 3;
+
+            ctx.beginPath();
+            ctx.moveTo(0, -45); 
+            ctx.lineTo(55, -20);
+            ctx.lineTo(75, 20); 
+            ctx.lineTo(35, 45);
+            ctx.lineTo(-35, 45);
+            ctx.lineTo(-75, 20); 
+            ctx.lineTo(-55, -20);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Glowing cockpit visor
+            ctx.fillStyle = '#ef4444';
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.roundRect(-30, -10, 60, 12, 4);
+            ctx.fill();
+            ctx.shadowBlur = 0; 
+
+            // Boss HP meter bar
+            const barW = 120;
+            const barH = 8;
+            const bx = -barW / 2;
+            const by = -65;
+            
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+            ctx.fillRect(bx, by, barW, barH);
+            
+            const hpRatio = boss.hp / boss.maxHp;
+            ctx.fillStyle = hpRatio > 0.4 ? '#22c55e' : '#ef4444';
+            ctx.fillRect(bx, by, barW * hpRatio, barH);
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(bx, by, barW, barH);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px "Orbitron", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(boss.name, 0, -74);
+
+            ctx.restore();
+        }
+    </script>
+</body>
+</html>
