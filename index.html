@@ -20,6 +20,65 @@
         .arcade-font {
             font-family: 'Orbitron', sans-serif;
         }
+        @keyframes ship-swoosh {
+            0% { transform: translate(-80px, 45px) rotate(-15deg); opacity: 0; }
+            5% { opacity: 1; }
+            45% { transform: translate(130px, 12px) rotate(-2deg); }
+            85% { transform: translate(340px, 22px) rotate(15deg); opacity: 1; }
+            90%, 100% { transform: translate(400px, 28px) rotate(18deg); opacity: 0; }
+        }
+        .ship-swoosher {
+            position: absolute;
+            left: 0;
+            top: 0;
+            animation: ship-swoosh 4.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+            pointer-events: none;
+            z-index: 50;
+        }
+        @keyframes logo-glimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .logo-glimmer-text {
+            background: linear-gradient(
+                90deg,
+                #ff0055 0%,
+                #ff7700 25%,
+                #ffff00 45%,
+                #ffffff 55%,
+                #00ffcc 75%,
+                #ff0055 100%
+            );
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: logo-glimmer 3.5s linear infinite;
+        }
+        /* Heavy bevel extrusion drop-shadow in the spirit of Street Fighter II */
+        .sf2-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-style: italic;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            line-height: 0.85;
+            background: linear-gradient(
+                to bottom,
+                #ffffff 0%,
+                #ffe600 30%,
+                #ff6a00 65%,
+                #e11d48 85%,
+                #4c0519 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(1px 1px 0px #4c0519) 
+                    drop-shadow(2px 2px 0px #4c0519) 
+                    drop-shadow(3px 3px 0px #4c0519) 
+                    drop-shadow(4px 4px 0px #4c0519)
+                    drop-shadow(5px 5px 1px #000)
+                    drop-shadow(0px 0px 12px rgba(239, 68, 68, 0.4));
+        }
         @keyframes pulse-glow {
             0%, 100% { filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.7)); }
             50% { filter: drop-shadow(0 0 12px rgba(239, 68, 68, 1)); }
@@ -27,25 +86,23 @@
         .boss-glow {
             animation: pulse-glow 2s infinite;
         }
-        @keyframes neon-pink-flash {
+        /* Active high-dramatic step glowing neon feedback */
+        @keyframes active-step-glow {
             0%, 100% {
-                color: #ff2a8d;
-                text-shadow: 0 0 4px #ff2a8d, 0 0 12px #ff2a8d, 0 0 20px #ff2a8d;
+                border-color: #ec4899;
+                box-shadow: 0 0 6px rgba(236, 72, 153, 0.4), inset 0 0 4px rgba(236, 72, 153, 0.2);
             }
             50% {
-                color: #fecdd3;
-                text-shadow: 0 0 2px #ff2a8d, 0 0 5px #ff2a8d;
+                border-color: #f43f5e;
+                box-shadow: 0 0 18px rgba(244, 63, 94, 0.95), inset 0 0 8px rgba(244, 63, 94, 0.4);
+                transform: scale(1.012);
             }
         }
-        .neon-pink-label {
-            animation: neon-pink-flash 1.2s infinite;
-        }
-        @keyframes step-pulse {
-            0%, 100% { border-color: rgba(99, 102, 241, 0.4); box-shadow: 0 0 0 0px rgba(99, 102, 241, 0.2); }
-            50% { border-color: rgba(99, 102, 241, 1); box-shadow: 0 0 8px 2px rgba(99, 102, 241, 0.4); }
-        }
-        .highlight-step {
-            animation: step-pulse 1.8s infinite;
+        .step-active-neon {
+            animation: active-step-glow 1.4s infinite ease-in-out;
+            border-width: 2px !important;
+            background-color: rgba(15, 23, 42, 0.95) !important;
+            z-index: 10;
         }
         /* Custom responsive limits to fit everything without scrolling at 100% zoom */
         #canvasContainer {
@@ -189,164 +246,206 @@
                 <!-- Main Game Rendering Canvas -->
                 <canvas id="gameCanvas" class="w-full h-full block bg-transparent"></canvas>
 
-                <!-- Screen 1: Splash/Subject Selector Menu (Solid Black Behind Text to Ensure Readability) -->
-                <div id="menuScreen" class="absolute inset-0 bg-slate-950 flex flex-col p-4 text-center z-40 overflow-y-auto">
-                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-950/40 via-transparent to-transparent opacity-60 pointer-events-none"></div>
+                <!-- Screen 1: Splash/Subject Selector Menu (Solid Black Behind Text to Ensure Readability - Optimized to be 100% compact with no scrollbars) -->
+                <div id="menuScreen" class="absolute inset-0 bg-slate-950 flex flex-col p-3 text-center z-40 overflow-hidden justify-between">
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-950/30 via-transparent to-transparent opacity-60 pointer-events-none"></div>
 
                     <!-- Header titles -->
-                    <div class="relative z-50 max-w-lg mx-auto flex flex-col items-center gap-2 w-full py-1">
-                        <div class="flex items-center gap-2 px-3 py-1 bg-indigo-950/60 border border-indigo-500/30 rounded-full text-[10px] text-indigo-400 font-semibold uppercase tracking-widest">
-                            <i class="fa-solid fa-shuttle-space animate-bounce"></i> Worlds of Words - Space Arcade Pro
+                    <div class="relative z-50 max-w-lg mx-auto flex flex-col items-center w-full py-0.5">
+                        <div class="flex items-center gap-2 px-2.5 py-0.5 bg-indigo-950/60 border border-indigo-500/30 rounded-full text-[9px] text-indigo-400 font-semibold uppercase tracking-widest">
+                            <i class="fa-solid fa-shuttle-space animate-bounce text-[10px]"></i> Worlds of Words - Space Arcade Pro
                         </div>
-                        <h1 class="text-2xl md:text-3xl font-black text-white tracking-tighter leading-none flex flex-col">
-                            <span class="bg-gradient-to-r from-pink-400 via-indigo-400 to-cyan-500 bg-clip-text text-transparent">WORLDS OF WORDS</span>
-                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase mt-1">Canadian Spelling & Curriculum Challenge</span>
-                        </h1>
 
-                        <!-- Menu Mode Tabs -->
-                        <div class="flex gap-2 w-full mt-2 border-b border-slate-800 pb-1.5 justify-center">
-                            <button id="tabStagesBtn" class="px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white rounded-lg transition-all">
+                        <!-- Creative Title Logo Container (Street Fighter 2 Extruded Bevel Style) -->
+                        <div class="relative w-full max-w-sm mx-auto py-1 mt-0.5 flex flex-col items-center select-none overflow-visible">
+                            <!-- Curved Swoosh Trail Vector -->
+                            <svg class="absolute w-full h-16 overflow-visible pointer-events-none" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M -20,60 Q 150,15 380,35" stroke="url(#swooshGrad)" stroke-width="4.5" stroke-linecap="round" opacity="0.8" />
+                                <defs>
+                                    <linearGradient id="swooshGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#f43f5e" stop-opacity="0" />
+                                        <stop offset="40%" stop-color="#ec4899" stop-opacity="0.9" />
+                                        <stop offset="75%" stop-color="#06b6d4" stop-opacity="0.9" />
+                                        <stop offset="100%" stop-color="#6366f1" stop-opacity="0" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+
+                            <!-- Zooming vector UFO swoosher (Switched from airplane to UFO) -->
+                            <div class="ship-swoosher w-12 h-10 flex items-center justify-center">
+                                <svg viewBox="0 0 100 60" class="w-11 h-9 drop-shadow-[0_0_8px_#22d3ee]">
+                                    <ellipse cx="50" cy="35" rx="38" ry="12" fill="#64748b" stroke="#38bdf8" stroke-width="2"/>
+                                    <path d="M 28,31 A 18,15 0 0,1 72,31 Z" fill="#e0f2fe" opacity="0.85" stroke="#bae6fd" stroke-width="1.5"/>
+                                    <circle cx="30" cy="35" r="2.5" fill="#10b981"/>
+                                    <circle cx="50" cy="37" r="3" fill="#f43f5e" class="animate-pulse"/>
+                                    <circle cx="70" cy="35" r="2.5" fill="#10b981"/>
+                                </svg>
+                            </div>
+
+                            <!-- Shimmering Text Logo Header in Street Fighter II Style -->
+                            <h1 class="text-[32px] md:text-[38px] font-black tracking-tighter arcade-font uppercase relative leading-none text-center">
+                                <span class="sf2-logo block filter">WORLDS</span>
+                                <span class="sf2-logo block text-[26px] md:text-[32px] mt-0.5">OF WORDS</span>
+                            </h1>
+                        </div>
+
+                        <!-- Menu Mode Tabs (Slightly Thinner Padding) -->
+                        <div class="flex gap-1.5 w-full mt-1 border-b border-slate-800 pb-1 justify-center">
+                            <button id="tabStagesBtn" class="px-2.5 py-1 text-[11px] font-bold bg-indigo-600 text-white rounded-lg transition-all">
                                 <i class="fa-solid fa-play"></i> LAUNCH MISSION
                             </button>
-                            <button id="tabShopBtn" class="px-3 py-1.5 text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-all">
+                            <button id="tabShopBtn" class="px-2.5 py-1 text-[11px] font-bold bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-all">
                                 <i class="fa-solid fa-shopping-cart"></i> UFO UPGRADE SHOP
                             </button>
                         </div>
 
-                        <!-- Panel A: Stages Selection Configuration (Wizard Flow) -->
-                        <div id="panelStages" class="w-full flex flex-col gap-3">
+                        <!-- Panel A: Stages Selection Configuration (Wizard Flow - Hyper Condensed) -->
+                        <div id="panelStages" class="w-full flex flex-col gap-2 mt-1.5">
                             
-                            <!-- STEP 1: Pilot Name Capture Field -->
-                            <div id="stepNameContainer" class="w-full text-left bg-slate-900/60 border-2 border-indigo-500/40 p-3 rounded-xl transition-all duration-300">
-                                <div class="flex items-center justify-between mb-1">
-                                    <span class="text-[10px] font-extrabold text-indigo-400 uppercase tracking-widest">Step 1: Pilot Identification</span>
-                                    <span id="step1Indicator" class="text-xs text-rose-500"><i class="fa-solid fa-circle-xmark"></i></span>
+                            <!-- STEP 1: Pilot Name Capture Field (Ultra High Dramatic Highlight) -->
+                            <div id="stepNameContainer" class="w-full text-left bg-slate-950/80 border border-slate-800 p-2 rounded-xl transition-all duration-300">
+                                <div class="flex items-center justify-between mb-0.5">
+                                    <span class="text-[10px] font-extrabold text-indigo-400 uppercase tracking-widest flex items-center gap-1">
+                                        <i class="fa-solid fa-user-astronaut"></i> Step 1: Pilot Identification
+                                    </span>
+                                    <span id="step1Indicator" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-900 text-slate-400">
+                                        LOCKED
+                                    </span>
                                 </div>
-                                <label id="namePromptLabel" class="text-[11px] font-bold text-slate-300 block mb-1">
-                                    Enter your first name and student number only:
-                                </label>
-                                <input type="text" id="pilotNameInput" placeholder="e.g. Jean Luc - 123456" class="w-full bg-slate-950 border border-slate-800 text-pink-200 rounded-lg p-2 font-bold text-center text-xs outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
+                                <div class="flex gap-2 items-center">
+                                    <label id="namePromptLabel" class="text-[11px] font-bold text-slate-300 shrink-0">Name & Student #:</label>
+                                    <input type="text" id="pilotNameInput" placeholder="e.g. Jean Luc - 1234" class="flex-1 bg-slate-900/90 border border-slate-700 text-pink-200 rounded-lg py-1 px-2 font-bold text-center text-xs outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all">
+                                </div>
                             </div>
 
-                            <!-- STEP 2: Difficulty Selection Panel -->
-                            <div id="stepDiffContainer" class="w-full text-left bg-slate-900/60 border border-slate-800 p-3 rounded-xl opacity-40 pointer-events-none transition-all duration-300">
+                            <!-- STEP 2: Difficulty Selection Panel (Ultra High Dramatic Highlight) -->
+                            <div id="stepDiffContainer" class="w-full text-left bg-slate-950/80 border border-slate-800 p-2 rounded-xl opacity-40 pointer-events-none transition-all duration-300">
                                 <div class="flex items-center justify-between mb-1">
-                                    <span class="text-[10px] font-extrabold text-indigo-400 uppercase tracking-widest">Step 2: Select Difficulty</span>
-                                    <span id="step2Indicator" class="text-xs text-rose-500"><i class="fa-solid fa-circle-xmark"></i></span>
+                                    <span class="text-[10px] font-extrabold text-indigo-400 uppercase tracking-widest flex items-center gap-1">
+                                        <i class="fa-solid fa-gauge-high"></i> Step 2: Select Difficulty
+                                    </span>
+                                    <span id="step2Indicator" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-900 text-slate-400">
+                                        LOCKED
+                                    </span>
                                 </div>
-                                <div id="difficultyContainer" class="grid grid-cols-5 gap-1.5 w-full">
-                                    <button data-diff="easy" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-1.5 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800">
+                                <div id="difficultyContainer" class="grid grid-cols-5 gap-1 w-full">
+                                    <button data-diff="easy" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 py-1 rounded-lg text-xs font-bold transition-all hover:bg-slate-800">
                                         Easy
                                     </button>
-                                    <button data-diff="medium" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-1.5 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800">
-                                        Medium
+                                    <button data-diff="medium" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 py-1 rounded-lg text-xs font-bold transition-all hover:bg-slate-800">
+                                        Med
                                     </button>
-                                    <button data-diff="hard" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-1.5 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800">
+                                    <button data-diff="hard" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 py-1 rounded-lg text-xs font-bold transition-all hover:bg-slate-800">
                                         Hard
                                     </button>
-                                    <button id="eagleModeBtn" data-diff="eagle" class="diff-btn relative bg-slate-900 border border-slate-800 text-slate-500 px-1 py-1.5 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    <button id="eagleModeBtn" data-diff="eagle" class="diff-btn relative bg-slate-900 border border-slate-800 text-slate-500 py-1 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                                         <i class="fa-solid fa-lock text-[9px]"></i> Eagle
                                     </button>
-                                    <button id="upsideDownModeBtn" data-diff="upsidedown" class="diff-btn relative bg-slate-900 border border-slate-800 text-slate-500 px-1 py-1.5 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    <button id="upsideDownModeBtn" data-diff="upsidedown" class="diff-btn relative bg-slate-900 border border-slate-800 text-slate-500 py-1 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                                         <i class="fa-solid fa-lock text-[9px]"></i> U-Down
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- STEP 3: Subject Choices Dropdown -->
-                            <div id="stepSubjectContainer" class="w-full text-left bg-slate-900/60 border border-slate-800 p-3 rounded-xl opacity-40 pointer-events-none transition-all duration-300">
+                            <!-- STEP 3: Subject Choices Dropdown (Ultra High Dramatic Highlight) -->
+                            <div id="stepSubjectContainer" class="w-full text-left bg-slate-950/80 border border-slate-800 p-2 rounded-xl opacity-40 pointer-events-none transition-all duration-300">
                                 <div class="flex items-center justify-between mb-1">
-                                    <span class="text-[10px] font-extrabold text-indigo-400 uppercase tracking-widest">Step 3: Core List Subject</span>
-                                    <span id="step3Indicator" class="text-xs text-rose-500"><i class="fa-solid fa-circle-xmark"></i></span>
+                                    <span class="text-[10px] font-extrabold text-indigo-400 uppercase tracking-widest flex items-center gap-1">
+                                        <i class="fa-solid fa-book-open"></i> Step 3: Core List Subject
+                                    </span>
+                                    <span id="step3Indicator" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-900 text-slate-400">
+                                        LOCKED
+                                    </span>
                                 </div>
-                                <select id="subjectDropdown" class="w-full bg-slate-900 border border-slate-800 text-slate-200 rounded-lg p-2 font-bold text-xs outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer">
-                                    <option value="all">Everything (All Core Subject Vocab Combined)</option>
-                                    <option value="math">Mathematics (Ontario K-4 Terminology)</option>
-                                    <option value="language">Language Arts (Grammar & Canadian Spelling)</option>
-                                    <option value="social">Social Studies (Canada Geography & Heritage)</option>
-                                    <option value="science">Science & Technology (Nature, Forces & Life)</option>
-                                    <option value="music">Music Theory (Melodies & Orchestra Instruments)</option>
-                                    <option value="physed">Physical Education (Athletics & Gym Terms)</option>
-                                    <option value="drama">Drama (Acting, Scripts & Theater Arts)</option>
-                                    <option value="dance">Dance (Melody Movements & Performance)</option>
-                                    <option value="health">Health & Nutrition (Somatic Habits & Diet)</option>
-                                    <option value="prefixes">Special: Prefixes Word Bank</option>
-                                    <option value="suffixes">Special: Suffixes Word Bank</option>
+                                <select id="subjectDropdown" class="w-full bg-slate-900 border border-slate-800 text-slate-200 rounded-lg py-1 px-2 font-bold text-xs outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer">
+                                    <option value="all">Everything (All Combined Vocab)</option>
+                                    <option value="math">Mathematics (Ontario K-4)</option>
+                                    <option value="language">Language Arts (Canadian Spell)</option>
+                                    <option value="social">Social Studies (Canada Heritage)</option>
+                                    <option value="science">Science & Tech (Nature/Life)</option>
+                                    <option value="music">Music Theory (Orchestra)</option>
+                                    <option value="physed">Physical Education (Gym)</option>
+                                    <option value="drama">Drama (Acting/Scripts)</option>
+                                    <option value="dance">Dance (Performance Movements)</option>
+                                    <option value="health">Health & Nutrition (Diet)</option>
+                                    <option value="prefixes">Special: Prefixes Bank</option>
+                                    <option value="suffixes">Special: Suffixes Bank</option>
                                     <option value="basewords">Special: Base Words Bank</option>
                                     <option value="foods" disabled id="optFoods">🔒 Unlocked: Foods (Canadian Diet)</option>
-                                    <option value="sports" disabled id="optSports">🔒 Unlocked: Sports (Championship Athletics)</option>
-                                    <option value="videogames" disabled id="optVideoGames">🔒 Unlocked: 80s Video Games (Classic Chiptunes)</option>
+                                    <option value="sports" disabled id="optSports">🔒 Unlocked: Sports (Athletics)</option>
+                                    <option value="videogames" disabled id="optVideoGames">🔒 Unlocked: 80s Games (Classic)</option>
                                 </select>
                             </div>
 
-                            <!-- Big Play Action Button -->
-                            <button id="startGameBtn" class="w-full mt-1 bg-gradient-to-r from-pink-500 to-indigo-500 opacity-40 cursor-not-allowed text-white font-black py-2.5 rounded-xl tracking-widest text-xs uppercase shadow-lg shadow-pink-500/10 active:scale-[0.99] transition-all flex items-center justify-center gap-2" disabled>
-                                DEPLOY SHUTTLE <i class="fa-solid fa-circle-play"></i>
+                            <!-- Big Play Action Button (Hyper Intense Active State) -->
+                            <button id="startGameBtn" class="w-full mt-0.5 bg-gradient-to-r from-pink-500 to-indigo-500 opacity-40 cursor-not-allowed text-white font-black py-2 rounded-xl tracking-widest text-[13px] uppercase shadow-md active:scale-[0.99] transition-all flex items-center justify-center gap-2" disabled>
+                                DEPLOY SHUTTLE <i class="fa-solid fa-circle-play text-xs"></i>
                             </button>
                         </div>
 
                         <!-- Panel B: Upgrades Shop -->
-                        <div id="panelShop" class="hidden w-full flex flex-col gap-2">
-                            <div class="bg-indigo-950/25 border border-indigo-500/20 p-2 rounded-xl flex justify-between items-center w-full">
-                                <span class="text-xs font-semibold text-slate-300">Your Current Points:</span>
-                                <span id="shopPointsBalance" class="text-yellow-400 font-extrabold text-xs arcade-font">5000</span>
+                        <div id="panelShop" class="hidden w-full flex flex-col gap-1.5 mt-1">
+                            <div class="bg-indigo-950/25 border border-indigo-500/20 p-1.5 rounded-xl flex justify-between items-center w-full">
+                                <span class="text-[11px] font-semibold text-slate-300">Your Current Points:</span>
+                                <span id="shopPointsBalance" class="text-yellow-400 font-extrabold text-[11px] arcade-font">5000</span>
                             </div>
 
                             <!-- Bullet Upgrades -->
                             <div class="text-left w-full">
-                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Equipped Projectile Item</span>
+                                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-widest block mb-0.5">Equipped Projectile Item</span>
                                 <div class="grid grid-cols-2 gap-1 w-full">
-                                    <button data-shop-item="bullet_hearts" class="shop-btn flex justify-between items-center bg-indigo-950/40 border border-indigo-500/50 text-white p-2 rounded-lg text-[11px] font-bold">
+                                    <button data-shop-item="bullet_hearts" class="shop-btn flex justify-between items-center bg-indigo-950/40 border border-indigo-500/50 text-white p-1.5 rounded-lg text-[10px] font-bold">
                                         <span>Hearts</span>
-                                        <span class="text-emerald-400 font-mono">Owned</span>
+                                        <span class="text-emerald-400 font-mono text-[9px]">Owned</span>
                                     </button>
-                                    <button data-shop-item="bullet_pizza" data-cost="4000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                    <button data-shop-item="bullet_pizza" data-cost="4000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-[10px] font-bold hover:bg-slate-850">
                                         <span>Pizza Slice</span>
-                                        <span class="text-yellow-400 font-mono">4000 pts</span>
+                                        <span class="text-yellow-400 font-mono text-[9px]">4000 pts</span>
                                     </button>
-                                    <button data-shop-item="bullet_emoji" data-cost="8000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                    <button data-shop-item="bullet_emoji" data-cost="8000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-[10px] font-bold hover:bg-slate-850">
                                         <span>Happy Smile</span>
-                                        <span class="text-yellow-400 font-mono">8000 pts</span>
+                                        <span class="text-yellow-400 font-mono text-[9px]">8000 pts</span>
                                     </button>
-                                    <button data-shop-item="bullet_cookie" data-cost="12000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                    <button data-shop-item="bullet_cookie" data-cost="12000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-[10px] font-bold hover:bg-slate-850">
                                         <span>Cookie Chip</span>
-                                        <span class="text-yellow-400 font-mono">12K pts</span>
+                                        <span class="text-yellow-400 font-mono text-[9px]">12K pts</span>
                                     </button>
                                 </div>
                             </div>
 
                             <!-- Ship Skin Upgrades -->
-                            <div class="text-left w-full mt-1">
-                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-1">UFO Ship Skin Upgrades</span>
+                            <div class="text-left w-full">
+                                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-widest block mb-0.5">UFO Ship Skin Upgrades</span>
                                 <div class="grid grid-cols-2 gap-1 w-full">
-                                    <button data-shop-item="skin_ufo" class="shop-btn flex justify-between items-center bg-indigo-950/40 border border-indigo-500/50 text-white p-2 rounded-lg text-[11px] font-bold">
+                                    <button data-shop-item="skin_ufo" class="shop-btn flex justify-between items-center bg-indigo-950/40 border border-indigo-500/50 text-white p-1.5 rounded-lg text-[10px] font-bold">
                                         <span>Classic UFO</span>
-                                        <span class="text-emerald-400 font-mono">Owned</span>
+                                        <span class="text-emerald-400 font-mono text-[9px]">Owned</span>
                                     </button>
-                                    <button data-shop-item="skin_sheep" data-cost="5000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                    <button data-shop-item="skin_sheep" data-cost="5000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-[10px] font-bold hover:bg-slate-850">
                                         <span>Cosmic Sheep</span>
-                                        <span class="text-yellow-400 font-mono">5000 pts</span>
+                                        <span class="text-yellow-400 font-mono text-[9px]">5000 pts</span>
                                     </button>
-                                    <button data-shop-item="skin_robot" data-cost="10000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                    <button data-shop-item="skin_robot" data-cost="10000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-[10px] font-bold hover:bg-slate-850">
                                         <span>Robot Head</span>
-                                        <span class="text-yellow-400 font-mono">10K pts</span>
+                                        <span class="text-yellow-400 font-mono text-[9px]">10K pts</span>
                                     </button>
-                                    <button data-shop-item="skin_fly" data-cost="15000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                    <button data-shop-item="skin_fly" data-cost="15000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-[10px] font-bold hover:bg-slate-850">
                                         <span>Nebula Fly</span>
-                                        <span class="text-yellow-400 font-mono">15K pts</span>
+                                        <span class="text-yellow-400 font-mono text-[9px]">15K pts</span>
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Classroom Top Scores section -->
-                        <div class="bg-indigo-950/30 border border-indigo-500/10 p-2 rounded-xl text-left w-full">
-                            <span class="text-[10px] font-bold text-indigo-400 tracking-wider uppercase block mb-1">
-                                <i class="fa-solid fa-trophy text-yellow-500"></i> Local Top Scores
-                            </span>
-                            <div id="leaderboardContainer" class="space-y-1 text-xs">
-                                <!-- Leaderboard values -->
-                            </div>
+                    </div>
+
+                    <!-- Classroom Top Scores section (Condensed row distributed to prevent scrolling overflow) -->
+                    <div class="bg-indigo-950/35 border border-indigo-500/15 p-1.5 rounded-xl text-left w-full">
+                        <span class="text-[9px] font-bold text-indigo-400 tracking-wider uppercase block mb-0.5">
+                            <i class="fa-solid fa-trophy text-yellow-500"></i> Local Top Scores
+                        </span>
+                        <div id="leaderboardContainer" class="flex flex-row justify-between items-center gap-3 text-[10px]">
+                            <!-- Leaderboard values distributed horizontally -->
                         </div>
                     </div>
                 </div>
@@ -612,7 +711,6 @@
             playCoinSound() {
                 if (this.muted) return;
                 this.init();
-                // Upbeat coin sound mimicking vintage arcade alerts: B5 (987.77 Hz) to E6 (1318.51 Hz)
                 this.playTone(987.77, 'sine', 0.08, 0.1);
                 setTimeout(() => {
                     this.playTone(1318.51, 'sine', 0.25, 0.1);
@@ -621,19 +719,18 @@
             playHeartSound() {
                 if (this.muted) return;
                 this.init();
-                // High-fidelity bright retro arpeggio chimes for health upgrade collections
-                this.playTone(587.33, 'sine', 0.12, 0.12); // D5
+                this.playTone(587.33, 'sine', 0.12, 0.12);
                 setTimeout(() => {
-                    this.playTone(783.99, 'sine', 0.12, 0.12); // G5
+                    this.playTone(783.99, 'sine', 0.12, 0.12);
                 }, 50);
                 setTimeout(() => {
-                    this.playTone(987.77, 'sine', 0.12, 0.12); // B5
+                    this.playTone(987.77, 'sine', 0.12, 0.12);
                 }, 100);
                 setTimeout(() => {
-                    this.playTone(1174.66, 'sine', 0.12, 0.12); // D6
+                    this.playTone(1174.66, 'sine', 0.12, 0.12);
                 }, 150);
                 setTimeout(() => {
-                    this.playTone(1567.98, 'sine', 0.35, 0.15); // G6
+                    this.playTone(1567.98, 'sine', 0.35, 0.15);
                 }, 200);
             }
             playBossWarning() {
@@ -642,8 +739,8 @@
             }
             startMidiSequencer() {
                 const scheduler = () => {
-                    let dynamicTempo = 115 + (currentLevelIdx * 10); // Increases tempo with harder levels
-                    let interval = 60000 / dynamicTempo / 2; // Eighth notes
+                    let dynamicTempo = 115 + (currentLevelIdx * 10);
+                    let interval = 60000 / dynamicTempo / 2;
                     if (!this.musicMuted && !this.muted && state !== 'PAUSED') {
                         this.playMidiStep();
                     }
@@ -886,10 +983,10 @@
         let gameTimeElapsed = 0; 
         let wordHitsAttempted = 0;
         let wordHitsCorrect = 0;
-        let state = 'MENU'; // 'MENU', 'PLAYING', 'TRANSITION', 'WARNING', 'VICTORY', 'GAMEOVER', 'PAUSED', 'CONTINUE'
+        let state = 'MENU';
         
         let selectedSubject = 'all';
-        let selectedDifficulty = ''; // Empty initially to force selection
+        let selectedDifficulty = '';
 
         // Upgrade Ship Shop items variables
         let ownedShopItems = ['bullet_hearts', 'skin_ufo'];
@@ -897,7 +994,7 @@
         let activeSkinType = 'skin_ufo';
         let walletPoints = 5000; 
 
-        // Continues tracker (3 allowed)
+        // Continues tracker
         let continuesRemaining = 3;
 
         // Stage variables
@@ -912,7 +1009,7 @@
             powerStreak: 0, 
             hp: 3, maxHp: 3,
             invulnTimer: 0,
-            shield: 0 // Bubble Shield protects up to 2 hits when powerStreak is 3
+            shield: 0
         };
 
         let keys = {};
@@ -962,7 +1059,6 @@
             canvas = document.getElementById('gameCanvas');
             ctx = canvas.getContext('2d');
             
-            // Load stats, scores, and shop
             loadLeaderboard();
             loadShopData();
 
@@ -977,13 +1073,11 @@
             window.addEventListener('keydown', e => {
                 keys[e.key] = true;
                 
-                // Escape key to toggle pause
                 if (e.key === 'Escape') {
                     togglePauseGame();
                     e.preventDefault();
                 }
 
-                // Enter Key Actions
                 if (e.key === 'Enter') {
                     if (state === 'TRANSITION') {
                         enterNextSector();
@@ -999,7 +1093,6 @@
                     e.preventDefault();
                 }
 
-                // Menu selection keys handler
                 handleMenuKeyNavigation(e);
             });
 
@@ -1007,7 +1100,6 @@
                 keys[e.key] = false;
             });
 
-            // Avoid arrow navigation from moving layout scroll
             window.addEventListener('keydown', e => {
                 if(["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(e.code) > -1) {
                     e.preventDefault();
@@ -1019,19 +1111,15 @@
             document.getElementById('restartVicBtn').addEventListener('click', resetToMenu);
             document.getElementById('restartGoBtn').addEventListener('click', resetToMenu);
             
-            // Pause action
             document.getElementById('pauseBtn').addEventListener('click', togglePauseGame);
 
-            // Continue action buttons
             document.getElementById('confirmContinueBtn').addEventListener('click', triggerContinueAction);
             document.getElementById('giveUpBtn').addEventListener('click', triggerGiveUpAction);
 
-            // Exit Confirmation controls
             document.getElementById('sideHomeBtn').addEventListener('click', tryReturnHome);
             document.getElementById('confirmHomeExitBtn').addEventListener('click', executeHomeReturn);
             document.getElementById('cancelHomeExitBtn').addEventListener('click', cancelHomeReturn);
 
-            // Fullscreen trigger (Acts as F11 browser maximize)
             document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
 
             setupTouchSupport();
@@ -1049,7 +1137,6 @@
             const step2Ind = document.getElementById('step2Indicator');
             const step3Ind = document.getElementById('step3Indicator');
 
-            // Force initial difficulty buttons to be deselected
             const diffButtons = document.querySelectorAll('#difficultyContainer button');
             diffButtons.forEach(b => {
                 b.classList.remove('bg-indigo-600/20', 'border-indigo-500', 'text-white');
@@ -1062,70 +1149,79 @@
                 const hasValidName = cleanName.length > 0;
                 const hasDiff = selectedDifficulty !== '';
 
+                // Remove existing dramatic animation helpers
+                stepNameContainer.classList.remove('step-active-neon');
+                stepDiffContainer.classList.remove('step-active-neon');
+                stepSubjectContainer.classList.remove('step-active-neon');
+
                 // Step 1 check
                 if (hasValidName) {
-                    step1Ind.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
-                    stepNameContainer.classList.remove('border-indigo-500/40', 'highlight-step');
-                    stepNameContainer.classList.add('border-emerald-500/60');
+                    step1Ind.innerHTML = '<i class="fa-solid fa-circle-check"></i> OK';
+                    step1Ind.className = "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800";
+                    stepNameContainer.classList.remove('border-slate-800');
+                    stepNameContainer.classList.add('border-emerald-600/40');
                     
                     // Unblock Step 2
                     stepDiffContainer.classList.remove('opacity-40', 'pointer-events-none');
-                    if (!hasDiff) {
-                        stepDiffContainer.classList.add('highlight-step');
-                    }
                 } else {
-                    step1Ind.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500"></i>';
-                    stepNameContainer.classList.add('highlight-step');
-                    stepNameContainer.classList.remove('border-emerald-500/60');
+                    step1Ind.innerHTML = 'PILOT NAME?';
+                    step1Ind.className = "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-rose-950 text-rose-400 border border-rose-800 animate-pulse";
+                    stepNameContainer.classList.add('step-active-neon');
+                    stepNameContainer.classList.remove('border-emerald-600/40');
                     
                     // Re-lock subsequent steps
                     stepDiffContainer.classList.add('opacity-40', 'pointer-events-none');
-                    stepDiffContainer.classList.remove('highlight-step');
                     stepSubjectContainer.classList.add('opacity-40', 'pointer-events-none');
-                    stepSubjectContainer.classList.remove('highlight-step');
                 }
 
                 // Step 2 check
-                if (hasValidName && hasDiff) {
-                    step2Ind.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
-                    stepDiffContainer.classList.remove('highlight-step');
-                    stepDiffContainer.classList.add('border-emerald-500/60');
+                if (hasValidName) {
+                    if (hasDiff) {
+                        step2Ind.innerHTML = '<i class="fa-solid fa-circle-check"></i> OK';
+                        step2Ind.className = "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800";
+                        stepDiffContainer.classList.remove('border-slate-800');
+                        stepDiffContainer.classList.add('border-emerald-600/40');
 
-                    // Unblock Step 3
-                    stepSubjectContainer.classList.remove('opacity-40', 'pointer-events-none');
-                    stepSubjectContainer.classList.add('highlight-step');
+                        // Unblock Step 3
+                        stepSubjectContainer.classList.remove('opacity-40', 'pointer-events-none');
+                    } else {
+                        step2Ind.innerHTML = 'SELECT DIFF';
+                        step2Ind.className = "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-pink-950 text-pink-400 border border-pink-800 animate-pulse";
+                        stepDiffContainer.classList.add('step-active-neon');
+                        stepDiffContainer.classList.remove('border-emerald-600/40');
+                    }
                 } else {
-                    step2Ind.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500"></i>';
-                    stepDiffContainer.classList.remove('border-emerald-500/60');
-                    stepSubjectContainer.classList.add('opacity-40', 'pointer-events-none');
-                    stepSubjectContainer.classList.remove('highlight-step');
+                    step2Ind.innerHTML = 'LOCKED';
+                    step2Ind.className = "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-900 text-slate-500";
+                    stepDiffContainer.classList.remove('border-emerald-600/40');
                 }
 
                 // Step 3 check
                 if (hasValidName && hasDiff) {
-                    step3Ind.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
-                    stepSubjectContainer.classList.remove('highlight-step');
-                    stepSubjectContainer.classList.add('border-emerald-500/60');
+                    step3Ind.innerHTML = '<i class="fa-solid fa-circle-check"></i> OK';
+                    step3Ind.className = "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800";
+                    stepSubjectContainer.classList.remove('border-slate-800');
+                    stepSubjectContainer.classList.add('border-emerald-600/40', 'step-active-neon'); // Step 3 active glow
                 } else {
-                    step3Ind.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500"></i>';
-                    stepSubjectContainer.classList.remove('border-emerald-500/60');
+                    step3Ind.innerHTML = 'LOCKED';
+                    step3Ind.className = "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-900 text-slate-500";
+                    stepSubjectContainer.classList.remove('border-emerald-600/40');
                 }
 
                 // Launch button final state
                 if (hasValidName && hasDiff) {
                     startBtn.disabled = false;
                     startBtn.classList.remove('opacity-40', 'cursor-not-allowed');
-                    startBtn.classList.add('hover:scale-105', 'shadow-pink-500/35');
+                    startBtn.classList.add('hover:scale-[1.02]', 'shadow-pink-500/35', 'animate-pulse');
                 } else {
                     startBtn.disabled = true;
                     startBtn.classList.add('opacity-40', 'cursor-not-allowed');
-                    startBtn.classList.remove('hover:scale-105', 'shadow-pink-500/35');
+                    startBtn.classList.remove('hover:scale-[1.02]', 'shadow-pink-500/35', 'animate-pulse');
                 }
             }
 
             nameInput.addEventListener('input', validateOnboarding);
             
-            // Re-trigger validation when difficulty is clicked
             diffButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     setTimeout(validateOnboarding, 50);
@@ -1192,9 +1288,10 @@
             scores.forEach((entry, idx) => {
                 const colors = ['text-yellow-400', 'text-cyan-400', 'text-emerald-400'];
                 container.innerHTML += `
-                    <div class="flex justify-between text-slate-400 border-b border-slate-900/40 pb-0.5 text-[11px]">
-                        <span>${idx + 1}. ${entry.name}</span>
-                        <span class="font-mono ${colors[idx] || 'text-slate-200'}">${entry.score.toLocaleString()} pts</span>
+                    <div class="flex flex-col items-center flex-1 bg-slate-900/60 p-1.5 rounded-lg border border-slate-800/80">
+                        <span class="text-[9px] text-slate-500 font-bold uppercase">Rank ${idx + 1}</span>
+                        <span class="font-bold text-slate-300 truncate max-w-[80px]">${entry.name}</span>
+                        <span class="font-mono ${colors[idx] || 'text-slate-200'} font-bold">${entry.score.toLocaleString()}</span>
                     </div>
                 `;
             });
@@ -1279,17 +1376,17 @@
 
                 if (ownedShopItems.includes(id)) {
                     if (id === activeBulletType || id === activeSkinType) {
-                        btn.className = "shop-btn flex justify-between items-center bg-indigo-600 border border-indigo-400 text-white p-2 rounded-lg text-xs font-bold w-full text-left";
-                        btn.querySelector('span:nth-child(2)').className = "text-yellow-300 font-mono text-[10px]";
+                        btn.className = "shop-btn flex justify-between items-center bg-indigo-600 border border-indigo-400 text-white p-1.5 rounded-lg text-[10px] font-bold w-full text-left";
+                        btn.querySelector('span:nth-child(2)').className = "text-yellow-300 font-mono text-[9px]";
                         btn.querySelector('span:nth-child(2)').textContent = "EQUIPPED";
                     } else {
-                        btn.className = "shop-btn flex justify-between items-center bg-slate-850 border border-slate-700 text-slate-200 p-2 rounded-lg text-xs font-bold w-full text-left hover:bg-slate-700";
-                        btn.querySelector('span:nth-child(2)').className = "text-indigo-400 font-mono text-[10px]";
+                        btn.className = "shop-btn flex justify-between items-center bg-slate-850 border border-slate-700 text-slate-200 p-1.5 rounded-lg text-[10px] font-bold w-full text-left hover:bg-slate-700";
+                        btn.querySelector('span:nth-child(2)').className = "text-indigo-400 font-mono text-[9px]";
                         btn.querySelector('span:nth-child(2)').textContent = "OWNED";
                     }
                 } else {
-                    btn.className = "shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-xs font-bold w-full text-left hover:bg-slate-850";
-                    btn.querySelector('span:nth-child(2)').className = "text-yellow-400 font-mono text-[10px]";
+                    btn.className = "shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-[10px] font-bold w-full text-left hover:bg-slate-850";
+                    btn.querySelector('span:nth-child(2)').className = "text-yellow-400 font-mono text-[9px]";
                     btn.querySelector('span:nth-child(2)').textContent = `${cost} pts`;
                 }
             });
@@ -1303,8 +1400,8 @@
             const panelShop = document.getElementById('panelShop');
 
             stagesBtn.addEventListener('click', () => {
-                stagesBtn.className = "px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white rounded-lg transition-all";
-                shopBtn.className = "px-3 py-1.5 text-xs font-bold bg-slate-900 hover:bg-slate-850 text-slate-400 hover:text-white rounded-lg transition-all";
+                stagesBtn.className = "px-2.5 py-1 text-[11px] font-bold bg-indigo-600 text-white rounded-lg transition-all";
+                shopBtn.className = "px-2.5 py-1 text-[11px] font-bold bg-slate-900 hover:bg-slate-850 text-slate-400 hover:text-white rounded-lg transition-all";
                 
                 panelStages.classList.remove('hidden');
                 panelShop.classList.add('hidden');
@@ -1312,8 +1409,8 @@
             });
 
             shopBtn.addEventListener('click', () => {
-                shopBtn.className = "px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white rounded-lg transition-all";
-                stagesBtn.className = "px-3 py-1.5 text-xs font-bold bg-slate-900 hover:bg-slate-850 text-slate-400 hover:text-white rounded-lg transition-all";
+                shopBtn.className = "px-2.5 py-1 text-[11px] font-bold bg-indigo-600 text-white rounded-lg transition-all";
+                stagesBtn.className = "px-2.5 py-1 text-[11px] font-bold bg-slate-900 hover:bg-slate-850 text-slate-400 hover:text-white rounded-lg transition-all";
                 
                 panelShop.classList.remove('hidden');
                 panelStages.classList.add('hidden');
@@ -1370,12 +1467,12 @@
             if (easyBeat && medBeat && hardBeat) {
                 eagleBtn.removeAttribute('disabled');
                 eagleBtn.innerHTML = 'Eagle';
-                eagleBtn.className = "diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-1.5 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800";
+                eagleBtn.className = "diff-btn bg-slate-900 border border-slate-800 text-slate-400 py-1 rounded-lg text-xs font-bold transition-all hover:bg-slate-800";
             }
             if (eagleBeat) {
                 udBtn.removeAttribute('disabled');
                 udBtn.innerHTML = 'U-Down';
-                udBtn.className = "diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-1.5 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800";
+                udBtn.className = "diff-btn bg-slate-900 border border-slate-800 text-slate-400 py-1 rounded-lg text-xs font-bold transition-all hover:bg-slate-800";
 
                 foodsOpt.removeAttribute('disabled');
                 foodsOpt.textContent = "Foods (Canadian Diet)";
@@ -1543,7 +1640,7 @@
             player.maxHp = 3;
             player.hp = player.maxHp;
             player.powerStreak = 0;
-            player.shield = 0; // Reset Forcefield
+            player.shield = 0;
             
             if (selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown') {
                 player.x = 400;
@@ -1597,7 +1694,6 @@
             let subjectDisplayName = subject === 'language' ? 'Language' : subject;
             document.getElementById('hudSubject').textContent = subjectDisplayName;
             
-            // Set the specific game stage indicator (e.g. Earthquake Level, Math Max Level)
             const stageTemplate = BOSS_TEMPLATES[subject] || { name: "Nebula Lord" };
             const stageName = stageTemplate.name.includes("Boss") || stageTemplate.name.includes("Level") 
                 ? stageTemplate.name 
@@ -1683,7 +1779,6 @@
             const container = document.getElementById('hudPower');
             container.innerHTML = '';
             
-            // Render green shields if forcefield bubble active
             if (player.shield > 0) {
                 for (let i = 0; i < player.shield; i++) {
                     container.innerHTML += '<i class="fa-solid fa-shield-halved text-emerald-400 animate-pulse"></i>';
@@ -1895,13 +1990,11 @@
         }
 
         function damagePlayer() {
-            // Check green bubble forcefield first!
             if (player.shield > 0) {
                 player.shield--;
                 player.invulnTimer = 1.5; 
                 audio.playHitWrong();
                 
-                // Absorbing particle burst
                 for (let p = 0; p < 20; p++) {
                     particles.push(new Particle(player.x, player.y, '#10b981'));
                 }
@@ -2143,7 +2236,7 @@
                 if (Math.hypot(player.x - emerald.x, player.y - emerald.y) < 35) {
                     player.hp = Math.min(player.maxHp, player.hp + 1);
                     updateHPIndicator();
-                    audio.playHeartSound(); // Upbeat distinct pickup sound for extra health item
+                    audio.playHeartSound(); 
                     emerald = null;
                 } else if (emerald.y > 1050 || emerald.y < -50) {
                     emerald = null;
@@ -2384,7 +2477,7 @@
                         
                         player.hp = Math.min(player.maxHp, player.hp + 1);
                         updateHPIndicator();
-                        audio.playHeartSound(); // Bright, upbeat retro chime sound triggered when hitting the extra life ship
+                        audio.playHeartSound(); 
                         greenSpaceship = null;
                         break;
                     }
@@ -2940,8 +3033,7 @@
             ctx.arc(0, 0, glow, 0, Math.PI * 2);
             ctx.fill();
 
-            // Sizing extra heart green triangle frame pointing down (matching image_d0038a.png verbatim)
-            ctx.fillStyle = '#22c55e'; // Bright arcade green
+            ctx.fillStyle = '#22c55e'; 
             ctx.strokeStyle = '#ffffff';
             ctx.lineWidth = 2.5;
             ctx.beginPath();
@@ -2952,7 +3044,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Beautiful mini red heart inside the triangle (matching image_d0038a.png)
             ctx.fillStyle = '#ef4444';
             ctx.beginPath();
             ctx.moveTo(0, -4);
@@ -2970,7 +3061,6 @@
             ctx.save();
             ctx.translate(s.x, s.y);
 
-            // Reverting other green triangle spaceship back to showing "+1" as requested
             ctx.fillStyle = '#22c55e';
             ctx.strokeStyle = '#ffffff';
             ctx.lineWidth = 2;
@@ -2983,7 +3073,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Render the +1 text in the center
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 16px "Orbitron", sans-serif';
             ctx.textAlign = 'center';
