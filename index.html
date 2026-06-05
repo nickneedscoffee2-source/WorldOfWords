@@ -230,9 +230,17 @@
                     <!-- SF2-Style Header titles with UFO swoosh -->
                     <div class="relative z-50 w-full flex flex-col items-center py-2 relative h-28 justify-center overflow-hidden">
                         <!-- Swooshing vector UFO element -->
-                        <div class="absolute top-2 left-0 ufo-swoosh pointer-events-none text-cyan-400 text-3xl">
+                        <div class="absolute top-2 left-0 ufo-swoosh pointer-events-none text-cyan-400 text-3xl flex flex-col items-center">
                             <i class="fa-solid fa-satellite-dish animate-spin text-[10px] block text-center"></i>
-                            <i class="fa-solid fa-space-shuttle -rotate-45"></i>
+                            <svg class="w-12 h-10 -mt-1 text-cyan-400 filter drop-shadow-[0_0_8px_rgba(34,211,238,0.7)]" viewBox="0 0 100 60" fill="currentColor">
+                                <path d="M30 30 C30 10, 70 10, 70 30 Z" fill="#bae6fd" stroke="#38bdf8" stroke-width="3"/>
+                                <ellipse cx="50" cy="35" rx="45" ry="15" fill="#475569" stroke="#94a3b8" stroke-width="3"/>
+                                <circle cx="20" cy="35" r="4" fill="#10b981" />
+                                <circle cx="35" cy="40" r="4" fill="#ef4444" />
+                                <circle cx="50" cy="42" r="4" fill="#eab308" />
+                                <circle cx="65" cy="40" r="4" fill="#10b981" />
+                                <circle cx="80" cy="35" r="4" fill="#ef4444" />
+                            </svg>
                         </div>
 
                         <div class="flex items-center gap-1.5 px-2 py-0.5 bg-indigo-950/80 border border-indigo-500/20 rounded-full text-[10px] text-indigo-300 font-semibold uppercase tracking-widest">
@@ -442,7 +450,7 @@
                             <button id="confirmContinueBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl tracking-wider text-xs uppercase transition-all">
                                 CONTINUE <i class="fa-solid fa-rotate-right ml-1"></i>
                             </button>
-                            <button id="giveUpBtn" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 font-bold py-3 px-4 rounded-xl tracking-wider text-xs uppercase transition-all">
+                            <button id="giveUpBtn" class="bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-400 font-bold py-3 px-4 rounded-xl tracking-wider text-xs uppercase transition-all">
                                 GIVE UP
                             </button>
                         </div>
@@ -642,7 +650,6 @@
                 setTimeout(() => this.playTone(55, 'sawtooth', 0.4, 0.45), 50);
             }
             playHeartSound() {
-                // Rising upbeat chime chime sound for the triangle power-up (image_d0038a.png)
                 this.playTone(523.25, 'sine', 0.1, 0.12); // C5
                 setTimeout(() => this.playTone(659.25, 'sine', 0.1, 0.12), 60); // E5
                 setTimeout(() => this.playTone(783.99, 'sine', 0.1, 0.12), 120); // G5
@@ -662,7 +669,6 @@
                     if (!this.musicMuted && !this.muted && state !== 'PAUSED') {
                         this.playMidiStep();
                     }
-                    // Speed up dynamic level pacing slightly with each harder level
                     const currentTempo = this.midiTempo + (currentLevelIdx * 10);
                     const interval = 60000 / currentTempo / 2;
                     setTimeout(triggerStep, interval);
@@ -716,7 +722,7 @@
             }
         });
 
-        /* Comprehensive K-4 Ontario Curriculum Canadian Word Bank (Massive expansion) */
+        /* Comprehensive K-4 Ontario Curriculum Canadian Word Bank */
         const VOCABULARY_BANK = {
             sightwords: [
                 { ok: "after", bad: "aftur" }, { ok: "again", bad: "agen" }, { ok: "always", bad: "alwayes" },
@@ -816,7 +822,7 @@
             ],
             social: [
                 { ok: "map", bad: "mapp" }, { ok: "community", bad: "comuniti" },
-                { ok: "globe", bad: "gloab" }, { ok: "canada", bad: "kanada" },
+                { ok: "globe", bad: "gloab" }, { ok: "Canada", bad: "kanada" },
                 { ok: "neighbour", bad: "neighbor" }, { ok: "favour", bad: "favor" },
                 { ok: "parliament", bad: "parliment" }, { ok: "province", bad: "provins" },
                 { ok: "identity", bad: "identiti" }, { ok: "responsibility", bad: "responsibiliti" },
@@ -826,15 +832,15 @@
                 { ok: "environment", bad: "environmint" }, { ok: "landform", bad: "landferm" },
                 { ok: "natural resource", bad: "naturel resource" }, { ok: "weather", bad: "wether" },
                 { ok: "season", bad: "seazon" }, { ok: "settlement", bad: "settlemint" },
-                { ok: "territory", bad: "territorie" }, { ok: "ontario", bad: "ontariow" },
-                { ok: "indigenous", bad: "indigenus" }, { ok: "first nations", bad: "ferst nations" },
-                { ok: "metis", bad: "meytis" }, { ok: "inuit", bad: "inuite" },
+                { ok: "territory", bad: "territorie" }, { ok: "Ontario", bad: "ontariow" },
+                { ok: "indigenous", bad: "indigenus" }, { ok: "First Nations", bad: "ferst nations" },
+                { ok: "Métis", bad: "meytis" }, { ok: "Inuit", bad: "inuite" },
                 { ok: "ancestor", bad: "ancestur" }, { ok: "culture", bad: "culcher" },
                 { ok: "diversity", bad: "diversiti" }, { ok: "pioneer", bad: "pionere" },
                 { ok: "timeline", bad: "tymeline" }, { ok: "citizenship", bad: "citizanship" },
                 { ok: "society", bad: "societi" }, { ok: "government", bad: "governmint" },
                 { ok: "mayor", bad: "mayur" }, { ok: "premier", bad: "premiur" },
-                { ok: "prime minister", bad: "pryme minister" }, { ok: "rights", bad: "ryghts" },
+                { ok: "Prime Minister", bad: "pryme minister" }, { ok: "rights", bad: "ryghts" },
                 { ok: "law", bad: "lawe" }, { ok: "trade", bad: "trayd" },
                 { ok: "service", bad: "servise" }, { ok: "job", bad: "jobb" },
                 { ok: "climate", bad: "clymate" }, { ok: "continent", bad: "contanent" },
@@ -1086,6 +1092,7 @@
         let gameTimeElapsed = 0; 
         let wordHitsAttempted = 0;
         let wordHitsCorrect = 0;
+        let wordHitsIncorrect = 0; // Tracks incorrectly identified elements
         let state = 'MENU'; // 'MENU', 'PLAYING', 'TRANSITION', 'WARNING', 'VICTORY', 'GAMEOVER', 'PAUSED', 'CONTINUE'
         
         let selectedSubject = 'all';
@@ -1392,12 +1399,18 @@
             }
 
             const pilotName = document.getElementById('pilotNameInput').value.trim() || "Jean Luc";
+            const totalHits = wordHitsCorrect + wordHitsIncorrect;
+            const accuracyRatioString = totalHits > 0 ? `${wordHitsCorrect} / ${totalHits}` : "0 / 0";
+
             const payload = {
                 name: pilotName,
                 category: selectedSubject.toUpperCase(),
                 score: finalScore,
                 difficulty: selectedDifficulty.toUpperCase(),
-                achievement: `Stage ${currentLevelIdx + 1} - ${statusMsg}`
+                achievement: `Stage ${currentLevelIdx + 1} - ${statusMsg}`,
+                wordsCorrect: wordHitsCorrect,
+                wordsIncorrect: wordHitsIncorrect,
+                accuracyRatio: accuracyRatioString
             };
 
             try {
@@ -1643,7 +1656,7 @@
         function setupTouchSupport() {
             let touchActive = false;
             canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
-            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+            canvas.addEventListener('touchmove', handleTouchStart, { passive: false });
             canvas.addEventListener('touchend', () => { touchActive = false; });
 
             function handleTouchStart(e) {
@@ -1704,6 +1717,7 @@
             gameTimeElapsed = 0;
             wordHitsAttempted = 0;
             wordHitsCorrect = 0;
+            wordHitsIncorrect = 0; // Reset metrics on new session launch
             continuesRemaining = 3; 
             
             initLevel();
@@ -2612,6 +2626,7 @@
                             if (word.hits >= word.maxHits) {
                                 triggerFireworksExplosion(word.x, word.y);
                                 words.splice(wIdx, 1);
+                                wordHitsIncorrect++; // Track incorrectly identified hits
                                 damagePlayer(); 
                             }
                         }
@@ -2633,6 +2648,7 @@
                     totalScore += w.isPinkBonus ? 1000 : 300;
                     correctWordsDestroyedCount++;
                     words.splice(i, 1);
+                    wordHitsCorrect++; // Accumulates correct items identified
                 } else if (!w.isCorrect) {
                     triggerFireworksExplosion(w.x, w.y);
                     words.splice(i, 1);
@@ -3034,8 +3050,8 @@
             else if (b.type === 'bullet_note') {
                 ctx.fillStyle = '#c084fc';
                 ctx.font = 'bold 20px "Inter", sans-serif';
-                ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
+                ctx.textAlign = 'center';
                 ctx.fillText("♫", 0, 0);
             }
             else {
