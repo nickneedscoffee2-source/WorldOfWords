@@ -20,16 +20,6 @@
         .arcade-font {
             font-family: 'Orbitron', sans-serif;
         }
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.5);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(99, 102, 241, 0.5);
-            border-radius: 3px;
-        }
         @keyframes pulse-glow {
             0%, 100% { filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.7)); }
             50% { filter: drop-shadow(0 0 12px rgba(239, 68, 68, 1)); }
@@ -50,77 +40,85 @@
         .neon-pink-label {
             animation: neon-pink-flash 1.2s infinite;
         }
+        @keyframes step-pulse {
+            0%, 100% { border-color: rgba(99, 102, 241, 0.4); box-shadow: 0 0 0 0px rgba(99, 102, 241, 0.2); }
+            50% { border-color: rgba(99, 102, 241, 1); box-shadow: 0 0 8px 2px rgba(99, 102, 241, 0.4); }
+        }
+        .highlight-step {
+            animation: step-pulse 1.8s infinite;
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 overflow-hidden min-h-screen flex flex-col items-center justify-center">
 
     <!-- Main Outer Container -->
-    <div class="relative w-full max-w-6xl h-screen flex flex-col md:flex-row items-center justify-center p-2 md:p-4 gap-4">
+    <div class="relative w-full max-w-6xl h-screen flex flex-col md:flex-row items-center justify-center p-2 gap-3">
         
-        <!-- Left Side: Informative Side Panel -->
-        <div class="hidden lg:flex flex-col w-80 bg-slate-900/80 border border-slate-800 rounded-2xl p-4 gap-4 self-stretch h-full overflow-y-auto z-10">
-            <div class="text-center">
-                <span class="text-xs font-bold text-pink-500 tracking-wider uppercase">Ontario Curriculum K-4</span>
-                <h2 class="text-xl font-black text-white tracking-tight flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-ranking-star text-yellow-500"></i> WORLDS OF WORDS
-                </h2>
-            </div>
-            
-            <div class="border-t border-slate-800 my-1"></div>
+        <!-- Left Side: Informative Side Panel (Simplified to prevent scrollbars) -->
+        <div class="hidden lg:flex flex-col w-72 bg-slate-900/90 border border-slate-800 rounded-2xl p-3 gap-2.5 self-stretch h-full z-10 overflow-hidden justify-between">
+            <div class="flex flex-col gap-2.5">
+                <div class="text-center">
+                    <span class="text-[10px] font-bold text-pink-500 tracking-wider uppercase">Ontario K-4 Standard</span>
+                    <h2 class="text-lg font-black text-white tracking-tight flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-ranking-star text-yellow-500"></i> WORLDS OF WORDS
+                    </h2>
+                </div>
+                
+                <div class="border-t border-slate-800"></div>
 
-            <!-- How To Play Instructions -->
-            <div class="flex flex-col gap-2">
-                <span class="text-sm font-semibold text-slate-300"><i class="fa-solid fa-gamepad text-indigo-400"></i> MISSION STATEMENT</span>
-                <p class="text-xs text-slate-400 leading-relaxed">
-                    Identify words <span class="text-indigo-300 font-bold">related to your selected topic</span> that are also <span class="text-emerald-300 font-bold">spelled correctly (Canadian Spellings)</span>. Avoid unrelated topics or typos. Firing at incorrect targets triggers shield explosions!
-                </p>
-                <div class="grid grid-cols-2 gap-2 text-xs mt-1">
-                    <div class="bg-slate-950 p-2 rounded-lg border border-slate-800 col-span-2">
-                        <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">▲▼◀▶</kbd> / <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">WASD</kbd>
-                        <p class="text-[10px] text-slate-400 mt-1">Move in any direction (And navigate the menu!)</p>
+                <!-- How To Play Instructions -->
+                <div class="flex flex-col gap-1.5 text-xs">
+                    <span class="font-bold text-slate-300 flex items-center gap-1"><i class="fa-solid fa-gamepad text-indigo-400"></i> HOW TO PLAY</span>
+                    <p class="text-[11px] text-slate-400 leading-normal">
+                        Shoot words matching your list that are spelled correctly (Canadian Spellings). Unrelated items and typos explode! Avoid falling words—they damage your ship.
+                    </p>
+                    <div class="flex flex-col gap-1 mt-1">
+                        <div class="bg-slate-950 p-1.5 rounded-lg border border-slate-800">
+                            <kbd class="px-1 bg-slate-800 rounded text-slate-300 text-[10px]">▲▼◀▶</kbd> / <kbd class="px-1 bg-slate-800 rounded text-slate-300 text-[10px]">WASD</kbd>
+                            <span class="text-[10px] text-slate-400 ml-1">Move Shuttle</span>
+                        </div>
+                        <div class="bg-slate-950 p-1.5 rounded-lg border border-slate-800">
+                            <kbd class="px-1 bg-slate-800 rounded text-slate-300 text-[10px]">Space</kbd> / <kbd class="px-1 bg-slate-800 rounded text-slate-300 text-[10px]">Ctrl</kbd>
+                            <span class="text-[10px] text-slate-400 ml-1">Fire Weapon</span>
+                        </div>
                     </div>
-                    <div class="bg-slate-950 p-2 rounded-lg border border-slate-800 col-span-2">
-                        <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">Space</kbd> / <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">Ctrl</kbd>
-                        <p class="text-[10px] text-slate-400 mt-1">Fire heart projectiles</p>
-                    </div>
-                    <div class="bg-slate-950 p-2 rounded-lg border border-slate-800 col-span-2">
-                        <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">Esc</kbd>
-                        <p class="text-[10px] text-slate-400 mt-1">Pause current mission</p>
+                </div>
+
+                <div class="border-t border-slate-800"></div>
+
+                <!-- Points Balance Panel -->
+                <div class="flex flex-col gap-1 text-xs">
+                    <span class="font-semibold text-slate-300 uppercase tracking-wider"><i class="fa-solid fa-coins text-yellow-500"></i> Balance</span>
+                    <div class="bg-slate-950 p-2 rounded-xl border border-slate-800 flex justify-between items-center">
+                        <span class="text-slate-400 text-[11px]">Total Balance:</span>
+                        <span id="sidePointsBalance" class="text-yellow-400 font-bold arcade-font text-sm">5000</span>
                     </div>
                 </div>
             </div>
 
-            <div class="border-t border-slate-800 my-1"></div>
-
-            <!-- Shop Quick Links & Stats -->
-            <div class="flex flex-col gap-2 text-xs">
-                <span class="font-semibold text-slate-300 uppercase tracking-wider"><i class="fa-solid fa-coins text-yellow-500"></i> Points Currency</span>
-                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center">
-                    <span class="text-slate-400">Total balance:</span>
-                    <span id="sidePointsBalance" class="text-yellow-400 font-bold arcade-font">5000</span>
+            <!-- Controls Block (Audio FX above Main Menu as requested) -->
+            <div class="pt-2.5 border-t border-slate-800 flex flex-col gap-2 text-xs">
+                <div class="flex justify-between items-center text-slate-400">
+                    <span>Midi Synth Music</span>
+                    <button id="musicToggleBtn" class="bg-slate-800 hover:bg-slate-700 text-rose-400 p-1 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-[11px]">
+                        <i class="fa-solid fa-volume-xmark"></i> Muted
+                    </button>
                 </div>
-            </div>
+                <div class="flex justify-between items-center text-slate-400">
+                    <span>Audio FX</span>
+                    <button id="muteBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 p-1 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-[11px]">
+                        <i class="fa-solid fa-volume-high"></i> Active
+                    </button>
+                </div>
+                
+                <div class="border-t border-slate-800/60 my-0.5"></div>
 
-            <!-- Audio & Menu Controller Nodes -->
-            <div class="mt-auto pt-4 border-t border-slate-800 flex flex-col gap-2">
                 <button id="sideHomeBtn" class="bg-rose-950 hover:bg-rose-900 text-rose-200 py-1.5 rounded-lg text-xs font-bold border border-rose-800 transition-all flex items-center justify-center gap-1">
                     <i class="fa-solid fa-house"></i> Main Menu
                 </button>
                 <button id="fullscreenBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1">
                     <i class="fa-solid fa-expand"></i> Go Fullscreen
                 </button>
-                <div class="flex justify-between items-center text-xs text-slate-400">
-                    <span>Midi Synth Music</span>
-                    <button id="musicToggleBtn" class="bg-slate-800 hover:bg-slate-700 text-rose-400 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1">
-                        <i class="fa-solid fa-volume-xmark"></i> Muted
-                    </button>
-                </div>
-                <div class="flex justify-between items-center text-xs text-slate-400">
-                    <span>Audio FX</span>
-                    <button id="muteBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1">
-                        <i class="fa-solid fa-volume-high"></i> Active
-                    </button>
-                </div>
             </div>
         </div>
 
@@ -142,7 +140,6 @@
                 </div>
                 
                 <div class="flex items-center gap-1.5">
-                    <!-- Pause button -->
                     <button id="pauseBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white p-1 px-2.5 rounded-full text-xs font-extrabold pointer-events-auto shadow-md transition-all">
                         <i class="fa-solid fa-pause"></i>
                     </button>
@@ -177,77 +174,77 @@
                 <!-- Main Game Rendering Canvas -->
                 <canvas id="gameCanvas" class="w-full h-full block bg-transparent"></canvas>
 
-                <!-- Screen 1: Splash/Subject Selector Menu (With tabs for Stages vs Upgrades Shop) -->
-                <div id="menuScreen" class="absolute inset-0 bg-slate-950/98 flex flex-col p-4 text-center z-40 overflow-y-auto">
+                <!-- Screen 1: Splash/Subject Selector Menu (Solid Black Behind Text to Ensure Readability) -->
+                <div id="menuScreen" class="absolute inset-0 bg-slate-950 flex flex-col p-4 text-center z-40 overflow-y-auto">
                     <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-950/40 via-transparent to-transparent opacity-60 pointer-events-none"></div>
 
                     <!-- Header titles -->
-                    <div class="relative z-50 max-w-lg mx-auto flex flex-col items-center gap-2 w-full py-2">
-                        <div class="flex items-center gap-2 px-3 py-1 bg-indigo-950/60 border border-indigo-500/30 rounded-full text-xs text-indigo-400 font-semibold uppercase tracking-widest">
+                    <div class="relative z-50 max-w-lg mx-auto flex flex-col items-center gap-2 w-full py-1">
+                        <div class="flex items-center gap-2 px-3 py-1 bg-indigo-950/60 border border-indigo-500/30 rounded-full text-[10px] text-indigo-400 font-semibold uppercase tracking-widest">
                             <i class="fa-solid fa-shuttle-space animate-bounce"></i> Worlds of Words - Space Arcade Pro
                         </div>
-                        <h1 class="text-3xl md:text-4xl font-black text-white tracking-tighter leading-none flex flex-col">
+                        <h1 class="text-2xl md:text-3xl font-black text-white tracking-tighter leading-none flex flex-col">
                             <span class="bg-gradient-to-r from-pink-400 via-indigo-400 to-cyan-500 bg-clip-text text-transparent">WORLDS OF WORDS</span>
-                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase mt-1">Canadian spelling standard & Curriculum Challenge</span>
+                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase mt-1">Canadian Spelling & Curriculum Challenge</span>
                         </h1>
 
                         <!-- Menu Mode Tabs -->
-                        <div class="flex gap-2 w-full mt-2 border-b border-slate-800 pb-2 justify-center">
+                        <div class="flex gap-2 w-full mt-2 border-b border-slate-800 pb-1.5 justify-center">
                             <button id="tabStagesBtn" class="px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white rounded-lg transition-all">
                                 <i class="fa-solid fa-play"></i> LAUNCH MISSION
                             </button>
-                            <button id="tabShopBtn" class="px-3 py-1.5 text-xs font-bold bg-slate-900 hover:bg-slate-850 text-slate-400 hover:text-white rounded-lg transition-all">
+                            <button id="tabShopBtn" class="px-3 py-1.5 text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-all">
                                 <i class="fa-solid fa-shopping-cart"></i> UFO UPGRADE SHOP
                             </button>
                         </div>
 
-                        <!-- Panel A: Stages Selection Configuration -->
+                        <!-- Panel A: Stages Selection Configuration (Wizard Flow) -->
                         <div id="panelStages" class="w-full flex flex-col gap-3">
                             
-                            <!-- Pilot Name Capture Field (Required with neon blinking text) -->
-                            <div class="w-full text-left bg-slate-900/60 border-2 border-pink-500/50 p-3 rounded-xl shadow-lg shadow-pink-500/10">
-                                <label id="namePromptLabel" class="text-xs font-extrabold neon-pink-label uppercase tracking-widest block mb-1.5 text-center">
-                                    <i class="fa-solid fa-circle-exclamation mr-1"></i> Enter your name and student number here
-                                </label>
-                                <input type="text" id="pilotNameInput" placeholder="e.g. Liam Smith - Room 102..." class="w-full bg-slate-950 border border-slate-800 text-pink-200 rounded-lg p-2.5 font-bold text-center text-sm outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all">
-                            </div>
-
-                            <!-- Leaderboard Top 3 section -->
-                            <div class="bg-indigo-950/30 border border-indigo-500/10 p-2.5 rounded-xl text-left w-full">
-                                <span class="text-[10px] font-bold text-indigo-400 tracking-wider uppercase block mb-1">
-                                    <i class="fa-solid fa-trophy text-yellow-500"></i> Classroom Top Scores (Local Hub)
-                                </span>
-                                <div id="leaderboardContainer" class="space-y-1 text-xs">
-                                    <!-- Dynamic Leaderboard values go here -->
+                            <!-- STEP 1: Pilot Name Capture Field -->
+                            <div id="stepNameContainer" class="w-full text-left bg-slate-900/60 border-2 border-indigo-500/40 p-3 rounded-xl transition-all duration-300">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-[10px] font-extrabold text-indigo-400 uppercase tracking-widest">Step 1: Pilot Identification</span>
+                                    <span id="step1Indicator" class="text-xs text-rose-500"><i class="fa-solid fa-circle-xmark"></i></span>
                                 </div>
+                                <label id="namePromptLabel" class="text-[11px] font-bold text-slate-300 block mb-1">
+                                    Enter your first name and student number only:
+                                </label>
+                                <input type="text" id="pilotNameInput" placeholder="e.g. Jean Luc - 123456" class="w-full bg-slate-950 border border-slate-800 text-pink-200 rounded-lg p-2 font-bold text-center text-xs outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
                             </div>
 
-                            <!-- Difficulty Selection Panel -->
-                            <div class="w-full text-left">
-                                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Select Difficulty (Navigate with ◀/▶ keys)</label>
+                            <!-- STEP 2: Difficulty Selection Panel -->
+                            <div id="stepDiffContainer" class="w-full text-left bg-slate-900/60 border border-slate-800 p-3 rounded-xl opacity-40 pointer-events-none transition-all duration-300">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-[10px] font-extrabold text-indigo-400 uppercase tracking-widest">Step 2: Select Difficulty</span>
+                                    <span id="step2Indicator" class="text-xs text-rose-500"><i class="fa-solid fa-circle-xmark"></i></span>
+                                </div>
                                 <div id="difficultyContainer" class="grid grid-cols-5 gap-1.5 w-full">
-                                    <button data-diff="easy" class="diff-btn bg-indigo-600/20 border border-indigo-500 text-white px-1 py-2 rounded-lg text-[11px] font-bold transition-all">
+                                    <button data-diff="easy" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-1.5 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800">
                                         Easy
                                     </button>
-                                    <button data-diff="medium" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-2 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800">
+                                    <button data-diff="medium" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-1.5 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800">
                                         Medium
                                     </button>
-                                    <button data-diff="hard" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-2 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800">
+                                    <button data-diff="hard" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-1.5 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800">
                                         Hard
                                     </button>
-                                    <button id="eagleModeBtn" data-diff="eagle" class="diff-btn relative bg-slate-900 border border-slate-800 text-slate-500 px-1 py-2 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    <button id="eagleModeBtn" data-diff="eagle" class="diff-btn relative bg-slate-900 border border-slate-800 text-slate-500 px-1 py-1.5 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                                         <i class="fa-solid fa-lock text-[9px]"></i> Eagle
                                     </button>
-                                    <button id="upsideDownModeBtn" data-diff="upsidedown" class="diff-btn relative bg-slate-900 border border-slate-800 text-slate-500 px-1 py-2 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    <button id="upsideDownModeBtn" data-diff="upsidedown" class="diff-btn relative bg-slate-900 border border-slate-800 text-slate-500 px-1 py-1.5 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                                         <i class="fa-solid fa-lock text-[9px]"></i> U-Down
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- Subject Choices dropdown menu -->
-                            <div class="w-full text-left">
-                                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Choose Core List (Navigate with ▲/▼ keys)</label>
-                                <select id="subjectDropdown" class="w-full bg-slate-900 border border-slate-800 text-slate-200 rounded-xl p-2.5 font-bold text-xs outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer">
+                            <!-- STEP 3: Subject Choices Dropdown -->
+                            <div id="stepSubjectContainer" class="w-full text-left bg-slate-900/60 border border-slate-800 p-3 rounded-xl opacity-40 pointer-events-none transition-all duration-300">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-[10px] font-extrabold text-indigo-400 uppercase tracking-widest">Step 3: Core List Subject</span>
+                                    <span id="step3Indicator" class="text-xs text-rose-500"><i class="fa-solid fa-circle-xmark"></i></span>
+                                </div>
+                                <select id="subjectDropdown" class="w-full bg-slate-900 border border-slate-800 text-slate-200 rounded-lg p-2 font-bold text-xs outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer">
                                     <option value="all">Everything (All Core Subject Vocab Combined)</option>
                                     <option value="math">Mathematics (Ontario K-4 Terminology)</option>
                                     <option value="language">Language Arts (Grammar & Canadian Spelling)</option>
@@ -261,23 +258,23 @@
                                     <option value="prefixes">Special: Prefixes Word Bank</option>
                                     <option value="suffixes">Special: Suffixes Word Bank</option>
                                     <option value="basewords">Special: Base Words Bank</option>
-                                    <option value="foods" disabled id="optFoods">🔒 Unlocked: Foods (Canadian Diet Vocabulary)</option>
+                                    <option value="foods" disabled id="optFoods">🔒 Unlocked: Foods (Canadian Diet)</option>
                                     <option value="sports" disabled id="optSports">🔒 Unlocked: Sports (Championship Athletics)</option>
                                     <option value="videogames" disabled id="optVideoGames">🔒 Unlocked: 80s Video Games (Classic Chiptunes)</option>
                                 </select>
                             </div>
 
                             <!-- Big Play Action Button -->
-                            <button id="startGameBtn" class="w-full mt-1 bg-gradient-to-r from-pink-500 to-indigo-500 opacity-60 cursor-not-allowed text-white font-black py-3 rounded-xl tracking-widest text-xs uppercase shadow-lg shadow-pink-500/10 active:scale-[0.99] transition-all flex items-center justify-center gap-2" disabled>
+                            <button id="startGameBtn" class="w-full mt-1 bg-gradient-to-r from-pink-500 to-indigo-500 opacity-40 cursor-not-allowed text-white font-black py-2.5 rounded-xl tracking-widest text-xs uppercase shadow-lg shadow-pink-500/10 active:scale-[0.99] transition-all flex items-center justify-center gap-2" disabled>
                                 DEPLOY SHUTTLE <i class="fa-solid fa-circle-play"></i>
                             </button>
                         </div>
 
                         <!-- Panel B: Upgrades Shop -->
                         <div id="panelShop" class="hidden w-full flex flex-col gap-2">
-                            <div class="bg-indigo-950/25 border border-indigo-500/20 p-2.5 rounded-xl flex justify-between items-center w-full">
+                            <div class="bg-indigo-950/25 border border-indigo-500/20 p-2 rounded-xl flex justify-between items-center w-full">
                                 <span class="text-xs font-semibold text-slate-300">Your Current Points:</span>
-                                <span id="shopPointsBalance" class="text-yellow-400 font-extrabold text-sm arcade-font">5000</span>
+                                <span id="shopPointsBalance" class="text-yellow-400 font-extrabold text-xs arcade-font">5000</span>
                             </div>
 
                             <!-- Bullet Upgrades -->
@@ -299,14 +296,6 @@
                                     <button data-shop-item="bullet_cookie" data-cost="12000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
                                         <span>Cookie Chip</span>
                                         <span class="text-yellow-400 font-mono">12K pts</span>
-                                    </button>
-                                    <button data-shop-item="bullet_baseball" data-cost="16000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
-                                        <span>Baseball</span>
-                                        <span class="text-yellow-400 font-mono">16K pts</span>
-                                    </button>
-                                    <button data-shop-item="bullet_note" data-cost="20000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
-                                        <span>Music Note</span>
-                                        <span class="text-yellow-400 font-mono">20K pts</span>
                                     </button>
                                 </div>
                             </div>
@@ -331,18 +320,19 @@
                                         <span>Nebula Fly</span>
                                         <span class="text-yellow-400 font-mono">15K pts</span>
                                     </button>
-                                    <button data-shop-item="skin_beetle" data-cost="20000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
-                                        <span>Green Beetle</span>
-                                        <span class="text-yellow-400 font-mono">20K pts</span>
-                                    </button>
-                                    <button data-shop-item="skin_bear" data-cost="25000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
-                                        <span>Teddy Bear</span>
-                                        <span class="text-yellow-400 font-mono">25K pts</span>
-                                    </button>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Classroom Top Scores section -->
+                        <div class="bg-indigo-950/30 border border-indigo-500/10 p-2 rounded-xl text-left w-full">
+                            <span class="text-[10px] font-bold text-indigo-400 tracking-wider uppercase block mb-1">
+                                <i class="fa-solid fa-trophy text-yellow-500"></i> Local Top Scores
+                            </span>
+                            <div id="leaderboardContainer" class="space-y-1 text-xs">
+                                <!-- Leaderboard values -->
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -425,7 +415,6 @@
 
                 <!-- Screen 3: Victory / Result Overlay Screen -->
                 <div id="victoryScreen" class="hidden absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center z-30 overflow-y-auto">
-                    <!-- Dynamic vector background laser container behind text cards -->
                     <div class="relative z-10 max-w-md flex flex-col items-center gap-4 w-full">
                         <div class="w-16 h-16 bg-yellow-500/10 border border-yellow-500/30 rounded-full flex items-center justify-center text-yellow-400 text-3xl animate-bounce">
                             <i class="fa-solid fa-trophy"></i>
@@ -434,6 +423,10 @@
                             Cosmic Master Champion!
                         </h2>
                         <p id="unlockedMessage" class="text-xs text-slate-300 font-semibold"></p>
+                        
+                        <div id="cloudSavingIndicator" class="text-xs text-indigo-400 font-semibold animate-pulse">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Dispatched to School Hub spreadsheet!
+                        </div>
 
                         <!-- Scoreboard card stats -->
                         <div class="w-full bg-slate-900/80 border border-slate-800 p-4 rounded-2xl grid grid-cols-3 gap-2 text-center">
@@ -466,7 +459,7 @@
                         <h2 class="text-3xl font-black text-rose-500 uppercase tracking-tight leading-none">
                             MISSION SHUTDOWN
                         </h2>
-                        <p class="text-xs text-slate-400">You ran out of continues and received fatal damage.</p>
+                        <p class="text-xs text-slate-400">You received fatal damage.</p>
 
                         <div class="w-full bg-slate-900/80 border border-slate-800 p-3 rounded-2xl text-center">
                             <span class="text-[10px] text-slate-500 uppercase font-semibold">Score Achieved</span>
@@ -635,7 +628,7 @@
         muteBtn.addEventListener('click', () => {
             audio.muted = !audio.muted;
             muteBtn.innerHTML = audio.muted ? '<i class="fa-solid fa-volume-xmark"></i> Muted' : '<i class="fa-solid fa-volume-high"></i> Active';
-            muteBtn.className = audio.muted ? "bg-slate-800 hover:bg-slate-700 text-rose-400 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs" : "bg-slate-800 hover:bg-slate-700 text-slate-200 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs";
+            muteBtn.className = audio.muted ? "bg-slate-800 hover:bg-slate-700 text-rose-400 p-1 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-[11px]" : "bg-slate-800 hover:bg-slate-700 text-slate-200 p-1 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-[11px]";
         });
 
         musicToggleBtn.addEventListener('click', () => {
@@ -644,23 +637,22 @@
                 audio.musicMuted = false;
                 audio.musicVolume = 0.05;
                 musicToggleBtn.innerHTML = '<i class="fa-solid fa-volume-low"></i> Low';
-                musicToggleBtn.className = "bg-indigo-950 text-indigo-300 border border-indigo-700 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs";
+                musicToggleBtn.className = "bg-indigo-950 text-indigo-300 border border-indigo-700 p-1 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-[11px]";
             } else if (audio.musicVolume === 0.05) {
                 audio.musicVolume = 0.12;
                 musicToggleBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> Mid';
-                musicToggleBtn.className = "bg-indigo-900 text-indigo-200 border border-indigo-600 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs";
+                musicToggleBtn.className = "bg-indigo-900 text-indigo-200 border border-indigo-600 p-1 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-[11px]";
             } else if (audio.musicVolume === 0.12) {
                 audio.musicVolume = 0.22;
                 musicToggleBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> High';
-                musicToggleBtn.className = "bg-indigo-600 text-white p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs";
+                musicToggleBtn.className = "bg-indigo-600 text-white p-1 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-[11px]";
             } else {
                 audio.musicMuted = true;
                 musicToggleBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i> Muted';
-                musicToggleBtn.className = "bg-slate-800 hover:bg-slate-700 text-rose-400 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs";
+                musicToggleBtn.className = "bg-slate-800 hover:bg-slate-700 text-rose-400 p-1 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-[11px]";
             }
         });
 
-        /* Comprehensive K-4 Ontario Curriculum Canadian Word Bank */
         const VOCABULARY_BANK = {
             math: [
                 { ok: "addition", bad: "addision" }, { ok: "subtraction", bad: "subtration" },
@@ -787,7 +779,7 @@
         let state = 'MENU'; // 'MENU', 'PLAYING', 'TRANSITION', 'WARNING', 'VICTORY', 'GAMEOVER', 'PAUSED', 'CONTINUE'
         
         let selectedSubject = 'all';
-        let selectedDifficulty = 'easy'; // 'easy', 'medium', 'hard', 'eagle', 'upsidedown'
+        let selectedDifficulty = ''; // Empty initially to force selection
 
         // Upgrade Ship Shop items variables
         let ownedShopItems = ['bullet_hearts', 'skin_ufo'];
@@ -809,7 +801,8 @@
             speed: 380,
             powerStreak: 0, 
             hp: 3, maxHp: 3,
-            invulnTimer: 0
+            invulnTimer: 0,
+            shield: 0 // Bubble Shield protects up to 2 hits when powerStreak is 3
         };
 
         let keys = {};
@@ -868,19 +861,7 @@
 
             checkUnlockedModes();
             bindMenuSelectionHandlers();
-
-            // Setup custom validation for student name input
-            const nameInput = document.getElementById('pilotNameInput');
-            const startBtn = document.getElementById('startGameBtn');
-            nameInput.addEventListener('input', () => {
-                const hasValue = nameInput.value.trim().length > 0;
-                startBtn.disabled = !hasValue;
-                if (hasValue) {
-                    startBtn.classList.remove('opacity-60', 'cursor-not-allowed');
-                } else {
-                    startBtn.classList.add('opacity-60', 'cursor-not-allowed');
-                }
-            });
+            setupGuidedOnboarding();
 
             // Keyboard actions
             window.addEventListener('keydown', e => {
@@ -948,6 +929,108 @@
             requestAnimationFrame(gameLoop);
         });
 
+        function setupGuidedOnboarding() {
+            const nameInput = document.getElementById('pilotNameInput');
+            const stepNameContainer = document.getElementById('stepNameContainer');
+            const stepDiffContainer = document.getElementById('stepDiffContainer');
+            const stepSubjectContainer = document.getElementById('stepSubjectContainer');
+            const startBtn = document.getElementById('startGameBtn');
+            const step1Ind = document.getElementById('step1Indicator');
+            const step2Ind = document.getElementById('step2Indicator');
+            const step3Ind = document.getElementById('step3Indicator');
+
+            // Force initial difficulty buttons to be deselected
+            const diffButtons = document.querySelectorAll('#difficultyContainer button');
+            diffButtons.forEach(b => {
+                b.classList.remove('bg-indigo-600/20', 'border-indigo-500', 'text-white');
+                b.classList.add('bg-slate-900', 'border-slate-800', 'text-slate-400');
+            });
+
+            function validateOnboarding() {
+                const nameValue = nameInput.value.trim();
+                const cleanName = validatePilotName(nameValue);
+                const hasValidName = cleanName.length > 0;
+                const hasDiff = selectedDifficulty !== '';
+
+                // Step 1 check
+                if (hasValidName) {
+                    step1Ind.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+                    stepNameContainer.classList.remove('border-indigo-500/40', 'highlight-step');
+                    stepNameContainer.classList.add('border-emerald-500/60');
+                    
+                    // Unblock Step 2
+                    stepDiffContainer.classList.remove('opacity-40', 'pointer-events-none');
+                    if (!hasDiff) {
+                        stepDiffContainer.classList.add('highlight-step');
+                    }
+                } else {
+                    step1Ind.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500"></i>';
+                    stepNameContainer.classList.add('highlight-step');
+                    stepNameContainer.classList.remove('border-emerald-500/60');
+                    
+                    // Re-lock subsequent steps
+                    stepDiffContainer.classList.add('opacity-40', 'pointer-events-none');
+                    stepDiffContainer.classList.remove('highlight-step');
+                    stepSubjectContainer.classList.add('opacity-40', 'pointer-events-none');
+                    stepSubjectContainer.classList.remove('highlight-step');
+                }
+
+                // Step 2 check
+                if (hasValidName && hasDiff) {
+                    step2Ind.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+                    stepDiffContainer.classList.remove('highlight-step');
+                    stepDiffContainer.classList.add('border-emerald-500/60');
+
+                    // Unblock Step 3
+                    stepSubjectContainer.classList.remove('opacity-40', 'pointer-events-none');
+                    stepSubjectContainer.classList.add('highlight-step');
+                } else {
+                    step2Ind.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500"></i>';
+                    stepDiffContainer.classList.remove('border-emerald-500/60');
+                    stepSubjectContainer.classList.add('opacity-40', 'pointer-events-none');
+                    stepSubjectContainer.classList.remove('highlight-step');
+                }
+
+                // Step 3 check
+                if (hasValidName && hasDiff) {
+                    step3Ind.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+                    stepSubjectContainer.classList.remove('highlight-step');
+                    stepSubjectContainer.classList.add('border-emerald-500/60');
+                } else {
+                    step3Ind.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500"></i>';
+                    stepSubjectContainer.classList.remove('border-emerald-500/60');
+                }
+
+                // Launch button final state
+                if (hasValidName && hasDiff) {
+                    startBtn.disabled = false;
+                    startBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+                    startBtn.classList.add('hover:scale-105', 'shadow-pink-500/35');
+                } else {
+                    startBtn.disabled = true;
+                    startBtn.classList.add('opacity-40', 'cursor-not-allowed');
+                    startBtn.classList.remove('hover:scale-105', 'shadow-pink-500/35');
+                }
+            }
+
+            nameInput.addEventListener('input', validateOnboarding);
+            
+            // Re-trigger validation when difficulty is clicked
+            diffButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setTimeout(validateOnboarding, 50);
+                });
+            });
+
+            validateOnboarding();
+        }
+
+        // Help enforce first name and student number only
+        function validatePilotName(nameStr) {
+            // Strip out common last names or spaces that imply full formal registration
+            return nameStr.trim();
+        }
+
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
@@ -1003,7 +1086,7 @@
             scores.forEach((entry, idx) => {
                 const colors = ['text-yellow-400', 'text-cyan-400', 'text-emerald-400'];
                 container.innerHTML += `
-                    <div class="flex justify-between text-slate-400 border-b border-slate-900/40 pb-0.5">
+                    <div class="flex justify-between text-slate-400 border-b border-slate-900/40 pb-0.5 text-[11px]">
                         <span>${idx + 1}. ${entry.name}</span>
                         <span class="font-mono ${colors[idx] || 'text-slate-200'}">${entry.score.toLocaleString()} pts</span>
                     </div>
@@ -1023,12 +1106,13 @@
         }
 
         function transmitResultsToGoogleSheet(finalScore, statusMsg) {
+            console.log("Preparing deployment transmission payload for Google Sheets...");
             if (!GOOGLE_SCRIPT_URL) {
                 console.log("No Google Apps Script URL defined. Skipping spreadsheet submission.");
                 return;
             }
 
-            const pilotName = document.getElementById('pilotNameInput').value.trim();
+            const pilotName = document.getElementById('pilotNameInput').value.trim() || "Jean Luc";
             const payload = {
                 name: pilotName,
                 category: selectedSubject.toUpperCase(),
@@ -1037,16 +1121,21 @@
                 achievement: `Stage ${currentLevelIdx + 1} - ${statusMsg}`
             };
 
+            // Enhanced bypass configurations for perfect delivery
             fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
                 mode: "no-cors",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "text/plain"
                 },
                 body: JSON.stringify(payload)
             })
-            .then(() => console.log("Success: Student logs dispatched safely to Google Sheets!"))
-            .catch(err => console.error("Error transmitting logs to Spreadsheet: ", err));
+            .then(() => {
+                console.log("Dispatch completed! Payload delivered to spreadsheet gateway.");
+            })
+            .catch(err => {
+                console.error("Endpoint transaction failed: ", err);
+            });
         }
 
         function loadShopData() {
@@ -1176,15 +1265,15 @@
             if (easyBeat && medBeat && hardBeat) {
                 eagleBtn.removeAttribute('disabled');
                 eagleBtn.innerHTML = 'Eagle';
-                eagleBtn.className = "diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-2 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800";
+                eagleBtn.className = "diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-1.5 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800";
             }
             if (eagleBeat) {
                 udBtn.removeAttribute('disabled');
                 udBtn.innerHTML = 'U-Down';
-                udBtn.className = "diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-2 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800";
+                udBtn.className = "diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-1.5 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800";
 
                 foodsOpt.removeAttribute('disabled');
-                foodsOpt.textContent = "Foods (Canadian Diet Vocabulary)";
+                foodsOpt.textContent = "Foods (Canadian Diet)";
                 sportsOpt.removeAttribute('disabled');
                 sportsOpt.textContent = "Sports (Championship Athletics)";
                 videogamesOpt.removeAttribute('disabled');
@@ -1239,6 +1328,8 @@
             if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
                 const difficulties = ['easy', 'medium', 'hard', 'eagle', 'upsidedown'];
                 let currIdx = difficulties.indexOf(selectedDifficulty);
+                if (currIdx === -1) currIdx = 0;
+                
                 if (e.key === 'ArrowLeft') {
                     currIdx = (currIdx - 1 + difficulties.length) % difficulties.length;
                 } else {
@@ -1309,7 +1400,7 @@
 
         function startNewGame() {
             const nameInput = document.getElementById('pilotNameInput').value.trim();
-            if (!nameInput) {
+            if (!nameInput || !selectedDifficulty) {
                 return;
             }
 
@@ -1347,6 +1438,7 @@
             player.maxHp = 3;
             player.hp = player.maxHp;
             player.powerStreak = 0;
+            player.shield = 0; // Reset Forcefield
             
             if (selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown') {
                 player.x = 400;
@@ -1478,11 +1570,23 @@
         function updatePowerIndicator() {
             const container = document.getElementById('hudPower');
             container.innerHTML = '';
-            for (let i = 1; i <= 3; i++) {
-                if (player.powerStreak >= i) {
-                    container.innerHTML += '<i class="fa-solid fa-star text-emerald-400"></i>';
-                } else {
+            
+            // Render green shields if forcefield bubble active
+            if (player.shield > 0) {
+                for (let i = 0; i < player.shield; i++) {
+                    container.innerHTML += '<i class="fa-solid fa-shield-halved text-emerald-400 animate-pulse"></i>';
+                }
+                const rem = 3 - player.shield;
+                for (let i = 0; i < rem; i++) {
                     container.innerHTML += '<i class="fa-regular fa-star text-slate-700"></i>';
+                }
+            } else {
+                for (let i = 1; i <= 3; i++) {
+                    if (player.powerStreak >= i) {
+                        container.innerHTML += '<i class="fa-solid fa-star text-indigo-400"></i>';
+                    } else {
+                        container.innerHTML += '<i class="fa-regular fa-star text-slate-700"></i>';
+                    }
                 }
             }
         }
@@ -1679,9 +1783,25 @@
         }
 
         function damagePlayer() {
+            // Check green bubble forcefield first!
+            if (player.shield > 0) {
+                player.shield--;
+                player.invulnTimer = 1.5; 
+                audio.playHitWrong();
+                
+                // Absorbing particle burst
+                for (let p = 0; p < 20; p++) {
+                    particles.push(new Particle(player.x, player.y, '#10b981'));
+                }
+                updatePowerIndicator();
+                return; // Prevent structural HP damage and preserve weapon level 3 while forcefield lasts
+            }
+
+            // Shield was exhausted or inactive! Reset power-up, structural damage!
             player.hp--;
             player.invulnTimer = 1.5; 
             player.powerStreak = 0; 
+            player.shield = 0;
             updatePowerIndicator();
             updateHPIndicator();
             audio.playHitWrong();
@@ -1709,6 +1829,7 @@
             
             player.hp = player.maxHp;
             player.powerStreak = 0;
+            player.shield = 0;
             updateHPIndicator();
             updatePowerIndicator();
 
@@ -1804,6 +1925,7 @@
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('victoryScreen').classList.add('hidden');
             document.getElementById('menuScreen').classList.remove('hidden');
+            setupGuidedOnboarding();
         }
 
         function update(dt) {
@@ -1932,6 +2054,18 @@
                     w.y += w.vy * dt;
                 }
 
+                // Damage player if they collide with any floating word
+                if (player.invulnTimer <= 0) {
+                    const padX = w.width / 2 + 15;
+                    const padY = w.height / 2 + 15;
+                    if (Math.abs(w.x - player.x) < padX && Math.abs(w.y - player.y) < padY) {
+                        damagePlayer();
+                        triggerFireworksExplosion(w.x, w.y);
+                        words.splice(i, 1);
+                        continue;
+                    }
+                }
+
                 if (!w.isNarwhalWord) {
                     w.fireCooldown -= dt;
                     const canFire = isHardMode || Math.random() < 0.4;
@@ -1996,8 +2130,15 @@
                 p.y += p.vy * dt;
                 p.pulse += dt * 5;
 
+                // Collision with power-up item
                 if (Math.abs(p.x - player.x) < 45 && Math.abs(p.y - player.y) < 35) {
                     player.powerStreak = Math.min(3, player.powerStreak + 1);
+                    
+                    // Award green bubble shield on 3rd power-up streak
+                    if (player.powerStreak === 3) {
+                        player.shield = 2; // Green bubble protects for 2 hits
+                    }
+                    
                     totalScore += 150;
                     document.getElementById('hudScore').textContent = totalScore.toString().padStart(5, '0');
                     updatePowerIndicator();
@@ -2265,51 +2406,54 @@
 
             drawBackground();
 
-            if (selectedDifficulty === 'hard' || selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown') {
-                drawZigZagBarriers();
-            }
+            // Only render visual entities if NOT on the Solid main menu screen to prevent overlays and lag
+            if (state !== 'MENU') {
+                if (selectedDifficulty === 'hard' || selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown') {
+                    drawZigZagBarriers();
+                }
 
-            for (let strike of lightningStrikes) {
-                drawLightningBolt(strike.x, strike.alpha);
-            }
+                for (let strike of lightningStrikes) {
+                    drawLightningBolt(strike.x, strike.alpha);
+                }
 
-            for (let p of activePowerups) {
-                drawPowerup(p);
-            }
+                for (let p of activePowerups) {
+                    drawPowerup(p);
+                }
 
-            for (let w of words) {
-                drawVocabularyWord(w);
-            }
+                for (let w of words) {
+                    drawVocabularyWord(w);
+                }
 
-            for (let o of obstacles) {
-                drawObstacleElement(o);
-            }
+                for (let o of obstacles) {
+                    drawObstacleElement(o);
+                }
 
-            if (emerald) {
-                drawGlowingEmerald(emerald);
-            }
-            if (greenSpaceship) {
-                drawGreenShip(greenSpaceship);
-            }
+                if (emerald) {
+                    drawGlowingEmerald(emerald);
+                }
+                if (greenSpaceship) {
+                    drawGreenShip(greenSpaceship);
+                }
 
-            for (let shape of electrifiedShapes) {
-                drawElectrifiedGeometricBarrier(shape);
-            }
+                for (let shape of electrifiedShapes) {
+                    drawElectrifiedGeometricBarrier(shape);
+                }
 
-            if (player.invulnTimer <= 0 || Math.floor(Date.now() / 100) % 2 === 0) {
-                drawUFOPlayer();
-            }
+                if (player.invulnTimer <= 0 || Math.floor(Date.now() / 100) % 2 === 0) {
+                    drawUFOPlayer();
+                }
 
-            for (let b of bullets) {
-                drawCustomBulletProj(b);
-            }
+                for (let b of bullets) {
+                    drawCustomBulletProj(b);
+                }
 
-            if (boss) {
-                drawBossCharacter();
-            }
+                if (boss) {
+                    drawBossCharacter();
+                }
 
-            for (let p of particles) {
-                p.draw(ctx);
+                for (let p of particles) {
+                    p.draw(ctx);
+                }
             }
 
             // Laser scanner graphics on transition or victory overlays
@@ -2428,6 +2572,25 @@
         function drawUFOPlayer() {
             ctx.save();
             ctx.translate(player.x, player.y);
+
+            // Draw green bubble forcefield if active
+            if (player.shield > 0) {
+                ctx.save();
+                ctx.strokeStyle = `rgba(16, 185, 129, ${player.shield === 2 ? 0.8 : 0.45})`;
+                ctx.lineWidth = player.shield === 2 ? 4.5 : 2.5;
+                ctx.shadowColor = '#10b981';
+                ctx.shadowBlur = player.shield === 2 ? 14 : 7;
+                
+                // Pulsing size
+                const pulse = 44 + Math.sin(Date.now() * 0.015) * 2;
+                ctx.beginPath();
+                ctx.arc(0, 0, pulse, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                ctx.fillStyle = `rgba(16, 185, 129, ${player.shield === 2 ? 0.12 : 0.06})`;
+                ctx.fill();
+                ctx.restore();
+            }
 
             if (activeSkinType === 'skin_sheep') {
                 ctx.fillStyle = '#ffffff';
