@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UFO Word Invaders - Raiden Spelling Shooter</title>
-    <!-- Tailwind CSS for modern responsive layout -->
+    <title>Worlds of Words - Spelling & Curriculum Space Arcade</title>
+    <!-- Tailwind CSS for layout -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for iconic arcade components -->
+    <!-- FontAwesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts for retro arcade styles -->
+    <!-- Google Fonts for retro styles -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body {
@@ -20,7 +20,6 @@
         .arcade-font {
             font-family: 'Orbitron', sans-serif;
         }
-        /* Custom scrollbars for menus */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -31,7 +30,6 @@
             background: rgba(99, 102, 241, 0.5);
             border-radius: 3px;
         }
-        /* Glow animations */
         @keyframes pulse-glow {
             0%, 100% { filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.7)); }
             50% { filter: drop-shadow(0 0 12px rgba(239, 68, 68, 1)); }
@@ -39,22 +37,18 @@
         .boss-glow {
             animation: pulse-glow 2s infinite;
         }
-        /* Shake animation for science stage */
-        @keyframes shake {
-            0% { transform: translate(0, 0); }
-            10% { transform: translate(-3px, 2px); }
-            20% { transform: translate(3px, -2px); }
-            30% { transform: translate(-2px, -1px); }
-            40% { transform: translate(2px, 2px); }
-            50% { transform: translate(-1px, -2px); }
-            60% { transform: translate(3px, 1px); }
-            70% { transform: translate(-2px, 2px); }
-            80% { transform: translate(1px, -1px); }
-            90% { transform: translate(-1px, 2px); }
-            100% { transform: translate(0, 0); }
+        @keyframes neon-pink-flash {
+            0%, 100% {
+                color: #ff2a8d;
+                text-shadow: 0 0 4px #ff2a8d, 0 0 12px #ff2a8d, 0 0 20px #ff2a8d;
+            }
+            50% {
+                color: #fecdd3;
+                text-shadow: 0 0 2px #ff2a8d, 0 0 5px #ff2a8d;
+            }
         }
-        .screen-shake {
-            animation: shake 0.4s infinite;
+        .neon-pink-label {
+            animation: neon-pink-flash 1.2s infinite;
         }
     </style>
 </head>
@@ -64,11 +58,11 @@
     <div class="relative w-full max-w-6xl h-screen flex flex-col md:flex-row items-center justify-center p-2 md:p-4 gap-4">
         
         <!-- Left Side: Informative Side Panel -->
-        <div class="hidden lg:flex flex-col w-72 bg-slate-900/80 border border-slate-800 rounded-2xl p-4 gap-4 self-stretch h-full overflow-y-auto z-10">
+        <div class="hidden lg:flex flex-col w-80 bg-slate-900/80 border border-slate-800 rounded-2xl p-4 gap-4 self-stretch h-full overflow-y-auto z-10">
             <div class="text-center">
-                <span class="text-xs font-bold text-indigo-400 tracking-wider uppercase">Ontario Curriculum</span>
+                <span class="text-xs font-bold text-pink-500 tracking-wider uppercase">Ontario Curriculum K-4</span>
                 <h2 class="text-xl font-black text-white tracking-tight flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-ranking-star text-yellow-500"></i> GRADE K-4 HERO
+                    <i class="fa-solid fa-ranking-star text-yellow-500"></i> WORLDS OF WORDS
                 </h2>
             </div>
             
@@ -76,34 +70,45 @@
 
             <!-- How To Play Instructions -->
             <div class="flex flex-col gap-2">
-                <span class="text-sm font-semibold text-slate-300"><i class="fa-solid fa-gamepad text-indigo-400"></i> CONTROLS</span>
-                <div class="grid grid-cols-2 gap-2 text-xs">
+                <span class="text-sm font-semibold text-slate-300"><i class="fa-solid fa-gamepad text-indigo-400"></i> MISSION STATEMENT</span>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Identify words <span class="text-indigo-300 font-bold">related to your selected topic</span> that are also <span class="text-emerald-300 font-bold">spelled correctly (Canadian Spellings)</span>. Avoid unrelated topics or typos. Firing at incorrect targets triggers shield explosions!
+                </p>
+                <div class="grid grid-cols-2 gap-2 text-xs mt-1">
                     <div class="bg-slate-950 p-2 rounded-lg border border-slate-800 col-span-2">
                         <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">▲▼◀▶</kbd> / <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">WASD</kbd>
-                        <p class="text-[10px] text-slate-400 mt-1">Move UFO in any direction</p>
+                        <p class="text-[10px] text-slate-400 mt-1">Move in any direction (And navigate the menu!)</p>
                     </div>
                     <div class="bg-slate-950 p-2 rounded-lg border border-slate-800 col-span-2">
-                        <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">Left Ctrl</kbd> / <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">Space</kbd>
-                        <p class="text-[10px] text-slate-400 mt-1">Tap to shoot glowing hearts</p>
+                        <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">Space</kbd> / <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">Ctrl</kbd>
+                        <p class="text-[10px] text-slate-400 mt-1">Fire heart projectiles</p>
+                    </div>
+                    <div class="bg-slate-950 p-2 rounded-lg border border-slate-800 col-span-2">
+                        <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border-b-2 border-slate-700">Esc</kbd>
+                        <p class="text-[10px] text-slate-400 mt-1">Pause current mission</p>
                     </div>
                 </div>
             </div>
 
             <div class="border-t border-slate-800 my-1"></div>
 
-            <!-- Scoring and Spelling Guidelines -->
-            <div class="flex flex-col gap-2 text-xs text-slate-300">
-                <span class="font-semibold text-slate-300"><i class="fa-solid fa-spell-check text-green-400"></i> CHALLENGE RULES</span>
-                <ul class="list-disc pl-4 space-y-1">
-                    <li>Hit <span class="text-white font-bold">correct words</span> with 3 hearts to explode them! Correct words have no green borders.</li>
-                    <li>Hit <span class="text-pink-400 font-bold">pink bonus words</span> for huge score multipliers.</li>
-                    <li>Hitting <span class="text-red-400 font-bold">incorrect words</span> 2 times triggers a self-destruct that costs you 1 heart!</li>
-                    <li>Pop the <span class="text-blue-400 font-bold">Narwhal Word</span> to clear the entire screen with an earthquake blast!</li>
-                </ul>
+            <!-- Shop Quick Links & Stats -->
+            <div class="flex flex-col gap-2 text-xs">
+                <span class="font-semibold text-slate-300 uppercase tracking-wider"><i class="fa-solid fa-coins text-yellow-500"></i> Points Currency</span>
+                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center">
+                    <span class="text-slate-400">Total balance:</span>
+                    <span id="sidePointsBalance" class="text-yellow-400 font-bold arcade-font">5000</span>
+                </div>
             </div>
 
-            <!-- Audio Controller Node -->
+            <!-- Audio & Menu Controller Nodes -->
             <div class="mt-auto pt-4 border-t border-slate-800 flex flex-col gap-2">
+                <button id="sideHomeBtn" class="bg-rose-950 hover:bg-rose-900 text-rose-200 py-1.5 rounded-lg text-xs font-bold border border-rose-800 transition-all flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-house"></i> Main Menu
+                </button>
+                <button id="fullscreenBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-expand"></i> Go Fullscreen
+                </button>
                 <div class="flex justify-between items-center text-xs text-slate-400">
                     <span>Midi Synth Music</span>
                     <button id="musicToggleBtn" class="bg-slate-800 hover:bg-slate-700 text-rose-400 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1">
@@ -124,31 +129,36 @@
             
             <!-- Game HUD Top Bar -->
             <div id="hudBar" class="hidden w-full absolute top-4 left-0 right-0 z-20 px-4 flex justify-between items-center pointer-events-none">
-                <div class="flex items-center gap-2 bg-slate-900/95 border border-slate-800 px-3 py-1.5 rounded-full pointer-events-auto shadow-lg backdrop-blur">
-                    <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Stage</span>
+                <div class="flex items-center gap-1.5 bg-slate-900/95 border border-slate-800 px-3 py-1.5 rounded-full pointer-events-auto shadow-lg backdrop-blur">
+                    <span class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Stage</span>
                     <span id="hudLevel" class="text-xs font-bold text-cyan-400 tracking-wider">1/7</span>
-                    <span id="hudSubject" class="text-[10px] bg-cyan-950 text-cyan-300 border border-cyan-800 px-2 py-0.5 rounded-full capitalize">Science</span>
+                    <span id="hudSubject" class="text-[9px] bg-cyan-950 text-cyan-300 border border-cyan-800 px-2 py-0.5 rounded-full capitalize">Science</span>
                 </div>
 
                 <!-- Word progress counter -->
-                <div class="flex items-center gap-2 bg-slate-900/95 border border-slate-800 px-3 py-1.5 rounded-full pointer-events-auto shadow-lg backdrop-blur">
-                    <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Progress</span>
+                <div class="flex items-center gap-1.5 bg-slate-900/95 border border-slate-800 px-3 py-1.5 rounded-full pointer-events-auto shadow-lg backdrop-blur">
+                    <span class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Progress</span>
                     <span id="hudProgressCounter" class="text-xs font-bold text-indigo-400 arcade-font">0 / 15</span>
                 </div>
                 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5">
+                    <!-- Pause button -->
+                    <button id="pauseBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white p-1 px-2.5 rounded-full text-xs font-extrabold pointer-events-auto shadow-md transition-all">
+                        <i class="fa-solid fa-pause"></i>
+                    </button>
+
                     <!-- Heart HP Bar -->
                     <div class="flex items-center gap-1 bg-slate-900/95 border border-slate-800 px-3 py-1.5 rounded-full pointer-events-auto shadow-lg backdrop-blur">
                         <span id="hpHearts" class="flex gap-1 text-red-500 text-xs">
-                            <i class="fa-solid fa-heart"></i>
-                            <i class="fa-solid fa-heart"></i>
-                            <i class="fa-solid fa-heart"></i>
+                            <i class="fa-solid fa-heart animate-pulse"></i>
+                            <i class="fa-solid fa-heart animate-pulse"></i>
+                            <i class="fa-solid fa-heart animate-pulse"></i>
                         </span>
                     </div>
 
                     <!-- Power-up Tracker -->
                     <div class="flex items-center gap-1 bg-slate-900/95 border border-slate-800 px-3 py-1.5 rounded-full pointer-events-auto shadow-lg backdrop-blur">
-                        <div id="hudPower" class="flex gap-1 text-emerald-400 text-[10px]">
+                        <div id="hudPower" class="flex gap-1 text-emerald-400 text-[9px]">
                             <i class="fa-regular fa-star"></i>
                             <i class="fa-regular fa-star"></i>
                             <i class="fa-regular fa-star"></i>
@@ -161,92 +171,178 @@
                 </div>
             </div>
 
-            <!-- Canvas Outer Frame wrapper to constraint proportions -->
-            <div id="canvasContainer" class="relative w-full aspect-[4/5] bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl shadow-indigo-500/10 flex flex-col items-center justify-center">
+            <!-- Canvas Outer Frame wrapper -->
+            <div id="canvasContainer" class="relative w-full aspect-[4/5] bg-black border border-slate-800 rounded-3xl overflow-hidden shadow-2xl shadow-indigo-500/10 flex flex-col items-center justify-center">
                 
                 <!-- Main Game Rendering Canvas -->
                 <canvas id="gameCanvas" class="w-full h-full block bg-transparent"></canvas>
 
-                <!-- Screen 1: Splash/Subject Selector Menu (Now fully clickable) -->
-                <div id="menuScreen" class="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-4 text-center z-40 overflow-y-auto">
-                    <!-- Cosmic background decor inside menu -->
+                <!-- Screen 1: Splash/Subject Selector Menu (With tabs for Stages vs Upgrades Shop) -->
+                <div id="menuScreen" class="absolute inset-0 bg-slate-950/98 flex flex-col p-4 text-center z-40 overflow-y-auto">
                     <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-950/40 via-transparent to-transparent opacity-60 pointer-events-none"></div>
 
-                    <div class="relative z-50 max-w-lg flex flex-col items-center gap-3 w-full py-2">
+                    <!-- Header titles -->
+                    <div class="relative z-50 max-w-lg mx-auto flex flex-col items-center gap-2 w-full py-2">
                         <div class="flex items-center gap-2 px-3 py-1 bg-indigo-950/60 border border-indigo-500/30 rounded-full text-xs text-indigo-400 font-semibold uppercase tracking-widest">
-                            <i class="fa-solid fa-shuttle-space animate-bounce"></i> Space-Typing Arcade
+                            <i class="fa-solid fa-shuttle-space animate-bounce"></i> Worlds of Words - Space Arcade Pro
                         </div>
                         <h1 class="text-3xl md:text-4xl font-black text-white tracking-tighter leading-none flex flex-col">
-                            <span class="bg-gradient-to-r from-cyan-400 via-indigo-400 to-pink-500 bg-clip-text text-transparent">UFO WORD ARCADE</span>
-                            <span class="text-xs font-bold tracking-widest text-slate-400 uppercase mt-1">Ontario K-4 Spell-Shooter Elite</span>
+                            <span class="bg-gradient-to-r from-pink-400 via-indigo-400 to-cyan-500 bg-clip-text text-transparent">WORLDS OF WORDS</span>
+                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase mt-1">Canadian spelling standard & Curriculum Challenge</span>
                         </h1>
 
-                        <!-- Difficulty Selection Panel -->
-                        <div class="w-full mt-1">
-                            <label class="text-[11px] font-bold text-slate-400 text-left uppercase tracking-wider block mb-1">Select Difficulty</label>
-                            <div id="difficultyContainer" class="grid grid-cols-5 gap-1.5 w-full">
-                                <button data-diff="easy" class="diff-btn bg-indigo-600/20 border border-indigo-500 text-white px-1.5 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-indigo-600/30">
-                                    Easy
-                                </button>
-                                <button data-diff="medium" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1.5 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800">
-                                    Medium
-                                </button>
-                                <button data-diff="hard" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1.5 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800">
-                                    Hard
-                                </button>
-                                <button id="eagleModeBtn" data-diff="eagle" class="diff-btn relative bg-slate-900 border border-slate-800 text-slate-500 px-1.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed">
-                                    <i class="fa-solid fa-lock text-[10px]"></i> Eagle
-                                </button>
-                                <button id="upsideDownModeBtn" data-diff="upsidedown" class="diff-btn relative bg-slate-900 border border-slate-800 text-slate-500 px-1.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed">
-                                    <i class="fa-solid fa-lock text-[10px]"></i> U-Down
-                                </button>
+                        <!-- Menu Mode Tabs -->
+                        <div class="flex gap-2 w-full mt-2 border-b border-slate-800 pb-2 justify-center">
+                            <button id="tabStagesBtn" class="px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white rounded-lg transition-all">
+                                <i class="fa-solid fa-play"></i> LAUNCH MISSION
+                            </button>
+                            <button id="tabShopBtn" class="px-3 py-1.5 text-xs font-bold bg-slate-900 hover:bg-slate-850 text-slate-400 hover:text-white rounded-lg transition-all">
+                                <i class="fa-solid fa-shopping-cart"></i> UFO UPGRADE SHOP
+                            </button>
+                        </div>
+
+                        <!-- Panel A: Stages Selection Configuration -->
+                        <div id="panelStages" class="w-full flex flex-col gap-3">
+                            
+                            <!-- Pilot Name Capture Field (Required with neon blinking text) -->
+                            <div class="w-full text-left bg-slate-900/60 border-2 border-pink-500/50 p-3 rounded-xl shadow-lg shadow-pink-500/10">
+                                <label id="namePromptLabel" class="text-xs font-extrabold neon-pink-label uppercase tracking-widest block mb-1.5 text-center">
+                                    <i class="fa-solid fa-circle-exclamation mr-1"></i> Enter your name and student number here
+                                </label>
+                                <input type="text" id="pilotNameInput" placeholder="e.g. Liam Smith - Room 102..." class="w-full bg-slate-950 border border-slate-800 text-pink-200 rounded-lg p-2.5 font-bold text-center text-sm outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all">
+                            </div>
+
+                            <!-- Leaderboard Top 3 section -->
+                            <div class="bg-indigo-950/30 border border-indigo-500/10 p-2.5 rounded-xl text-left w-full">
+                                <span class="text-[10px] font-bold text-indigo-400 tracking-wider uppercase block mb-1">
+                                    <i class="fa-solid fa-trophy text-yellow-500"></i> Classroom Top Scores (Local Hub)
+                                </span>
+                                <div id="leaderboardContainer" class="space-y-1 text-xs">
+                                    <!-- Dynamic Leaderboard values go here -->
+                                </div>
+                            </div>
+
+                            <!-- Difficulty Selection Panel -->
+                            <div class="w-full text-left">
+                                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Select Difficulty (Navigate with ◀/▶ keys)</label>
+                                <div id="difficultyContainer" class="grid grid-cols-5 gap-1.5 w-full">
+                                    <button data-diff="easy" class="diff-btn bg-indigo-600/20 border border-indigo-500 text-white px-1 py-2 rounded-lg text-[11px] font-bold transition-all">
+                                        Easy
+                                    </button>
+                                    <button data-diff="medium" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-2 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800">
+                                        Medium
+                                    </button>
+                                    <button data-diff="hard" class="diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-2 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800">
+                                        Hard
+                                    </button>
+                                    <button id="eagleModeBtn" data-diff="eagle" class="diff-btn relative bg-slate-900 border border-slate-800 text-slate-500 px-1 py-2 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                        <i class="fa-solid fa-lock text-[9px]"></i> Eagle
+                                    </button>
+                                    <button id="upsideDownModeBtn" data-diff="upsidedown" class="diff-btn relative bg-slate-900 border border-slate-800 text-slate-500 px-1 py-2 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                        <i class="fa-solid fa-lock text-[9px]"></i> U-Down
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Subject Choices dropdown menu -->
+                            <div class="w-full text-left">
+                                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Choose Core List (Navigate with ▲/▼ keys)</label>
+                                <select id="subjectDropdown" class="w-full bg-slate-900 border border-slate-800 text-slate-200 rounded-xl p-2.5 font-bold text-xs outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer">
+                                    <option value="all">Everything (All Core Subject Vocab Combined)</option>
+                                    <option value="math">Mathematics (Ontario K-4 Terminology)</option>
+                                    <option value="language">Language Arts (Grammar & Canadian Spelling)</option>
+                                    <option value="social">Social Studies (Canada Geography & Heritage)</option>
+                                    <option value="science">Science & Technology (Nature, Forces & Life)</option>
+                                    <option value="music">Music Theory (Melodies & Orchestra Instruments)</option>
+                                    <option value="physed">Physical Education (Athletics & Gym Terms)</option>
+                                    <option value="drama">Drama (Acting, Scripts & Theater Arts)</option>
+                                    <option value="dance">Dance (Melody Movements & Performance)</option>
+                                    <option value="health">Health & Nutrition (Somatic Habits & Diet)</option>
+                                    <option value="prefixes">Special: Prefixes Word Bank</option>
+                                    <option value="suffixes">Special: Suffixes Word Bank</option>
+                                    <option value="basewords">Special: Base Words Bank</option>
+                                    <option value="foods" disabled id="optFoods">🔒 Unlocked: Foods (Canadian Diet Vocabulary)</option>
+                                    <option value="sports" disabled id="optSports">🔒 Unlocked: Sports (Championship Athletics)</option>
+                                    <option value="videogames" disabled id="optVideoGames">🔒 Unlocked: 80s Video Games (Classic Chiptunes)</option>
+                                </select>
+                            </div>
+
+                            <!-- Big Play Action Button -->
+                            <button id="startGameBtn" class="w-full mt-1 bg-gradient-to-r from-pink-500 to-indigo-500 opacity-60 cursor-not-allowed text-white font-black py-3 rounded-xl tracking-widest text-xs uppercase shadow-lg shadow-pink-500/10 active:scale-[0.99] transition-all flex items-center justify-center gap-2" disabled>
+                                DEPLOY SHUTTLE <i class="fa-solid fa-circle-play"></i>
+                            </button>
+                        </div>
+
+                        <!-- Panel B: Upgrades Shop -->
+                        <div id="panelShop" class="hidden w-full flex flex-col gap-2">
+                            <div class="bg-indigo-950/25 border border-indigo-500/20 p-2.5 rounded-xl flex justify-between items-center w-full">
+                                <span class="text-xs font-semibold text-slate-300">Your Current Points:</span>
+                                <span id="shopPointsBalance" class="text-yellow-400 font-extrabold text-sm arcade-font">5000</span>
+                            </div>
+
+                            <!-- Bullet Upgrades -->
+                            <div class="text-left w-full">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Equipped Projectile Item</span>
+                                <div class="grid grid-cols-2 gap-1 w-full">
+                                    <button data-shop-item="bullet_hearts" class="shop-btn flex justify-between items-center bg-indigo-950/40 border border-indigo-500/50 text-white p-2 rounded-lg text-[11px] font-bold">
+                                        <span>Hearts</span>
+                                        <span class="text-emerald-400 font-mono">Owned</span>
+                                    </button>
+                                    <button data-shop-item="bullet_pizza" data-cost="4000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                        <span>Pizza Slice</span>
+                                        <span class="text-yellow-400 font-mono">4000 pts</span>
+                                    </button>
+                                    <button data-shop-item="bullet_emoji" data-cost="8000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                        <span>Happy Smile</span>
+                                        <span class="text-yellow-400 font-mono">8000 pts</span>
+                                    </button>
+                                    <button data-shop-item="bullet_cookie" data-cost="12000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                        <span>Cookie Chip</span>
+                                        <span class="text-yellow-400 font-mono">12K pts</span>
+                                    </button>
+                                    <button data-shop-item="bullet_baseball" data-cost="16000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                        <span>Baseball</span>
+                                        <span class="text-yellow-400 font-mono">16K pts</span>
+                                    </button>
+                                    <button data-shop-item="bullet_note" data-cost="20000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                        <span>Music Note</span>
+                                        <span class="text-yellow-400 font-mono">20K pts</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Ship Skin Upgrades -->
+                            <div class="text-left w-full mt-1">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-1">UFO Ship Skin Upgrades</span>
+                                <div class="grid grid-cols-2 gap-1 w-full">
+                                    <button data-shop-item="skin_ufo" class="shop-btn flex justify-between items-center bg-indigo-950/40 border border-indigo-500/50 text-white p-2 rounded-lg text-[11px] font-bold">
+                                        <span>Classic UFO</span>
+                                        <span class="text-emerald-400 font-mono">Owned</span>
+                                    </button>
+                                    <button data-shop-item="skin_sheep" data-cost="5000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                        <span>Cosmic Sheep</span>
+                                        <span class="text-yellow-400 font-mono">5000 pts</span>
+                                    </button>
+                                    <button data-shop-item="skin_robot" data-cost="10000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                        <span>Robot Head</span>
+                                        <span class="text-yellow-400 font-mono">10K pts</span>
+                                    </button>
+                                    <button data-shop-item="skin_fly" data-cost="15000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                        <span>Nebula Fly</span>
+                                        <span class="text-yellow-400 font-mono">15K pts</span>
+                                    </button>
+                                    <button data-shop-item="skin_beetle" data-cost="20000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                        <span>Green Beetle</span>
+                                        <span class="text-yellow-400 font-mono">20K pts</span>
+                                    </button>
+                                    <button data-shop-item="skin_bear" data-cost="25000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-[11px] font-bold hover:bg-slate-850">
+                                        <span>Teddy Bear</span>
+                                        <span class="text-yellow-400 font-mono">25K pts</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Subject Choices Selection -->
-                        <div class="w-full">
-                            <label class="text-[11px] font-bold text-slate-400 text-left uppercase tracking-wider block mb-1">Choose Subject Vocabulary</label>
-                            <div id="subjectsContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 w-full max-h-44 overflow-y-auto pr-1">
-                                <button data-subject="all" class="subject-btn bg-indigo-600/30 border border-indigo-500 text-white px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-indigo-600/40 flex items-center justify-between">
-                                    <span>Everything</span> <i class="fa-solid fa-star text-[9px] text-yellow-400"></i>
-                                </button>
-                                <button data-subject="math" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
-                                    <span>Math</span> <i class="fa-solid fa-calculator text-[9px] text-red-400"></i>
-                                </button>
-                                <button data-subject="language" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
-                                    <span>Language</span> <i class="fa-solid fa-book-open text-[9px] text-blue-400"></i>
-                                </button>
-                                <button data-subject="social" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
-                                    <span>Social Studies</span> <i class="fa-solid fa-globe text-[9px] text-emerald-400"></i>
-                                </button>
-                                <button data-subject="science" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
-                                    <span>Science</span> <i class="fa-solid fa-flask text-[9px] text-yellow-400"></i>
-                                </button>
-                                <button data-subject="music" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
-                                    <span>Music</span> <i class="fa-solid fa-music text-[9px] text-purple-400"></i>
-                                </button>
-                                <button data-subject="physed" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
-                                    <span>Phys-Ed</span> <i class="fa-solid fa-volleyball text-[9px] text-orange-400"></i>
-                                </button>
-                                <button data-subject="drama" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
-                                    <span>Drama</span> <i class="fa-solid fa-masks-theater text-[9px] text-pink-400"></i>
-                                </button>
-                                <button data-subject="dance" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
-                                    <span>Dance</span> <i class="fa-solid fa-shoe-prints text-[9px] text-violet-400"></i>
-                                </button>
-                                <button data-subject="health" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
-                                    <span>Health</span> <i class="fa-solid fa-heart-pulse text-[9px] text-rose-400"></i>
-                                </button>
-                                <button data-subject="art" class="subject-btn bg-slate-900 border border-slate-850 text-slate-300 px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800 flex items-center justify-between">
-                                    <span>Art</span> <i class="fa-solid fa-palette text-[9px] text-teal-400"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Big Play Action Button -->
-                        <button id="startGameBtn" class="w-full mt-2 bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600 text-white font-black py-2.5 rounded-xl tracking-widest text-xs uppercase shadow-lg shadow-pink-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2">
-                            LAUNCH UFO SHUTTLE <i class="fa-solid fa-circle-play"></i>
-                        </button>
                     </div>
                 </div>
 
@@ -268,14 +364,68 @@
                             <p id="transStageDesc" class="text-xs text-slate-400">Avoid incoming hazards and target the correctly spelled word clusters to blast through!</p>
                         </div>
 
+                        <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider animate-pulse">
+                            Press <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300">ENTER</kbd> to continue
+                        </div>
+
                         <button id="nextStageBtn" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl tracking-wider text-xs uppercase shadow-md transition-all">
                             ENTER SECTOR <i class="fa-solid fa-chevron-right ml-1"></i>
                         </button>
                     </div>
                 </div>
 
+                <!-- Screen 2B: Continue Option Overlay Screen -->
+                <div id="continueScreen" class="hidden absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center z-30">
+                    <div class="relative z-10 max-w-sm flex flex-col items-center gap-4">
+                        <div class="w-16 h-16 bg-pink-500/10 border border-pink-500/30 rounded-full flex items-center justify-center text-pink-500 text-3xl animate-pulse">
+                            <i class="fa-solid fa-heart-crack"></i>
+                        </div>
+                        <h2 class="text-3xl font-black text-pink-500 uppercase tracking-tight leading-none">
+                            CRITICAL DAMAGE
+                        </h2>
+                        <p class="text-sm text-slate-300 font-semibold">Do you want to continue the mission?</p>
+                        <div class="text-2xl font-black text-yellow-400 arcade-font" id="continueCounterLabel">
+                            3 Continues Left
+                        </div>
+                        <p class="text-xs text-slate-400">Restarts your current level, keeping accumulated scores intact.</p>
+
+                        <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-2">
+                            Press <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300">ENTER</kbd> to continue
+                        </div>
+
+                        <div class="flex gap-2 w-full mt-1">
+                            <button id="confirmContinueBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl tracking-wider text-xs uppercase transition-all">
+                                CONTINUE <i class="fa-solid fa-rotate-right ml-1"></i>
+                            </button>
+                            <button id="giveUpBtn" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 font-bold py-3 px-4 rounded-xl tracking-wider text-xs uppercase transition-all">
+                                GIVE UP
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screen 2C: Are You Sure Home Confirmation Overlay -->
+                <div id="homeConfirmOverlay" class="hidden absolute inset-0 bg-slate-950/96 flex flex-col items-center justify-center p-6 text-center z-50">
+                    <div class="max-w-sm bg-slate-900 border-2 border-rose-500/50 rounded-2xl p-6 flex flex-col items-center gap-4 shadow-2xl">
+                        <div class="w-12 h-12 bg-rose-500/10 border border-rose-500/30 rounded-full flex items-center justify-center text-rose-500 text-2xl">
+                            <i class="fa-solid fa-triangle-exclamation animate-bounce"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white tracking-tight">Are you sure you want to exit?</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Returning to the Main Menu will cancel your current run. All active level progress will be lost!</p>
+                        <div class="flex gap-2 w-full mt-2">
+                            <button id="confirmHomeExitBtn" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 rounded-xl text-xs uppercase tracking-wider transition-all">
+                                Yes, Exit Run
+                            </button>
+                            <button id="cancelHomeExitBtn" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 rounded-xl text-xs uppercase tracking-wider transition-all">
+                                No, Resume
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Screen 3: Victory / Result Overlay Screen -->
                 <div id="victoryScreen" class="hidden absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center z-30 overflow-y-auto">
+                    <!-- Dynamic vector background laser container behind text cards -->
                     <div class="relative z-10 max-w-md flex flex-col items-center gap-4 w-full">
                         <div class="w-16 h-16 bg-yellow-500/10 border border-yellow-500/30 rounded-full flex items-center justify-center text-yellow-400 text-3xl animate-bounce">
                             <i class="fa-solid fa-trophy"></i>
@@ -314,9 +464,9 @@
                             <i class="fa-solid fa-circle-exclamation"></i>
                         </div>
                         <h2 class="text-3xl font-black text-rose-500 uppercase tracking-tight leading-none">
-                            UFO SHUTDOWN
+                            MISSION SHUTDOWN
                         </h2>
-                        <p class="text-xs text-slate-400">You received fatal shields damage. Recharge and try again!</p>
+                        <p class="text-xs text-slate-400">You ran out of continues and received fatal damage.</p>
 
                         <div class="w-full bg-slate-900/80 border border-slate-800 p-3 rounded-2xl text-center">
                             <span class="text-[10px] text-slate-500 uppercase font-semibold">Score Achieved</span>
@@ -326,6 +476,23 @@
                         <button id="restartGoBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl tracking-wider text-xs uppercase transition-all">
                             RELAUNCH SHUTTLE <i class="fa-solid fa-rotate-left ml-1"></i>
                         </button>
+                    </div>
+                </div>
+
+                <!-- Megaman-style Boss Intro Overlay Grid -->
+                <div id="megamanSegway" class="hidden absolute inset-0 bg-black z-30 flex flex-col items-center justify-center">
+                    <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,_rgba(0,0,0,0.25)_50%),_linear-gradient(90deg,_rgba(255,0,0,0.06),_rgba(0,255,0,0.02),_rgba(0,0,255,0.06))] bg-[size:100%_4px,_6px_100%]"></div>
+                    <div class="relative z-10 text-center flex flex-col items-center gap-6 p-4">
+                        <span class="text-[10px] font-bold text-rose-500 tracking-widest uppercase animate-pulse border border-rose-500/30 bg-rose-950/40 px-3 py-1 rounded-full">
+                            ALERT: COMPILING HEAVY ENEMY SECTOR
+                        </span>
+                        <div class="w-36 h-36 bg-slate-900 border-4 border-indigo-500 rounded-2xl overflow-hidden flex items-center justify-center shadow-lg shadow-indigo-500/20 relative animate-pulse">
+                            <div class="absolute inset-0 bg-indigo-950/40 flex items-center justify-center">
+                                <i class="fa-solid fa-skull-crossbones text-5xl text-rose-500 animate-bounce"></i>
+                            </div>
+                        </div>
+                        <h2 id="megamanBossName" class="text-3xl font-black text-white tracking-widest uppercase font-mono">BOSS: MATH MAX</h2>
+                        <span class="text-xs text-indigo-300 font-bold uppercase tracking-wider animate-pulse">PREPARE FOR CONTACT...</span>
                     </div>
                 </div>
 
@@ -340,17 +507,15 @@
 
             <!-- Mobile Virtual Controllers (Touch Screens) -->
             <div id="touchControllers" class="relative mt-3 w-full grid grid-cols-2 gap-4 h-24 px-1 md:hidden pointer-events-auto">
-                <!-- Left Touch Area: Slide / Joystick Zone Info -->
                 <div class="relative bg-slate-900/60 border border-slate-800 rounded-2xl flex items-center justify-center p-2 text-center select-none cursor-pointer">
                     <div class="pointer-events-none flex flex-col items-center gap-1">
                         <i class="fa-solid fa-up-down-left-right text-indigo-400 text-lg"></i>
                         <span class="text-[10px] text-slate-400">Touch Screen & Drag UFO</span>
                     </div>
                 </div>
-                <!-- Right Touch Area: Quick Fire Heart Button -->
                 <button id="touchFireBtn" class="bg-gradient-to-r from-red-500 to-rose-600 active:from-red-600 active:to-rose-700 border border-red-500/20 text-white rounded-2xl flex flex-col items-center justify-center gap-1 font-extrabold select-none shadow-lg shadow-rose-500/20">
                     <i class="fa-solid fa-heart text-2xl animate-pulse"></i>
-                    <span class="text-xs uppercase tracking-wider">SHOOT HEART</span>
+                    <span class="text-xs uppercase tracking-wider">FIRE HEART</span>
                 </button>
             </div>
 
@@ -359,18 +524,20 @@
     </div>
 
     <script>
-        /* Retro Web Audio Synthesizer Class to generate arcade tones and retro loops */
+        // GOOGLE APPS SCRIPT WEB APP URL INTEGRATED:
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/a/macros/hdsb.ca/s/AKfycbyiB8xcFW0NY0FcWVV3C44PNk4-3V9HhDvwyChbTOJIyXm7Q5Kb4zPp2MMz9Vx3QaJRHg/exec"; 
+
+        /* Retro Web Audio Synthesizer Class */
         class AudioSynth {
             constructor() {
                 this.ctx = null;
                 this.muted = false;
                 this.musicMuted = true; // Starts muted as requested
-                this.musicVolume = 0.05; // Starts with low volume if unmuted
+                this.musicVolume = 0.05; 
                 this.midiTimer = null;
                 this.midiTempo = 115; // BPM
                 this.midiStep = 0;
                 
-                // Classic MIDI Chiptune chord and lead progression: K-4 Space-Vibe
                 this.melodySeq = [
                     261.63, 293.66, 329.63, 392.00, 329.63, 349.23, 392.00, 440.00,
                     440.00, 392.00, 349.23, 329.63, 293.66, 329.63, 261.63, 293.66
@@ -402,9 +569,16 @@
                     osc.stop(this.ctx.currentTime + duration);
                 } catch (e) {}
             }
-            playShoot() {
+            playFire() {
                 this.playTone(880, 'sine', 0.1, 0.08);
                 setTimeout(() => this.playTone(1320, 'sine', 0.08, 0.04), 30);
+            }
+            playMegamanSweep() {
+                for (let i = 0; i < 8; i++) {
+                    setTimeout(() => {
+                        this.playTone(300 + (i * 120), 'sawtooth', 0.12, 0.07);
+                    }, i * 100);
+                }
             }
             playExplode() {
                 this.playTone(150, 'triangle', 0.4, 0.15);
@@ -415,10 +589,12 @@
                 this.playTone(60, 'triangle', 1.2, 0.3);
             }
             playHitCorrect() {
-                this.playTone(600, 'sine', 0.15, 0.1);
+                this.playTone(70, 'triangle', 0.35, 0.5);
+                this.playTone(45, 'sawtooth', 0.3, 0.4);
             }
             playHitWrong() {
-                this.playTone(180, 'sawtooth', 0.3, 0.12);
+                this.playTone(100, 'sawtooth', 0.5, 0.45);
+                setTimeout(() => this.playTone(55, 'sawtooth', 0.4, 0.45), 50);
             }
             playPowerup() {
                 this.playTone(440, 'sine', 0.1, 0.1);
@@ -429,34 +605,25 @@
                 this.playTone(200, 'sawtooth', 0.5, 0.15);
                 setTimeout(() => this.playTone(150, 'sawtooth', 0.5, 0.15), 500);
             }
-
             startMidiSequencer() {
                 const interval = 60000 / this.midiTempo / 2; // Eighth notes
                 setInterval(() => {
-                    if (this.musicMuted || this.muted) return;
+                    if (this.musicMuted || this.muted || state === 'PAUSED') return;
                     this.playMidiStep();
                 }, interval);
             }
-
             playMidiStep() {
                 this.init();
                 const step = this.midiStep;
-                
-                // Bass Note (Sub-triangle rhythm)
                 const bassFreq = this.bassSeq[step % this.bassSeq.length];
                 this.playTone(bassFreq, 'triangle', 0.2, this.musicVolume * 1.5);
-
-                // Alternating Melody (Sine chiptune voice)
                 if (step % 2 === 0) {
                     const melFreq = this.melodySeq[step % this.melodySeq.length];
                     this.playTone(melFreq, 'sine', 0.15, this.musicVolume * 0.7);
                 }
-
-                // Cyber beat on step 4
                 if (step % 4 === 0) {
                     this.playTone(60, 'sawtooth', 0.05, this.musicVolume * 0.3);
                 }
-
                 this.midiStep = (step + 1) % 32;
             }
         }
@@ -474,30 +641,26 @@
         musicToggleBtn.addEventListener('click', () => {
             audio.init();
             if (audio.musicMuted) {
-                // Set low volume
                 audio.musicMuted = false;
                 audio.musicVolume = 0.05;
                 musicToggleBtn.innerHTML = '<i class="fa-solid fa-volume-low"></i> Low';
                 musicToggleBtn.className = "bg-indigo-950 text-indigo-300 border border-indigo-700 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs";
             } else if (audio.musicVolume === 0.05) {
-                // Set mid volume
                 audio.musicVolume = 0.12;
                 musicToggleBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> Mid';
                 musicToggleBtn.className = "bg-indigo-900 text-indigo-200 border border-indigo-600 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs";
             } else if (audio.musicVolume === 0.12) {
-                // Set high volume
                 audio.musicVolume = 0.22;
                 musicToggleBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> High';
                 musicToggleBtn.className = "bg-indigo-600 text-white p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs";
             } else {
-                // Mute
                 audio.musicMuted = true;
                 musicToggleBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i> Muted';
                 musicToggleBtn.className = "bg-slate-800 hover:bg-slate-700 text-rose-400 p-1.5 px-2.5 rounded-lg transition-colors flex items-center gap-1 text-xs";
             }
         });
 
-        /* Comprehensive K-4 Ontario Curriculum Word Bank */
+        /* Comprehensive K-4 Ontario Curriculum Canadian Word Bank */
         const VOCABULARY_BANK = {
             math: [
                 { ok: "addition", bad: "addision" }, { ok: "subtraction", bad: "subtration" },
@@ -507,267 +670,88 @@
                 { ok: "multiply", bad: "multipli" }, { ok: "divide", bad: "devide" },
                 { ok: "shape", bad: "shaipe" }, { ok: "circle", bad: "sircle" },
                 { ok: "square", bad: "skuare" }, { ok: "equal", bad: "equall" },
-                { ok: "count", bad: "cownt" }, { ok: "decimal", bad: "decimel" },
-                { ok: "percent", bad: "persent" }, { ok: "symmetry", bad: "simmetry" },
-                { ok: "perimeter", bad: "perimeteur" }, { ok: "area", bad: "aria" },
-                { ok: "total", bad: "totle" }, { ok: "plus", bad: "pluss" },
-                { ok: "minus", bad: "minis" }, { ok: "zero", bad: "zeero" },
-                { ok: "height", bad: "hight" }, { ok: "weight", bad: "wayght" },
-                { ok: "length", bad: "lenth" }, { ok: "width", bad: "widthe" },
-                { ok: "ruler", bad: "rooler" }, { ok: "clock", bad: "clok" },
-                { ok: "minute", bad: "minit" }, { ok: "second", bad: "sekond" },
-                { ok: "hour", bad: "owre" }, { ok: "calendar", bad: "calender" },
-                { ok: "month", bad: "munth" }, { ok: "year", bad: "yeer" },
-                { ok: "money", bad: "muni" }, { ok: "coin", bad: "coyn" },
-                { ok: "dollar", bad: "doler" }, { ok: "penny", bad: "peny" },
-                { ok: "dime", bad: "diyme" }, { ok: "nickel", bad: "nikel" },
-                { ok: "quarter", bad: "corter" }, { ok: "math", bad: "maths" },
-                { ok: "solve", bad: "solv" }, { ok: "rule", bad: "rool" },
-                { ok: "group", bad: "groop" }, { ok: "sort", bad: "soort" },
-                { ok: "more", bad: "moor" }, { ok: "less", bad: "les" }
+                { ok: "centre", bad: "center" }, { ok: "decimal", bad: "decimel" }
             ],
             language: [
                 { ok: "alphabet", bad: "alfabat" }, { ok: "sentence", bad: "sentanse" },
                 { ok: "reading", bad: "reeding" }, { ok: "writing", bad: "writeing" },
                 { ok: "grammar", bad: "grammer" }, { ok: "phonics", bad: "fonics" },
                 { ok: "spelling", bad: "speling" }, { ok: "letter", bad: "lettr" },
-                { ok: "word", bad: "wurd" }, { ok: "story", bad: "storey" },
-                { ok: "book", bad: "buk" }, { ok: "noun", bad: "nown" },
-                { ok: "verb", bad: "vurb" }, { ok: "adjective", bad: "adjektive" },
-                { ok: "pronoun", bad: "pronown" }, { ok: "poem", bad: "poam" },
-                { ok: "read", bad: "reed" }, { ok: "speak", bad: "speek" },
-                { ok: "listen", bad: "lissen" }, { ok: "write", bad: "rite" },
-                { ok: "sound", bad: "sownd" }, { ok: "page", bad: "paige" },
-                { ok: "chapter", bad: "shapter" }, { ok: "library", bad: "libery" },
-                { ok: "author", bad: "auther" }, { ok: "title", bad: "tytle" },
-                { ok: "pencil", bad: "pensil" }, { ok: "paper", bad: "payper" },
-                { ok: "marker", bad: "marcer" }, { ok: "erase", bad: "eraze" },
-                { ok: "school", bad: "skool" }, { ok: "teacher", bad: "teecher" },
-                { ok: "friend", bad: "frend" }, { ok: "learn", bad: "lern" },
-                { ok: "think", bad: "thynk" }, { ok: "know", bad: "noa" },
-                { ok: "quest", bad: "qwest" }, { ok: "answer", bad: "anser" },
-                { ok: "ask", bad: "asc" }, { ok: "talk", bad: "tok" },
-                { ok: "vowel", bad: "vowle" }, { ok: "comma", bad: "coma" },
-                { ok: "period", bad: "peeriod" }, { ok: "space", bad: "spase" },
-                { ok: "capital", bad: "capitle" }, { ok: "rhyme", bad: "ryme" },
-                { ok: "lesson", bad: "leson" }, { ok: "quiet", bad: "kwiet" },
-                { ok: "loud", bad: "lowd" }, { ok: "talk", bad: "taulk" }
+                { ok: "behaviour", bad: "behavior" }, { ok: "honour", bad: "honor" }
             ],
             social: [
                 { ok: "map", bad: "mapp" }, { ok: "community", bad: "comuniti" },
                 { ok: "globe", bad: "gloab" }, { ok: "canada", bad: "kanada" },
-                { ok: "history", bad: "histry" }, { ok: "culture", bad: "kulcher" },
-                { ok: "heritage", bad: "heritige" }, { ok: "country", bad: "cuntry" },
-                { ok: "leader", bad: "leeder" }, { ok: "rules", bad: "rools" },
-                { ok: "laws", bad: "loz" }, { ok: "citizen", bad: "citizan" },
-                { ok: "region", bad: "reajon" }, { ok: "land", bad: "laind" },
-                { ok: "ocean", bad: "oshan" }, { ok: "river", bad: "rivver" },
-                { ok: "lake", bad: "layk" }, { ok: "pioneer", bad: "pyoneer" },
-                { ok: "native", bad: "nativ" }, { ok: "chart", bad: "shart" },
-                { ok: "town", bad: "towne" }, { ok: "city", bad: "sity" },
-                { ok: "province", bad: "provins" }, { ok: "capital", bad: "capitall" },
-                { ok: "world", bad: "wurld" }, { ok: "earth", bad: "erth" },
-                { ok: "north", bad: "northe" }, { ok: "south", bad: "sowth" },
-                { ok: "east", bad: "eest" }, { ok: "west", bad: "wesst" },
-                { ok: "flag", bad: "flagg" }, { ok: "symbol", bad: "simbol" },
-                { ok: "settler", bad: "setler" }, { ok: "chief", bad: "cheif" },
-                { ok: "treaty", bad: "treety" }, { ok: "trade", bad: "traid" },
-                { ok: "travel", bad: "travle" }, { ok: "forest", bad: "forrest" },
-                { ok: "mountain", bad: "mountin" }, { ok: "island", bad: "iland" },
-                { ok: "people", bad: "peepel" }, { ok: "family", bad: "famly" },
-                { ok: "home", bad: "howm" }, { ok: "job", bad: "jobb" },
-                { ok: "work", bad: "wurk" }, { ok: "help", bad: "helpp" },
-                { ok: "care", bad: "cair" }, { ok: "share", bad: "shair" },
-                { ok: "peace", bad: "peese" }, { ok: "earth", bad: "urth" }
+                { ok: "neighbour", bad: "neighbor" }, { ok: "favour", bad: "favor" },
+                { ok: "parliament", bad: "parliment" }, { ok: "province", bad: "provins" }
             ],
             science: [
                 { ok: "animal", bad: "animle" }, { ok: "plant", bad: "plaint" },
                 { ok: "energy", bad: "energe" }, { ok: "force", bad: "forse" },
-                { ok: "weather", bad: "wether" }, { ok: "space", bad: "spase" },
-                { ok: "gravity", bad: "gravety" }, { ok: "magnet", bad: "magnett" },
-                { ok: "liquid", bad: "likwid" }, { ok: "solid", bad: "sollid" },
-                { ok: "gas", bad: "gase" }, { ok: "insect", bad: "insekt" },
-                { ok: "habitat", bad: "habittat" }, { ok: "soil", bad: "soyl" },
-                { ok: "rock", bad: "rok" }, { ok: "cycle", bad: "sicle" },
-                { ok: "water", bad: "watter" }, { ok: "human", bad: "yooman" },
-                { ok: "health", bad: "helth" }, { ok: "shadow", bad: "shaddow" },
-                { ok: "sun", bad: "sunn" }, { ok: "moon", bad: "moone" },
-                { ok: "star", bad: "starr" }, { ok: "planet", bad: "plannet" },
-                { ok: "cloud", bad: "clowd" }, { ok: "rain", bad: "rane" },
-                { ok: "snow", bad: "sno" }, { ok: "wind", bad: "wynd" },
-                { ok: "storm", bad: "stoorm" }, { ok: "heat", bad: "heet" },
-                { ok: "cold", bad: "coald" }, { ok: "stem", bad: "stimm" },
-                { ok: "leaf", bad: "leef" }, { ok: "root", bad: "rootte" },
-                { ok: "seed", bad: "sead" }, { ok: "flower", bad: "flowr" },
-                { ok: "mammal", bad: "mamal" }, { ok: "bird", bad: "byrd" },
-                { ok: "fish", bad: "fysh" }, { ok: "reptile", bad: "reptil" },
-                { ok: "frog", bad: "frogg" }, { ok: "bug", bad: "bugg" },
-                { ok: "nature", bad: "nacher" }, { ok: "tree", bad: "tre" },
-                { ok: "grass", bad: "gras" }, { ok: "dirt", bad: "durt" },
-                { ok: "stone", bad: "stohn" }, { ok: "light", bad: "lite" },
-                { ok: "sound", bad: "sownd" }, { ok: "taste", bad: "taist" }
+                { ok: "weather", bad: "wether" }, { ok: "gravity", bad: "gravety" },
+                { ok: "magnet", bad: "magnett" }, { ok: "colour", bad: "color" }
             ],
             music: [
                 { ok: "rhythm", bad: "rythm" }, { ok: "melody", bad: "mellody" },
                 { ok: "beat", bad: "beet" }, { ok: "tempo", bad: "temppo" },
-                { ok: "song", bad: "songe" }, { ok: "instrument", bad: "instrumant" },
-                { ok: "pitch", bad: "pich" }, { ok: "note", bad: "noot" },
-                { ok: "voice", bad: "voyce" }, { ok: "sing", bad: "syng" },
-                { ok: "sound", bad: "sownd" }, { ok: "guitar", bad: "gitar" },
-                { ok: "piano", bad: "peano" }, { ok: "drum", bad: "drumb" },
-                { ok: "flute", bad: "floot" }, { ok: "chord", bad: "kord" },
-                { ok: "scale", bad: "scail" }, { ok: "music", bad: "muzic" },
-                { ok: "band", bad: "bannd" }, { ok: "choir", bad: "quire" },
-                { ok: "clef", bad: "cleff" }, { ok: "horn", bad: "horne" },
-                { ok: "bell", bad: "bel" }, { ok: "harp", bad: "harpe" },
-                { ok: "string", bad: "stryng" }, { ok: "brass", bad: "bras" },
-                { ok: "play", bad: "plae" }, { ok: "practice", bad: "practis" },
-                { ok: "loud", bad: "lowd" }, { ok: "soft", bad: "sofft" },
-                { ok: "slow", bad: "sloe" }, { ok: "fast", bad: "fasst" },
-                { ok: "listen", bad: "lisn" }, { ok: "hear", bad: "heer" },
-                { ok: "clap", bad: "clapp" }, { ok: "dance", bad: "dans" },
-                { ok: "tune", bad: "toone" }, { ok: "key", bad: "keey" },
-                { ok: "stage", bad: "stayge" }, { ok: "lyrics", bad: "lyrix" },
-                { ok: "jazz", bad: "jaz" }, { ok: "rock", bad: "rok" },
-                { ok: "pop", bad: "popp" }, { ok: "solo", bad: "soloe" },
-                { ok: "duet", bad: "duett" }, { ok: "trio", bad: "trioe" },
-                { ok: "woodwind", bad: "woodwynd" }, { ok: "brass", bad: "braas" },
-                { ok: "violin", bad: "violen" }, { ok: "composer", bad: "composser" }
+                { ok: "programme", bad: "program" }, { ok: "theatre", bad: "theater" }
             ],
             physed: [
-                { ok: "run", bad: "runn" }, { ok: "jump", bad: "jomp" },
-                { ok: "catch", bad: "cach" }, { ok: "throw", bad: "thro" },
-                { ok: "ball", bad: "bal" }, { ok: "team", bad: "teem" },
-                { ok: "game", bad: "gamme" }, { ok: "sport", bad: "spoort" },
                 { ok: "active", bad: "activ" }, { ok: "fitness", bad: "fitnes" },
                 { ok: "exercise", bad: "exersise" }, { ok: "stretch", bad: "strech" },
-                { ok: "soccer", bad: "socker" }, { ok: "hockey", bad: "hoki" },
-                { ok: "rules", bad: "rulls" }, { ok: "play", bad: "plai" },
-                { ok: "safety", bad: "saftey" }, { ok: "health", bad: "helthe" },
-                { ok: "energy", bad: "enargy" }, { ok: "win", bad: "winn" },
-                { ok: "kick", bad: "kik" }, { ok: "pass", bad: "pas" },
-                { ok: "score", bad: "scoar" }, { ok: "goal", bad: "gole" },
-                { ok: "skip", bad: "skyp" }, { ok: "hop", bad: "hopp" },
-                { ok: "slide", bad: "slyde" }, { ok: "climb", bad: "clime" },
-                { ok: "swim", bad: "swym" }, { ok: "race", bad: "rayce" },
-                { ok: "fast", bad: "fasst" }, { ok: "quick", bad: "qwik" },
-                { ok: "strong", bad: "stronge" }, { ok: "body", bad: "boddy" },
-                { ok: "heart", bad: "hart" }, { ok: "lungs", bad: "lunges" },
-                { ok: "muscle", bad: "mussel" }, { ok: "bone", bad: "boan" },
-                { ok: "gym", bad: "gim" }, { ok: "field", bad: "feeld" },
-                { ok: "track", bad: "trak" }, { ok: "shoes", bad: "shooes" },
-                { ok: "water", bad: "watre" }, { ok: "fun", bad: "funn" },
-                { ok: "fair", bad: "fare" }, { ok: "friend", bad: "frend" },
-                { ok: "group", bad: "groop" }, { ok: "jog", bad: "jogg" },
-                { ok: "push", bad: "puss" }, { ok: "pull", bad: "pul" }
+                { ok: "soccer", bad: "socker" }, { ok: "hockey", bad: "hoki" }
             ],
             drama: [
-                { ok: "actor", bad: "acter" }, { ok: "play", bad: "plae" },
-                { ok: "stage", bad: "staige" }, { ok: "mask", bad: "masque" },
-                { ok: "voice", bad: "voise" }, { ok: "role", bad: "roal" },
-                { ok: "scene", bad: "sene" }, { ok: "costume", bad: "costoom" },
-                { ok: "puppet", bad: "pupet" }, { ok: "story", bad: "storrie" },
-                { ok: "act", bad: "ack" }, { ok: "theater", bad: "theaterr" },
-                { ok: "show", bad: "sho" }, { ok: "character", bad: "caracter" },
-                { ok: "script", bad: "scrypt" }, { ok: "mood", bad: "mude" },
-                { ok: "sound", bad: "sownd" }, { ok: "light", bad: "lyte" },
-                { ok: "action", bad: "axion" }, { ok: "mimic", bad: "mimick" },
-                { ok: "pretend", bad: "pretendd" }, { ok: "imagine", bad: "imajine" },
-                { ok: "props", bad: "propps" }, { ok: "dressup", bad: "dresup" },
-                { ok: "dialogue", bad: "dialog" }, { ok: "funny", bad: "funy" },
-                { ok: "sad", bad: "sadd" }, { ok: "happy", bad: "happie" },
-                { ok: "scary", bad: "scari" }, { ok: "brave", bad: "braiv" },
-                { ok: "friend", bad: "frend" }, { ok: "clown", bad: "clowne" },
-                { ok: "mime", bad: "myme" }, { ok: "audience", bad: "audiense" },
-                { ok: "performance", bad: "performanse" }, { ok: "cast", bad: "casst" },
-                { ok: "star", bad: "starr" }, { ok: "makeup", bad: "makeupp" },
-                { ok: "smile", bad: "smyle" }, { ok: "frown", bad: "frowne" },
-                { ok: "gesture", bad: "jester" }, { ok: "curtain", bad: "curtin" },
-                { ok: "script", bad: "skript" }, { ok: "clapping", bad: "claping" },
-                { ok: "laugh", bad: "laf" }, { ok: "cry", bad: "crye" },
-                { ok: "scream", bad: "screem" }, { ok: "whisper", bad: "wisper" },
-                { ok: "shout", bad: "showt" }, { ok: "mimic", bad: "mimyc" }
+                { ok: "theatre", bad: "theater" }, { ok: "script", bad: "skript" },
+                { ok: "acting", bad: "acteing" }, { ok: "dialogue", bad: "dialog" },
+                { ok: "costume", bad: "costum" }, { ok: "character", bad: "caracter" }
             ],
             dance: [
-                { ok: "dance", bad: "danse" }, { ok: "move", bad: "moove" },
-                { ok: "step", bad: "stepp" }, { ok: "rhythm", bad: "rythum" },
-                { ok: "music", bad: "muzik" }, { ok: "ballet", bad: "balet" },
-                { ok: "spin", bad: "spinn" }, { ok: "twist", bad: "twyst" },
-                { ok: "jump", bad: "jamp" }, { ok: "grace", bad: "grayce" },
-                { ok: "style", bad: "stile" }, { ok: "energy", bad: "enerjie" },
-                { ok: "body", bad: "boddy" }, { ok: "space", bad: "spayce" },
-                { ok: "time", bad: "tyme" }, { ok: "flow", bad: "floe" },
-                { ok: "shape", bad: "shayp" }, { ok: "beat", bad: "beete" },
-                { ok: "gesture", bad: "jester" }, { ok: "swing", bad: "swyng" },
-                { ok: "pose", bad: "poas" }, { ok: "stretch", bad: "strech" },
-                { ok: "bend", bad: "bennd" }, { ok: "shake", bad: "shaik" },
-                { ok: "slide", bad: "slyde" }, { ok: "hop", bad: "hopp" },
-                { ok: "leap", bad: "leeap" }, { ok: "fast", bad: "fasst" },
-                { ok: "slow", bad: "sloe" }, { ok: "happy", bad: "happie" },
-                { ok: "music", bad: "muzic" }, { ok: "class", bad: "clase" },
-                { ok: "teacher", bad: "teecher" }, { ok: "friend", bad: "frend" },
-                { ok: "stage", bad: "stayge" }, { ok: "shoes", bad: "shooes" },
-                { ok: "costume", bad: "costoom" }, { ok: "partner", bad: "partnr" },
-                { ok: "group", bad: "groop" }, { ok: "circle", bad: "sircle" },
-                { ok: "line", bad: "lyne" }, { ok: "floor", bad: "flor" },
-                { ok: "jump", bad: "jumpp" }, { ok: "wiggle", bad: "wigel" },
-                { ok: "bounce", bad: "bounse" }, { ok: "tap", bad: "tapp" },
-                { ok: "hiphop", bad: "hip-hop" }, { ok: "jazz", bad: "jaz" },
-                { ok: "clog", bad: "clogg" }, { ok: "march", bad: "marche" }
+                { ok: "movement", bad: "movemint" }, { ok: "rhythm", bad: "rythm" },
+                { ok: "energy", bad: "energe" }, { ok: "spin", bad: "spynn" },
+                { ok: "balance", bad: "balence" }, { ok: "routine", bad: "routin" }
             ],
             health: [
-                { ok: "food", bad: "fude" }, { ok: "fruit", bad: "froot" },
-                { ok: "water", bad: "watre" }, { ok: "clean", bad: "cleen" },
-                { ok: "sleep", bad: "slepe" }, { ok: "strong", bad: "stronge" },
-                { ok: "body", bad: "bodie" }, { ok: "teeth", bad: "teethe" },
+                { ok: "healthy", bad: "helthy" }, { ok: "teeth", bad: "teethe" },
                 { ok: "brush", bad: "bruss" }, { ok: "wash", bad: "wosh" },
-                { ok: "safe", bad: "saife" }, { ok: "mind", bad: "mynd" },
-                { ok: "happy", bad: "happie" }, { ok: "active", bad: "aktive" },
-                { ok: "milk", bad: "mylk" }, { ok: "apple", bad: "apel" },
-                { ok: "carrot", bad: "carot" }, { ok: "bread", bad: "bred" },
-                { ok: "grain", bad: "grane" }, { ok: "fit", bad: "fitt" },
-                { ok: "soap", bad: "sope" }, { ok: "germ", bad: "jurm" },
-                { ok: "sick", bad: "sik" }, { ok: "well", bad: "wel" },
-                { ok: "doctor", bad: "docter" }, { ok: "nurse", bad: "nurrs" },
-                { ok: "dentist", bad: "dentyst" }, { ok: "safety", bad: "saftey" },
-                { ok: "helmet", bad: "helmit" }, { ok: "seatbelt", bad: "seetbelt" },
-                { ok: "healthy", bad: "helthy" }, { ok: "energy", bad: "enargy" },
-                { ok: "grow", bad: "gro" }, { ok: "height", bad: "hight" },
-                { ok: "weight", bad: "wayght" }, { ok: "feel", bad: "fele" },
-                { ok: "angry", bad: "angrie" }, { ok: "scared", bad: "skared" },
-                { ok: "proud", bad: "prowd" }, { ok: "share", bad: "shair" },
-                { ok: "friend", bad: "frend" }, { ok: "family", bad: "famly" },
-                { ok: "smile", bad: "smyle" }, { ok: "play", bad: "plae" },
-                { ok: "rest", bad: "resst" }, { ok: "water", bad: "watter" },
-                { ok: "meat", bad: "meete" }, { ok: "egg", bad: "egge" },
-                { ok: "cheese", bad: "cheese" }, { ok: "bean", bad: "beene" }
+                { ok: "behaviour", bad: "behavior" }, { ok: "favour", bad: "favor" }
             ],
             art: [
-                { ok: "paint", bad: "paynt" }, { ok: "draw", bad: "dro" },
-                { ok: "color", bad: "coler" }, { ok: "paper", bad: "payper" },
-                { ok: "brush", bad: "bruss" }, { ok: "pencil", bad: "pensil" },
-                { ok: "clay", bad: "clai" }, { ok: "crayon", bad: "crayen" },
-                { ok: "line", bad: "lyne" }, { ok: "shape", bad: "shayp" },
-                { ok: "space", bad: "spase" }, { ok: "texture", bad: "texcher" },
-                { ok: "form", bad: "fourm" }, { ok: "craft", bad: "crafte" },
-                { ok: "picture", bad: "pikcher" }, { ok: "frame", bad: "fraim" },
-                { ok: "scissors", bad: "scisors" }, { ok: "glue", bad: "gloo" },
-                { ok: "canvas", bad: "canvasse" }, { ok: "artist", bad: "artyst" },
-                { ok: "red", bad: "redd" }, { ok: "blue", bad: "blew" },
-                { ok: "yellow", bad: "yelo" }, { ok: "green", bad: "grene" },
-                { ok: "orange", bad: "oranje" }, { ok: "purple", bad: "purplee" },
-                { ok: "pink", bad: "pynk" }, { ok: "brown", bad: "browne" },
-                { ok: "black", bad: "blak" }, { ok: "white", bad: "whyte" },
-                { ok: "mix", bad: "myx" }, { ok: "shade", bad: "shaid" },
-                { ok: "bright", bad: "bryte" }, { ok: "dark", bad: "darck" },
-                { ok: "sketch", bad: "skech" }, { ok: "create", bad: "creayt" },
-                { ok: "sculpt", bad: "sculp" }, { ok: "gallery", bad: "galery" },
-                { ok: "museum", bad: "muzium" }, { ok: "idea", bad: "idear" },
-                { ok: "pattern", bad: "patren" }, { ok: "cutting", bad: "cuting" },
-                { ok: "folding", bad: "foldingg" }, { ok: "gluing", bad: "gluingg" },
-                { ok: "imagination", bad: "imajination" }, { ok: "easel", bad: "eezel" },
-                { ok: "chalk", bad: "chawk" }, { ok: "charcoal", bad: "charcole" },
-                { ok: "pastels", bad: "pastells" }, { ok: "sculpture", bad: "sculpcher" }
+                { ok: "colour", bad: "color" }, { ok: "paint", bad: "paynt" },
+                { ok: "canvas", bad: "canvasse" }, { ok: "drawing", bad: "droing" },
+                { ok: "moulding", bad: "molding" }, { ok: "theatre", bad: "theater" }
+            ],
+            prefixes: [
+                { ok: "unhappy", bad: "unhapie" }, { ok: "replay", bad: "replayy" },
+                { ok: "dislike", bad: "dislyke" }, { ok: "preview", bad: "preveiw" },
+                { ok: "misspell", bad: "mispel" }, { ok: "subway", bad: "subwaye" },
+                { ok: "coexist", bad: "coexyst" }, { ok: "decode", bad: "decodd" }
+            ],
+            suffixes: [
+                { ok: "helpful", bad: "helpfull" }, { ok: "careless", bad: "careles" },
+                { ok: "quickly", bad: "quicklie" }, { ok: "sadness", bad: "sadnes" },
+                { ok: "raining", bad: "rainnig" }, { ok: "happiness", bad: "happyness" },
+                { ok: "beautiful", bad: "beautifull" }
+            ],
+            basewords: [
+                { ok: "happy", bad: "happie" }, { ok: "friend", bad: "frend" },
+                { ok: "agree", bad: "agrie" }, { ok: "write", bad: "rite" },
+                { ok: "build", bad: "bild" }, { ok: "create", bad: "creayt" }
+            ],
+            foods: [
+                { ok: "yoghurt", bad: "yogert" }, { ok: "cheddar", bad: "cheder" },
+                { ok: "maple syrup", bad: "mapel sirup" }, { ok: "sandwich", bad: "sanwich" },
+                { ok: "potato", bad: "potatoe" }, { ok: "tomato", bad: "tomatoe" }
+            ],
+            sports: [
+                { ok: "basketball", bad: "basketbal" }, { ok: "badminton", bad: "badmiton" },
+                { ok: "gymnastics", bad: "gymnastic" }, { ok: "swimming", bad: "swiming" },
+                { ok: "volleyball", bad: "volyball" }, { ok: "lacrosse", bad: "lacrose" }
+            ],
+            videogames: [
+                { ok: "Pac-Man", bad: "Packman" }, { ok: "Donkey Kong", bad: "Donky Kong" },
+                { ok: "Space Invaders", bad: "Space Invaderz" }, { ok: "Frogger", bad: "Froger" },
+                { ok: "Tetris", bad: "Tetrys" }, { ok: "Dig Dug", bad: "Digdug" }
             ]
         };
 
@@ -779,9 +763,15 @@
             health: { name: "Mad Caramel", obstacle: "candy", desc: "Beware of spinning sugar candies!" },
             physed: { name: "La Velcro", obstacle: "soccer", desc: "Deflect heavy bouncing soccer balls." },
             science: { name: "Earthquake", obstacle: "stone", desc: "Brace for shaky screen quakes & falling stones!" },
-            drama: { name: "Thunder Kirby", obstacle: "mask", desc: "Beware of falling drama masks and heavy lightning strikes!" },
+            drama: { name: "Thunder Kirby", obstacle: "mask", desc: "Beware of falling drama masks!" },
             dance: { name: "Whisper", obstacle: "shoes", desc: "Spin around floating ballet slippers!" },
-            music: { name: "Melody Maestro", obstacle: "note", desc: "Evade falling musical note beams!" }
+            music: { name: "Melody Maestro", obstacle: "note", desc: "Evade falling musical note beams!" },
+            prefixes: { name: "Prefix Portal", obstacle: "stone", desc: "Tear through the prefix barrier!" },
+            suffixes: { name: "Suffix Stormer", obstacle: "stone", desc: "Identify valid suffixes!" },
+            basewords: { name: "Base Builder", obstacle: "stone", desc: "Destroy basic misspelled roots!" },
+            foods: { name: "Chef Pierre", obstacle: "candy", desc: "Dodge flying dessert traps!" },
+            sports: { name: "Athleta", obstacle: "soccer", desc: "Beware of high-speed athletic gear!" },
+            videogames: { name: "Arcade Overlord", obstacle: "letter", desc: "Defeat the pixel glitched boss!" }
         };
 
         let canvas, ctx;
@@ -794,20 +784,29 @@
         let gameTimeElapsed = 0; 
         let wordHitsAttempted = 0;
         let wordHitsCorrect = 0;
-        let state = 'MENU'; // 'MENU', 'PLAYING', 'TRANSITION', 'WARNING', 'VICTORY', 'GAMEOVER'
+        let state = 'MENU'; // 'MENU', 'PLAYING', 'TRANSITION', 'WARNING', 'VICTORY', 'GAMEOVER', 'PAUSED', 'CONTINUE'
         
         let selectedSubject = 'all';
         let selectedDifficulty = 'easy'; // 'easy', 'medium', 'hard', 'eagle', 'upsidedown'
 
-        // Stage progress tracking
+        // Upgrade Ship Shop items variables
+        let ownedShopItems = ['bullet_hearts', 'skin_ufo'];
+        let activeBulletType = 'bullet_hearts';
+        let activeSkinType = 'skin_ufo';
+        let walletPoints = 5000; 
+
+        // Continues tracker (3 allowed)
+        let continuesRemaining = 3;
+
+        // Stage variables
         let correctWordsDestroyedCount = 0;
         let narwhalWordSpawnedThisLevel = false;
+        let emeraldSpawnedThisLevel = false;
 
         let player = {
             x: 400, y: 800,
             width: 70, height: 45,
             speed: 380,
-            power: 1, 
             powerStreak: 0, 
             hp: 3, maxHp: 3,
             invulnTimer: 0
@@ -822,14 +821,12 @@
         let boss = null;
         let earthquakeTimer = 0;
         let lightningStrikes = [];
-
-        // Annoying Chasing UFO Enemy Ship
-        let enemyUfo = null;
-        let enemyUfoSpawnTimer = 15; // Spawns every 15 seconds
+        let emerald = null;
+        let greenSpaceship = null;
+        let electrifiedShapes = [];
 
         let levelStartRealTime = 0;
 
-        // Firework Particle
         class Particle {
             constructor(x, y, color) {
                 this.x = x;
@@ -862,26 +859,64 @@
             canvas = document.getElementById('gameCanvas');
             ctx = canvas.getContext('2d');
             
+            // Load stats, scores, and shop
+            loadLeaderboard();
+            loadShopData();
+
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
 
-            // Set up local storage checks
             checkUnlockedModes();
-
-            // Bind game menu choices dynamically & securely
             bindMenuSelectionHandlers();
 
+            // Setup custom validation for student name input
+            const nameInput = document.getElementById('pilotNameInput');
+            const startBtn = document.getElementById('startGameBtn');
+            nameInput.addEventListener('input', () => {
+                const hasValue = nameInput.value.trim().length > 0;
+                startBtn.disabled = !hasValue;
+                if (hasValue) {
+                    startBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+                } else {
+                    startBtn.classList.add('opacity-60', 'cursor-not-allowed');
+                }
+            });
+
+            // Keyboard actions
             window.addEventListener('keydown', e => {
                 keys[e.key] = true;
+                
+                // Escape key to toggle pause
+                if (e.key === 'Escape') {
+                    togglePauseGame();
+                    e.preventDefault();
+                }
+
+                // Enter Key Actions
+                if (e.key === 'Enter') {
+                    if (state === 'TRANSITION') {
+                        enterNextSector();
+                        e.preventDefault();
+                    } else if (state === 'CONTINUE') {
+                        triggerContinueAction();
+                        e.preventDefault();
+                    }
+                }
+
                 if ((e.key === 'Control' || e.key === ' ') && state === 'PLAYING') {
                     fireHeartBullet();
                     e.preventDefault();
                 }
+
+                // Menu selection keys handler
+                handleMenuKeyNavigation(e);
             });
+
             window.addEventListener('keyup', e => {
                 keys[e.key] = false;
             });
 
+            // Avoid arrow navigation from moving layout scroll
             window.addEventListener('keydown', e => {
                 if(["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(e.code) > -1) {
                     e.preventDefault();
@@ -893,12 +928,239 @@
             document.getElementById('restartVicBtn').addEventListener('click', resetToMenu);
             document.getElementById('restartGoBtn').addEventListener('click', resetToMenu);
             
+            // Pause action
+            document.getElementById('pauseBtn').addEventListener('click', togglePauseGame);
+
+            // Continue action buttons
+            document.getElementById('confirmContinueBtn').addEventListener('click', triggerContinueAction);
+            document.getElementById('giveUpBtn').addEventListener('click', triggerGiveUpAction);
+
+            // Exit Confirmation controls
+            document.getElementById('sideHomeBtn').addEventListener('click', tryReturnHome);
+            document.getElementById('confirmHomeExitBtn').addEventListener('click', executeHomeReturn);
+            document.getElementById('cancelHomeExitBtn').addEventListener('click', cancelHomeReturn);
+
+            // Fullscreen trigger (Acts as F11 browser maximize)
+            document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
+
             setupTouchSupport();
+            setupShopTabs();
             requestAnimationFrame(gameLoop);
         });
 
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable browser F11 fullscreen mode: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function togglePauseGame() {
+            if (state === 'PLAYING') {
+                state = 'PAUSED';
+                document.getElementById('pauseBtn').innerHTML = '<i class="fa-solid fa-play"></i>';
+            } else if (state === 'PAUSED') {
+                state = 'PLAYING';
+                document.getElementById('pauseBtn').innerHTML = '<i class="fa-solid fa-pause"></i>';
+            }
+        }
+
+        // Return Home with Safeguard confirmation modal
+        function tryReturnHome() {
+            if (state === 'MENU' || state === 'VICTORY' || state === 'GAMEOVER') {
+                executeHomeReturn();
+            } else {
+                // Currently in gameplay: show safe exit overlay
+                document.getElementById('homeConfirmOverlay').classList.remove('hidden');
+                if (state === 'PLAYING') {
+                    state = 'PAUSED';
+                }
+            }
+        }
+
+        function cancelHomeReturn() {
+            document.getElementById('homeConfirmOverlay').classList.add('hidden');
+            state = 'PLAYING';
+        }
+
+        function executeHomeReturn() {
+            document.getElementById('homeConfirmOverlay').classList.add('hidden');
+            document.getElementById('hudBar').classList.add('hidden');
+            resetToMenu();
+        }
+
+        function loadLeaderboard() {
+            const scores = JSON.parse(localStorage.getItem('ufo_leaderboard_v2')) || [
+                { name: "Academic Hero", score: 12500 },
+                { name: "Spell Master", score: 8200 },
+                { name: "K-4 Pioneer", score: 4100 }
+            ];
+            const container = document.getElementById('leaderboardContainer');
+            container.innerHTML = '';
+            scores.forEach((entry, idx) => {
+                const colors = ['text-yellow-400', 'text-cyan-400', 'text-emerald-400'];
+                container.innerHTML += `
+                    <div class="flex justify-between text-slate-400 border-b border-slate-900/40 pb-0.5">
+                        <span>${idx + 1}. ${entry.name}</span>
+                        <span class="font-mono ${colors[idx] || 'text-slate-200'}">${entry.score.toLocaleString()} pts</span>
+                    </div>
+                `;
+            });
+            localStorage.setItem('ufo_leaderboard_v2', JSON.stringify(scores));
+        }
+
+        function saveNewScore(finalScore) {
+            const pilotName = document.getElementById('pilotNameInput').value.trim() || "Cadet Explorer";
+            let scores = JSON.parse(localStorage.getItem('ufo_leaderboard_v2')) || [];
+            scores.push({ name: pilotName, score: finalScore });
+            scores.sort((a, b) => b.score - a.score);
+            scores = scores.slice(0, 3);
+            localStorage.setItem('ufo_leaderboard_v2', JSON.stringify(scores));
+            loadLeaderboard();
+        }
+
+        function transmitResultsToGoogleSheet(finalScore, statusMsg) {
+            if (!GOOGLE_SCRIPT_URL) {
+                console.log("No Google Apps Script URL defined. Skipping spreadsheet submission.");
+                return;
+            }
+
+            const pilotName = document.getElementById('pilotNameInput').value.trim();
+            const payload = {
+                name: pilotName,
+                category: selectedSubject.toUpperCase(),
+                score: finalScore,
+                difficulty: selectedDifficulty.toUpperCase(),
+                achievement: `Stage ${currentLevelIdx + 1} - ${statusMsg}`
+            };
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(() => console.log("Success: Student logs dispatched safely to Google Sheets!"))
+            .catch(err => console.error("Error transmitting logs to Spreadsheet: ", err));
+        }
+
+        function loadShopData() {
+            if (localStorage.getItem('ufo_wallet') !== null) {
+                walletPoints = parseInt(localStorage.getItem('ufo_wallet'));
+            } else {
+                localStorage.setItem('ufo_wallet', walletPoints);
+            }
+            if (localStorage.getItem('ufo_owned_items') !== null) {
+                ownedShopItems = JSON.parse(localStorage.getItem('ufo_owned_items'));
+            } else {
+                localStorage.setItem('ufo_owned_items', JSON.stringify(ownedShopItems));
+            }
+            activeBulletType = localStorage.getItem('ufo_equipped_bullet') || 'bullet_hearts';
+            activeSkinType = localStorage.getItem('ufo_equipped_skin') || 'skin_ufo';
+
+            updateShopUI();
+        }
+
+        function saveShopData() {
+            localStorage.setItem('ufo_wallet', walletPoints);
+            localStorage.setItem('ufo_owned_items', JSON.stringify(ownedShopItems));
+            localStorage.setItem('ufo_equipped_bullet', activeBulletType);
+            localStorage.setItem('ufo_equipped_skin', activeSkinType);
+            updateShopUI();
+        }
+
+        function updateShopUI() {
+            document.getElementById('sidePointsBalance').textContent = walletPoints.toLocaleString();
+            document.getElementById('shopPointsBalance').textContent = walletPoints.toLocaleString();
+
+            const buttons = document.querySelectorAll('.shop-btn');
+            buttons.forEach(btn => {
+                const id = btn.getAttribute('data-shop-item');
+                const cost = parseInt(btn.getAttribute('data-cost'));
+
+                if (ownedShopItems.includes(id)) {
+                    if (id === activeBulletType || id === activeSkinType) {
+                        btn.className = "shop-btn flex justify-between items-center bg-indigo-600 border border-indigo-400 text-white p-2 rounded-lg text-xs font-bold w-full text-left";
+                        btn.querySelector('span:nth-child(2)').className = "text-yellow-300 font-mono text-[10px]";
+                        btn.querySelector('span:nth-child(2)').textContent = "EQUIPPED";
+                    } else {
+                        btn.className = "shop-btn flex justify-between items-center bg-slate-850 border border-slate-700 text-slate-200 p-2 rounded-lg text-xs font-bold w-full text-left hover:bg-slate-700";
+                        btn.querySelector('span:nth-child(2)').className = "text-indigo-400 font-mono text-[10px]";
+                        btn.querySelector('span:nth-child(2)').textContent = "OWNED";
+                    }
+                } else {
+                    btn.className = "shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-2 rounded-lg text-xs font-bold w-full text-left hover:bg-slate-850";
+                    btn.querySelector('span:nth-child(2)').className = "text-yellow-400 font-mono text-[10px]";
+                    btn.querySelector('span:nth-child(2)').textContent = `${cost} pts`;
+                }
+            });
+        }
+
+        function setupShopTabs() {
+            const stagesBtn = document.getElementById('tabStagesBtn');
+            const shopBtn = document.getElementById('tabShopBtn');
+            
+            const panelStages = document.getElementById('panelStages');
+            const panelShop = document.getElementById('panelShop');
+
+            stagesBtn.addEventListener('click', () => {
+                stagesBtn.className = "px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white rounded-lg transition-all";
+                shopBtn.className = "px-3 py-1.5 text-xs font-bold bg-slate-900 hover:bg-slate-850 text-slate-400 hover:text-white rounded-lg transition-all";
+                
+                panelStages.classList.remove('hidden');
+                panelShop.classList.add('hidden');
+                audio.playTone(300, 'sine', 0.1, 0.05);
+            });
+
+            shopBtn.addEventListener('click', () => {
+                shopBtn.className = "px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white rounded-lg transition-all";
+                stagesBtn.className = "px-3 py-1.5 text-xs font-bold bg-slate-900 hover:bg-slate-850 text-slate-400 hover:text-white rounded-lg transition-all";
+                
+                panelShop.classList.remove('hidden');
+                panelStages.classList.add('hidden');
+                audio.playTone(350, 'sine', 0.1, 0.05);
+            });
+
+            const buttons = document.querySelectorAll('.shop-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-shop-item');
+                    const cost = parseInt(btn.getAttribute('data-cost'));
+
+                    if (ownedShopItems.includes(id)) {
+                        if (id.startsWith('bullet_')) {
+                            activeBulletType = id;
+                        } else if (id.startsWith('skin_')) {
+                            activeSkinType = id;
+                        }
+                        audio.playTone(600, 'sine', 0.1, 0.05);
+                        saveShopData();
+                    } else {
+                        if (walletPoints >= cost) {
+                            walletPoints -= cost;
+                            ownedShopItems.push(id);
+                            if (id.startsWith('bullet_')) {
+                                activeBulletType = id;
+                            } else if (id.startsWith('skin_')) {
+                                activeSkinType = id;
+                            }
+                            audio.playTone(880, 'sine', 0.1, 0.1);
+                            setTimeout(() => audio.playTone(1200, 'sine', 0.2, 0.1), 80);
+                            saveShopData();
+                        } else {
+                            audio.playTone(150, 'sawtooth', 0.3, 0.15);
+                        }
+                    }
+                });
+            });
+        }
+
         function checkUnlockedModes() {
-            // Check if user has beaten previous modes
             const easyBeat = localStorage.getItem('ufo_arcade_easy_beat') === 'true';
             const medBeat = localStorage.getItem('ufo_arcade_medium_beat') === 'true';
             const hardBeat = localStorage.getItem('ufo_arcade_hard_beat') === 'true';
@@ -907,23 +1169,30 @@
             const eagleBtn = document.getElementById('eagleModeBtn');
             const udBtn = document.getElementById('upsideDownModeBtn');
 
-            // Eagle unlocks after Easy, Medium, AND Hard are all beaten
+            const foodsOpt = document.getElementById('optFoods');
+            const sportsOpt = document.getElementById('optSports');
+            const videogamesOpt = document.getElementById('optVideoGames');
+
             if (easyBeat && medBeat && hardBeat) {
                 eagleBtn.removeAttribute('disabled');
                 eagleBtn.innerHTML = 'Eagle';
-                eagleBtn.className = "diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1.5 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800";
+                eagleBtn.className = "diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-2 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800";
             }
-
-            // Upside Down unlocks after Eagle Mode is beaten
             if (eagleBeat) {
                 udBtn.removeAttribute('disabled');
                 udBtn.innerHTML = 'U-Down';
-                udBtn.className = "diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1.5 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-slate-800";
+                udBtn.className = "diff-btn bg-slate-900 border border-slate-800 text-slate-400 px-1 py-2 rounded-lg text-[11px] font-bold transition-all hover:bg-slate-800";
+
+                foodsOpt.removeAttribute('disabled');
+                foodsOpt.textContent = "Foods (Canadian Diet Vocabulary)";
+                sportsOpt.removeAttribute('disabled');
+                sportsOpt.textContent = "Sports (Championship Athletics)";
+                videogamesOpt.removeAttribute('disabled');
+                videogamesOpt.textContent = "80s Video Games (Classic Chiptunes)";
             }
         }
 
         function bindMenuSelectionHandlers() {
-            // Difficulties selection click handlers
             const diffButtons = document.querySelectorAll('#difficultyContainer button');
             diffButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -939,20 +1208,57 @@
                 });
             });
 
-            // Subjects selection click handlers
-            const subButtons = document.querySelectorAll('#subjectsContainer button');
-            subButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    subButtons.forEach(b => {
-                        b.classList.remove('bg-indigo-600/30', 'border-indigo-500', 'text-white');
-                        b.classList.add('bg-slate-900', 'border-slate-850', 'text-slate-300');
-                    });
-                    btn.classList.remove('bg-slate-900', 'border-slate-850', 'text-slate-300');
-                    btn.classList.add('bg-indigo-600/30', 'border-indigo-500', 'text-white');
-                    selectedSubject = btn.getAttribute('data-subject');
-                    audio.playTone(480, 'sine', 0.1, 0.05);
-                });
+            const dropdown = document.getElementById('subjectDropdown');
+            dropdown.addEventListener('change', (e) => {
+                selectedSubject = e.target.value;
+                audio.playTone(480, 'sine', 0.1, 0.05);
             });
+        }
+
+        function handleMenuKeyNavigation(e) {
+            if (state !== 'MENU') return;
+
+            if (e.key === 'ArrowUp') {
+                const select = document.getElementById('subjectDropdown');
+                if (select.selectedIndex > 0) {
+                    select.selectedIndex--;
+                    selectedSubject = select.value;
+                    audio.playTone(480, 'sine', 0.1, 0.05);
+                }
+                e.preventDefault();
+            } else if (e.key === 'ArrowDown') {
+                const select = document.getElementById('subjectDropdown');
+                if (select.selectedIndex < select.options.length - 1) {
+                    select.selectedIndex++;
+                    selectedSubject = select.value;
+                    audio.playTone(480, 'sine', 0.1, 0.05);
+                }
+                e.preventDefault();
+            }
+
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                const difficulties = ['easy', 'medium', 'hard', 'eagle', 'upsidedown'];
+                let currIdx = difficulties.indexOf(selectedDifficulty);
+                if (e.key === 'ArrowLeft') {
+                    currIdx = (currIdx - 1 + difficulties.length) % difficulties.length;
+                } else {
+                    currIdx = (currIdx + 1) % difficulties.length;
+                }
+                
+                let safetyCount = 0;
+                while (safetyCount < 5) {
+                    const btn = document.querySelector(`[data-diff="${difficulties[currIdx]}"]`);
+                    if (btn && !btn.hasAttribute('disabled')) {
+                        btn.click();
+                        break;
+                    }
+                    currIdx = e.key === 'ArrowLeft' ? 
+                        (currIdx - 1 + difficulties.length) % difficulties.length : 
+                        (currIdx + 1) % difficulties.length;
+                    safetyCount++;
+                }
+                e.preventDefault();
+            }
         }
 
         function resizeCanvas() {
@@ -1002,14 +1308,17 @@
         }
 
         function startNewGame() {
+            const nameInput = document.getElementById('pilotNameInput').value.trim();
+            if (!nameInput) {
+                return;
+            }
+
             audio.init();
             
-            // Randomize curriculum subject list for stage sequence
-            const keysList = selectedSubject === 'all' ? Object.keys(VOCABULARY_BANK) : [selectedSubject];
+            const keysList = selectedSubject === 'all' ? Object.keys(VOCABULARY_BANK).filter(k => k !== 'foods' && k !== 'sports' && k !== 'videogames') : [selectedSubject];
             levelOrder = [];
             let temp = [...keysList];
             
-            // Generate 7 randomized levels
             while (levelOrder.length < 7) {
                 if (temp.length === 0) {
                     temp = [...keysList];
@@ -1023,24 +1332,23 @@
             gameTimeElapsed = 0;
             wordHitsAttempted = 0;
             wordHitsCorrect = 0;
+            continuesRemaining = 3; 
             
             initLevel();
         }
 
         function getRequiredWordsForLevel(stageIdx) {
-            // Level 1 = 15 words, up to Level 7 = 30 words
             return 15 + Math.round((stageIdx) * (15 / 6));
         }
 
         function initLevel() {
             const subject = levelOrder[currentLevelIdx];
             
-            // Easy mode sets initial health to 4, others stay at 3
-            player.maxHp = selectedDifficulty === 'easy' ? 4 : 3;
+            player.maxHp = 3;
             player.hp = player.maxHp;
+            player.powerStreak = 0;
             
-            // Upside Down Mode: Player is placed at top of screen
-            if (selectedDifficulty === 'upsidedown') {
+            if (selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown') {
                 player.x = 400;
                 player.y = 150;
             } else {
@@ -1048,22 +1356,45 @@
                 player.y = 850;
             }
             
-            player.power = 1;
-            player.powerStreak = 0;
-            
             bullets = [];
             words = [];
             obstacles = [];
             activePowerups = [];
             particles = [];
             boss = null;
-            enemyUfo = null;
-            enemyUfoSpawnTimer = 10;
+            greenSpaceship = null;
             correctWordsDestroyedCount = 0;
             narwhalWordSpawnedThisLevel = false;
+            emeraldSpawnedThisLevel = false;
             lightningStrikes = [];
             earthquakeTimer = 0;
             levelStartRealTime = Date.now();
+
+            electrifiedShapes = [];
+            if (selectedDifficulty === 'hard' || selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown') {
+                const count = selectedDifficulty === 'hard' ? 2 : 4;
+                for (let i = 0; i < count; i++) {
+                    electrifiedShapes.push({
+                        x: Math.random() * 600 + 100,
+                        y: Math.random() * 300 + 200,
+                        size: 140, 
+                        angle: Math.random() * Math.PI,
+                        rotSpeed: Math.random() * 1.5 + 0.5,
+                        vx: (Math.random() - 0.5) * 80,
+                        vy: (Math.random() - 0.5) * 80
+                    });
+                }
+            } else if (selectedDifficulty === 'medium') {
+                electrifiedShapes.push({
+                    x: Math.random() * 600 + 100,
+                    y: Math.random() * 300 + 200,
+                    size: 90,
+                    angle: Math.random() * Math.PI,
+                    rotSpeed: 1.0,
+                    vx: 40,
+                    vy: 40
+                });
+            }
 
             document.getElementById('hudLevel').textContent = `${currentLevelIdx + 1}/7`;
             let subjectDisplayName = subject === 'language' ? 'Language' : subject;
@@ -1076,6 +1407,7 @@
             document.getElementById('hudBar').classList.remove('hidden');
             document.getElementById('menuScreen').classList.add('hidden');
             document.getElementById('transitionScreen').classList.add('hidden');
+            document.getElementById('continueScreen').classList.add('hidden');
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('victoryScreen').classList.add('hidden');
 
@@ -1089,12 +1421,18 @@
 
         function triggerBossApproach() {
             state = 'WARNING';
-            audio.playBossWarning();
-            const warningEl = document.getElementById('bossWarning');
-            warningEl.classList.remove('hidden');
+            const subject = levelOrder[currentLevelIdx];
+            const template = BOSS_TEMPLATES[subject] || { name: "Nebula Lord" };
             
+            audio.playBossWarning();
+            document.getElementById('megamanBossName').textContent = template.name.toUpperCase();
+            
+            const segway = document.getElementById('megamanSegway');
+            segway.classList.remove('hidden');
+            audio.playMegamanSweep();
+
             setTimeout(() => {
-                warningEl.classList.add('hidden');
+                segway.classList.add('hidden');
                 spawnBoss();
                 state = 'PLAYING';
             }, 3000);
@@ -1105,17 +1443,19 @@
             const template = BOSS_TEMPLATES[subject] || { name: "Nebula Lord", obstacle: "stone" };
             const maxHp = BOSS_REQ_HITS[currentLevelIdx];
 
+            const isUD = selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown';
             boss = {
                 name: template.name,
+                subjectType: subject,
                 obstacleType: template.obstacle,
                 x: 400,
-                y: selectedDifficulty === 'upsidedown' ? 1150 : -150,
-                targetY: selectedDifficulty === 'upsidedown' ? 820 : 180,
+                y: isUD ? 1150 : -150,
+                targetY: isUD ? 820 : 180,
                 width: 150,
                 height: 100,
                 hp: maxHp,
                 maxHp: maxHp,
-                shootCooldown: 1.5,
+                fireCooldown: 1.5,
                 wordSpawnCooldown: 0.5,
                 direction: 1
             };
@@ -1148,21 +1488,23 @@
         }
 
         function fireHeartBullet() {
-            audio.playShoot();
+            audio.playFire();
             
-            // Adjust heart vector direction depending on Upside Down mode
-            const bulletVy = selectedDifficulty === 'upsidedown' ? 650 : -650;
-            const offsetY = selectedDifficulty === 'upsidedown' ? 20 : -20;
+            const isUD = selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown';
+            const bulletVy = isUD ? 650 : -650;
+            const offsetY = isUD ? 20 : -20;
+
+            const projType = activeBulletType;
 
             if (player.powerStreak >= 3) {
-                bullets.push({ x: player.x, y: player.y + offsetY, vx: 0, vy: bulletVy, size: 8 });
-                bullets.push({ x: player.x - 12, y: player.y + offsetY, vx: -120, vy: bulletVy * 0.95, size: 8 });
-                bullets.push({ x: player.x + 12, y: player.y + offsetY, vx: 120, vy: bulletVy * 0.95, size: 8 });
+                bullets.push({ x: player.x, y: player.y + offsetY, vx: 0, vy: bulletVy, size: 8, type: projType });
+                bullets.push({ x: player.x - 12, y: player.y + offsetY, vx: -120, vy: bulletVy * 0.95, size: 8, type: projType });
+                bullets.push({ x: player.x + 12, y: player.y + offsetY, vx: 120, vy: bulletVy * 0.95, size: 8, type: projType });
             } else if (player.powerStreak === 2) {
-                bullets.push({ x: player.x - 12, y: player.y + offsetY, vx: 0, vy: bulletVy, size: 8 });
-                bullets.push({ x: player.x + 12, y: player.y + offsetY, vx: 0, vy: bulletVy, size: 8 });
+                bullets.push({ x: player.x - 12, y: player.y + offsetY, vx: 0, vy: bulletVy, size: 8, type: projType });
+                bullets.push({ x: player.x + 12, y: player.y + offsetY, vx: 0, vy: bulletVy, size: 8, type: projType });
             } else {
-                bullets.push({ x: player.x, y: player.y + offsetY, vx: 0, vy: bulletVy, size: 8 });
+                bullets.push({ x: player.x, y: player.y + offsetY, vx: 0, vy: bulletVy, size: 8, type: projType });
             }
         }
 
@@ -1174,25 +1516,20 @@
             const isCorrect = Math.random() > 0.4;
             const wordText = isCorrect ? pair.ok : pair.bad;
 
-            // Spelling shooter patterns
-            const patterns = ['straight', 'zigzag', 'diagonal', 'circle', 'upside_down', 'horizontal'];
+            const patterns = ['straight', 'zigzag', 'diagonal', 'circle', 'horizontal'];
             const pattern = patterns[Math.floor(Math.random() * patterns.length)];
 
-            // Difficulty Speed Multipliers
             let diffSpeedMult = 1.0;
             if (selectedDifficulty === 'medium') diffSpeedMult = 1.25;
             if (selectedDifficulty === 'hard') diffSpeedMult = 1.55;
-            if (selectedDifficulty === 'eagle') diffSpeedMult = 2.0;
-            if (selectedDifficulty === 'upsidedown') diffSpeedMult = 2.0;
+            if (selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown') diffSpeedMult = 2.0;
 
-            // Direction configuration depending on Upside Down mode
-            const isUD = selectedDifficulty === 'upsidedown';
+            const isUD = selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown';
             let x = Math.random() * 500 + 150;
             let y = isUD ? 1040 : -40;
             let vx = 0;
             let vy = (Math.random() * 60 + 50 + currentLevelIdx * 10) * diffSpeedMult;
             
-            // Negate vertical movement direction for Upside Down mode
             if (isUD) {
                 vy = -vy;
             }
@@ -1207,7 +1544,6 @@
                 vy = 0;
             }
 
-            // Occasional pink outlined high speed bonus word (Only spawned on correctly spelled ones)
             const isPinkBonus = isCorrect && Math.random() < 0.15;
             if (isPinkBonus) {
                 vy *= 1.4;
@@ -1223,7 +1559,7 @@
                 vx: vx,
                 vy: vy,
                 hits: 0,
-                maxHits: isCorrect ? 3 : 2, // Incorrect words require only 2 hits to detonate (causing heart loss)
+                maxHits: isCorrect ? 3 : 2, 
                 pattern: pattern,
                 width: 0, 
                 height: 35,
@@ -1233,13 +1569,12 @@
                 creationTime: Date.now(),
                 isPinkBonus: isPinkBonus,
                 isNarwhalWord: false,
-                shootCooldown: Math.random() * 2 + 1.5 // some words shoot red Xs back
+                fireCooldown: Math.random() * 2 + 1.5 
             };
         }
 
         function spawnNarwhalWord() {
-            // Once per level, a super fast blue-outlined Narwhal word spawns
-            const isUD = selectedDifficulty === 'upsidedown';
+            const isUD = selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown';
             let vy = isUD ? -200 : 200;
             
             words.push({
@@ -1251,7 +1586,7 @@
                 vx: 0,
                 vy: vy,
                 hits: 0,
-                maxHits: 1, // Only 1 shot to pop!
+                maxHits: 1, 
                 pattern: 'straight',
                 width: 0,
                 height: 35,
@@ -1261,19 +1596,41 @@
                 creationTime: Date.now(),
                 isPinkBonus: false,
                 isNarwhalWord: true,
-                shootCooldown: 9999
+                fireCooldown: 9999
             });
             narwhalWordSpawnedThisLevel = true;
         }
 
+        function spawnEmerald() {
+            const isUD = selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown';
+            emerald = {
+                x: Math.random() * 600 + 100,
+                y: isUD ? 980 : 20,
+                vy: isUD ? -90 : 90,
+                size: 38 
+            };
+            emeraldSpawnedThisLevel = true;
+        }
+
+        function spawnGreenSpaceship() {
+            greenSpaceship = {
+                x: 850,
+                y: Math.random() * 300 + 150,
+                vx: -120,
+                vy: 0,
+                size: 65, 
+                active: true,
+                chaseTimer: 0
+            };
+        }
+
         function spawnPowerup(x, y) {
-            // Significantly bigger powerups
             activePowerups.push({
                 x: x,
                 y: y,
-                vy: selectedDifficulty === 'upsidedown' ? -80 : 80,
-                width: 48,
-                height: 48,
+                vy: (selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown') ? -80 : 80,
+                width: 58, 
+                height: 58,
                 pulse: 0
             });
         }
@@ -1281,7 +1638,7 @@
         function spawnObstacle() {
             const subject = levelOrder[currentLevelIdx];
             const template = BOSS_TEMPLATES[subject] || { obstacle: "stone" };
-            const isUD = selectedDifficulty === 'upsidedown';
+            const isUD = selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown';
             
             let x = Math.random() * 700 + 50;
             let y = isUD ? 1050 : -50;
@@ -1312,40 +1669,62 @@
         function handleStageSpecialEvents(dt) {
             const subject = levelOrder[currentLevelIdx];
             
-            if (subject === 'science' && Math.random() < 0.01) {
-                earthquakeTimer = 0.5; 
-            }
-
-            if (subject === 'drama' && Math.random() < 0.006) {
-                const targetX = Math.random() * 700 + 50;
+            if (subject === 'science' && Math.random() < 0.005) {
                 lightningStrikes.push({
-                    x: targetX,
-                    duration: 0.4,
-                    alpha: 1
+                    x: Math.random() * 800,
+                    duration: 0.3,
+                    alpha: 0.9
                 });
-                audio.playTone(100, 'sawtooth', 0.4, 0.1);
-                
-                if (Math.abs(player.x - targetX) < 40 && player.invulnTimer <= 0) {
-                    damagePlayer();
-                }
             }
         }
 
         function damagePlayer() {
             player.hp--;
             player.invulnTimer = 1.5; 
-            player.powerStreak = 0; // Reset power streak back to 1 heart shoot
+            player.powerStreak = 0; 
             updatePowerIndicator();
             updateHPIndicator();
             audio.playHitWrong();
 
             if (player.hp <= 0) {
+                triggerHPDepletedSequence();
+            }
+        }
+
+        function triggerHPDepletedSequence() {
+            if (continuesRemaining > 0) {
+                state = 'CONTINUE';
+                document.getElementById('continueCounterLabel').textContent = `${continuesRemaining} Continues Left`;
+                document.getElementById('continueScreen').classList.remove('hidden');
+                document.getElementById('hudBar').classList.add('hidden');
+            } else {
                 triggerGameOver();
             }
         }
 
+        function triggerContinueAction() {
+            if (state !== 'CONTINUE' || continuesRemaining <= 0) return;
+            continuesRemaining--;
+            audio.playPowerup();
+            
+            player.hp = player.maxHp;
+            player.powerStreak = 0;
+            updateHPIndicator();
+            updatePowerIndicator();
+
+            document.getElementById('continueScreen').classList.add('hidden');
+            document.getElementById('hudBar').classList.remove('hidden');
+            state = 'PLAYING';
+        }
+
+        function triggerGiveUpAction() {
+            document.getElementById('continueScreen').classList.add('hidden');
+            triggerGameOver();
+        }
+
         function triggerGameOver() {
             state = 'GAMEOVER';
+            transmitResultsToGoogleSheet(totalScore, "Shutdown");
             document.getElementById('goScore').textContent = totalScore.toString().padStart(5, '0');
             document.getElementById('gameOverScreen').classList.remove('hidden');
             document.getElementById('hudBar').classList.add('hidden');
@@ -1354,6 +1733,11 @@
         function handleLevelVictory() {
             const levelDuration = (Date.now() - levelStartRealTime) / 1000;
             gameTimeElapsed += levelDuration;
+
+            transmitResultsToGoogleSheet(totalScore, "Success");
+
+            walletPoints += Math.round(totalScore * 0.1);
+            saveShopData();
 
             if (currentLevelIdx < 6) {
                 state = 'TRANSITION';
@@ -1377,8 +1761,8 @@
                 const seconds = Math.floor(gameTimeElapsed % 60);
                 document.getElementById('vicTime').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 
-                // Track Difficulty completion to unlock next tiers
                 updateUnlockStates();
+                saveNewScore(totalScore);
 
                 document.getElementById('victoryScreen').classList.remove('hidden');
                 document.getElementById('hudBar').classList.add('hidden');
@@ -1397,7 +1781,7 @@
                 localStorage.setItem('ufo_arcade_hard_beat', 'true');
             } else if (selectedDifficulty === 'eagle') {
                 localStorage.setItem('ufo_arcade_eagle_beat', 'true');
-                unlockedMsg.textContent = "🏆 NEW UNLOCK: Upside Down Mode is now fully accessible!";
+                unlockedMsg.textContent = "🏆 NEW UNLOCK: Upside Down mode is fully accessible!";
             }
 
             const easyBeat = localStorage.getItem('ufo_arcade_easy_beat') === 'true';
@@ -1405,7 +1789,7 @@
             const hardBeat = localStorage.getItem('ufo_arcade_hard_beat') === 'true';
 
             if (easyBeat && medBeat && hardBeat && selectedDifficulty !== 'eagle' && selectedDifficulty !== 'upsidedown') {
-                unlockedMsg.textContent = "🦅 NEW UNLOCK: Eagle Mode has been unlocked!";
+                unlockedMsg.textContent = "🦅 NEW UNLOCK: Eagle mode unlocked! (Features upside-down texts)";
             }
 
             checkUnlockedModes();
@@ -1428,7 +1812,6 @@
             if (player.invulnTimer > 0) player.invulnTimer -= dt;
             if (earthquakeTimer > 0) earthquakeTimer -= dt;
 
-            // 1. UFO Keyboard Controls
             let dx = 0;
             let dy = 0;
             if (keys['ArrowLeft'] || keys['a'] || keys['A']) dx = -1;
@@ -1444,20 +1827,49 @@
             player.x += dx * player.speed * dt;
             player.y += dy * player.speed * dt;
 
-            player.x = Math.max(player.width / 2, Math.min(800 - player.width / 2, player.x));
-            player.y = Math.max(player.height / 2, Math.min(1000 - player.height / 2, player.y));
+            const isHardMode = (selectedDifficulty === 'hard' || selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown');
+            const margin = isHardMode ? 75 : 30;
 
-            // 2. Specialized stage actions
+            if (isHardMode && player.invulnTimer <= 0) {
+                let leftBarrier = 60 + Math.sin(player.y / 10 + Date.now() * 0.01) * 15;
+                let rightBarrier = 740 + Math.cos(player.y / 10 + Date.now() * 0.01) * 15;
+
+                if (player.x < leftBarrier + 15 || player.x > rightBarrier - 15) {
+                    damagePlayer();
+                    for (let p = 0; p < 15; p++) {
+                        particles.push(new Particle(player.x, player.y, '#22d3ee'));
+                    }
+                }
+            }
+
+            player.x = Math.max(margin, Math.min(800 - margin, player.x));
+            player.y = Math.max(margin, Math.min(1000 - margin, player.y));
+
             handleStageSpecialEvents(dt);
             for (let i = lightningStrikes.length - 1; i >= 0; i--) {
                 lightningStrikes[i].duration -= dt;
-                lightningStrikes[i].alpha = lightningStrikes[i].duration / 0.4;
+                lightningStrikes[i].alpha = lightningStrikes[i].duration / 0.3;
                 if (lightningStrikes[i].duration <= 0) {
                     lightningStrikes.splice(i, 1);
                 }
             }
 
-            // 3. Spawner Tracker
+            for (let shape of electrifiedShapes) {
+                shape.angle += shape.rotSpeed * dt;
+                shape.x += shape.vx * dt;
+                shape.y += shape.vy * dt;
+
+                if (shape.x < 100 || shape.x > 700) shape.vx = -shape.vx;
+                if (shape.y < 100 || shape.y > 900) shape.vy = -shape.vy;
+
+                if (player.invulnTimer <= 0) {
+                    const dist = Math.hypot(player.x - shape.x, player.y - shape.y);
+                    if (dist < (shape.size / 2 + 20)) {
+                        damagePlayer();
+                    }
+                }
+            }
+
             const requiredWords = getRequiredWordsForLevel(currentLevelIdx);
             if (!boss && correctWordsDestroyedCount < requiredWords) {
                 if (words.length < 3 && Math.random() < 0.015) {
@@ -1467,18 +1879,46 @@
                     spawnObstacle();
                 }
 
-                // Spawn Special Narwhal word if half of the level target is reached
                 if (!narwhalWordSpawnedThisLevel && correctWordsDestroyedCount >= requiredWords / 2) {
                     spawnNarwhalWord();
+                }
+                if (!emeraldSpawnedThisLevel && Math.random() < 0.005) {
+                    spawnEmerald();
+                }
+                
+                const spaceshipProb = (selectedDifficulty === 'hard' || selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown') ? 0.001 : 0.0035;
+                if (!greenSpaceship && Math.random() < spaceshipProb) {
+                    spawnGreenSpaceship();
                 }
             } else if (!boss && correctWordsDestroyedCount >= requiredWords) {
                 triggerBossApproach();
             }
 
-            // 4. Word Movement & Projectile Actions
+            if (greenSpaceship) {
+                greenSpaceship.x += greenSpaceship.vx * dt;
+                
+                greenSpaceship.chaseTimer += dt;
+                const chaseForce = 120;
+                if (player.y < greenSpaceship.y) greenSpaceship.y -= chaseForce * dt;
+                else if (player.y > greenSpaceship.y) greenSpaceship.y += chaseForce * dt;
+
+                if (greenSpaceship.x < -50) greenSpaceship = null;
+            }
+
+            if (emerald) {
+                emerald.y += emerald.vy * dt;
+                if (Math.hypot(player.x - emerald.x, player.y - emerald.y) < 35) {
+                    player.hp = Math.min(player.maxHp, player.hp + 1);
+                    updateHPIndicator();
+                    audio.playPowerup();
+                    emerald = null;
+                } else if (emerald.y > 1050 || emerald.y < -50) {
+                    emerald = null;
+                }
+            }
+
             for (let i = words.length - 1; i >= 0; i--) {
                 let w = words[i];
-                
                 if (w.pattern === 'zigzag') {
                     w.angle += dt * 3;
                     w.x += Math.sin(w.angle) * 120 * dt;
@@ -1492,22 +1932,18 @@
                     w.y += w.vy * dt;
                 }
 
-                // Words shoot red Xs downwards
                 if (!w.isNarwhalWord) {
-                    w.shootCooldown -= dt;
-                    if (w.shootCooldown <= 0) {
-                        obstacles.push({
-                            type: 'redX',
-                            x: w.x,
-                            y: w.y + 15,
-                            vx: 0,
-                            vy: selectedDifficulty === 'upsidedown' ? -250 : 250,
-                            width: 25,
-                            height: 25,
-                            rotation: 0,
-                            rotateSpeed: 3
-                        });
-                        w.shootCooldown = Math.random() * 3 + 2;
+                    w.fireCooldown -= dt;
+                    const canFire = isHardMode || Math.random() < 0.4;
+                    if (w.fireCooldown <= 0 && canFire) {
+                        const vyProj = (selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown') ? -250 : 250;
+                        if (Math.random() > 0.5) {
+                            obstacles.push({ type: 'redX', x: w.x, y: w.y + 15, vx: -100, vy: vyProj, width: 20, height: 20, rotation: 0, rotateSpeed: 3 });
+                            obstacles.push({ type: 'redX', x: w.x, y: w.y + 15, vx: 100, vy: vyProj, width: 20, height: 20, rotation: 0, rotateSpeed: 3 });
+                        } else {
+                            obstacles.push({ type: 'redX', x: w.x, y: w.y + 15, vx: 0, vy: vyProj, width: 20, height: 20, rotation: 0, rotateSpeed: 3 });
+                        }
+                        w.fireCooldown = Math.random() * 3 + 2.5;
                     }
                 }
 
@@ -1516,73 +1952,45 @@
                 }
             }
 
-            // 5. Boss Actions
             if (boss) {
-                if (selectedDifficulty === 'upsidedown') {
-                    // Boss rises from bottom to top target
-                    if (boss.y > boss.targetY) {
-                        boss.y -= 100 * dt;
-                    }
+                const isUD = selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown';
+                if (isUD) {
+                    if (boss.y > boss.targetY) boss.y -= 100 * dt;
                 } else {
-                    // Boss moves downwards
-                    if (boss.y < boss.targetY) {
-                        boss.y += 100 * dt;
-                    }
+                    if (boss.y < boss.targetY) boss.y += 100 * dt;
                 }
 
                 if (Math.abs(boss.y - boss.targetY) < 10) {
-                    boss.x += boss.direction * 120 * dt;
-                    if (boss.x > 700) boss.direction = -1;
-                    if (boss.x < 100) boss.direction = 1;
-
-                    boss.shootCooldown -= dt;
-                    if (boss.shootCooldown <= 0) {
-                        spawnBossProjectiles();
-                        boss.shootCooldown = 1.3 - (currentLevelIdx * 0.08); 
-                    }
+                    boss.x += boss.direction * 140 * dt;
+                    if (boss.x > 680) boss.direction = -1;
+                    if (boss.x < 120) boss.direction = 1;
 
                     boss.wordSpawnCooldown -= dt;
                     if (boss.wordSpawnCooldown <= 0 && words.length < 4) {
                         spawnBossWordCluster();
-                        boss.wordSpawnCooldown = 3.5;
+                        boss.wordSpawnCooldown = 3.2;
+                        if (levelOrder[currentLevelIdx] === 'science') {
+                            earthquakeTimer = 0.5;
+                        }
+                    }
+
+                    boss.fireCooldown -= dt;
+                    if (boss.fireCooldown <= 0) {
+                        spawnBossProjectiles();
+                        boss.fireCooldown = 1.3 - (currentLevelIdx * 0.08);
                     }
                 }
             }
 
-            // 6. Chasing Enemy UFO Spawner
-            enemyUfoSpawnTimer -= dt;
-            if (enemyUfoSpawnTimer <= 0 && !enemyUfo) {
-                spawnAnnoyingUfo();
-            }
-
-            if (enemyUfo) {
-                // Steer towards player
-                const angle = Math.atan2(player.y - enemyUfo.y, player.x - enemyUfo.x);
-                const chaseSpeed = 160 + currentLevelIdx * 10;
-                enemyUfo.x += Math.cos(angle) * chaseSpeed * dt;
-                enemyUfo.y += Math.sin(angle) * chaseSpeed * dt;
-
-                // Collision with player
-                if (player.invulnTimer <= 0 && Math.abs(enemyUfo.x - player.x) < 45 && Math.abs(enemyUfo.y - player.y) < 35) {
-                    damagePlayer();
-                    triggerFireworksExplosion(enemyUfo.x, enemyUfo.y);
-                    enemyUfo = null;
-                    enemyUfoSpawnTimer = 15;
-                }
-            }
-
-            // 7. Bullet Actions
             for (let i = bullets.length - 1; i >= 0; i--) {
                 let b = bullets[i];
                 b.x += b.vx * dt;
                 b.y += b.vy * dt;
-
-                if (b.y < -20 || b.y > 1020 || b.x < -20 || b.x > 820) {
+                if (b.y < -20 || b.y > 1020) {
                     bullets.splice(i, 1);
                 }
             }
 
-            // 8. Powerup Tracker Actions
             for (let i = activePowerups.length - 1; i >= 0; i--) {
                 let p = activePowerups[i];
                 p.y += p.vy * dt;
@@ -1603,7 +2011,6 @@
                 }
             }
 
-            // 9. Obstacle Elements
             for (let i = obstacles.length - 1; i >= 0; i--) {
                 let o = obstacles[i];
                 o.x += o.vx * dt;
@@ -1621,7 +2028,6 @@
                 }
             }
 
-            // 10. Particles update
             for (let i = particles.length - 1; i >= 0; i--) {
                 particles[i].update();
                 if (particles[i].alpha <= 0) {
@@ -1632,28 +2038,26 @@
             processGameCollisions();
         }
 
-        function spawnAnnoyingUfo() {
-            const isUD = selectedDifficulty === 'upsidedown';
-            enemyUfo = {
-                x: Math.random() * 600 + 100,
-                y: isUD ? 850 : 150,
-                width: 60,
-                height: 40,
-                hp: 3,
-                maxHp: 3
-            };
-        }
-
         function spawnBossProjectiles() {
             const angle = Math.atan2(player.y - boss.y, player.x - boss.x);
             const speed = 250 + (currentLevelIdx * 25);
-            
             obstacles.push({
                 type: 'redX',
                 x: boss.x,
-                y: boss.y + (selectedDifficulty === 'upsidedown' ? -30 : 30),
-                vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed,
+                y: boss.y + 40,
+                vx: Math.cos(angle - 0.2) * speed,
+                vy: Math.sin(angle - 0.2) * speed,
+                width: 30,
+                height: 30,
+                rotation: 0,
+                rotateSpeed: 4
+            });
+            obstacles.push({
+                type: 'redX',
+                x: boss.x,
+                y: boss.y + 40,
+                vx: Math.cos(angle + 0.2) * speed,
+                vy: Math.sin(angle + 0.2) * speed,
                 width: 30,
                 height: 30,
                 rotation: 0,
@@ -1669,16 +2073,15 @@
             const positions = [200, 400, 600];
             const shuffledPos = positions.sort(() => Math.random() - 0.5);
 
-            const isUD = selectedDifficulty === 'upsidedown';
+            const isUD = selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown';
             const vy = isUD ? -70 : 70;
 
-            // Correct word choice
             words.push({
                 text: chosenPair.ok,
                 correctSpelling: chosenPair.ok,
                 isCorrect: true,
                 x: shuffledPos[0],
-                y: boss.y + (isUD ? -40 : 40),
+                y: boss.y + 40,
                 vx: 0,
                 vy: vy,
                 hits: 0,
@@ -1692,10 +2095,9 @@
                 creationTime: Date.now(),
                 isPinkBonus: false,
                 isNarwhalWord: false,
-                shootCooldown: 9999
+                fireCooldown: 9999
             });
 
-            // Incorrect ones
             for (let i = 1; i <= 2; i++) {
                 const wrongPair = list[Math.floor(Math.random() * list.length)];
                 words.push({
@@ -1703,11 +2105,11 @@
                     correctSpelling: wrongPair.ok,
                     isCorrect: false,
                     x: shuffledPos[i],
-                    y: boss.y + (isUD ? -40 : 40),
+                    y: boss.y + 40,
                     vx: 0,
                     vy: vy,
                     hits: 0,
-                    maxHits: 2, // 2 hits to detonate and damage player
+                    maxHits: 2, 
                     pattern: 'straight',
                     width: 0,
                     height: 35,
@@ -1717,39 +2119,33 @@
                     creationTime: Date.now(),
                     isPinkBonus: false,
                     isNarwhalWord: false,
-                    shootCooldown: 9999
+                    fireCooldown: 9999
                 });
             }
         }
 
         function processGameCollisions() {
-            // Heart bullets vs chasing UFO
-            if (enemyUfo) {
+            if (greenSpaceship && greenSpaceship.active) {
                 for (let bIdx = bullets.length - 1; bIdx >= 0; bIdx--) {
                     let bullet = bullets[bIdx];
-                    if (Math.abs(bullet.x - enemyUfo.x) < 40 && Math.abs(bullet.y - enemyUfo.y) < 30) {
+                    if (Math.abs(bullet.x - greenSpaceship.x) < 45 && Math.abs(bullet.y - greenSpaceship.y) < 35) {
                         bullets.splice(bIdx, 1);
-                        enemyUfo.hp--;
-                        audio.playHitCorrect();
-                        if (enemyUfo.hp <= 0) {
-                            triggerFireworksExplosion(enemyUfo.x, enemyUfo.y);
-                            enemyUfo = null;
-                            enemyUfoSpawnTimer = 18; // wait 18 seconds to spawn another
-                            totalScore += 500;
-                            document.getElementById('hudScore').textContent = totalScore.toString().padStart(5, '0');
-                        }
+                        greenSpaceship.active = false;
+                        triggerFireworksExplosion(greenSpaceship.x, greenSpaceship.y);
+                        
+                        player.hp = Math.min(player.maxHp, player.hp + 1);
+                        updateHPIndicator();
+                        greenSpaceship = null;
                         break;
                     }
                 }
             }
 
-            // Heart bullets vs vocabulary words
             for (let bIdx = bullets.length - 1; bIdx >= 0; bIdx--) {
                 let bullet = bullets[bIdx];
 
                 for (let wIdx = words.length - 1; wIdx >= 0; wIdx--) {
                     let word = words[wIdx];
-
                     const padX = word.width / 2 + 10;
                     const padY = word.height / 2 + 10;
 
@@ -1758,7 +2154,6 @@
                         wordHitsAttempted++;
 
                         if (word.isNarwhalWord) {
-                            // Instant screen wipe
                             triggerNarwhalScreenWipe(word.x, word.y);
                             words.splice(wIdx, 1);
                             wordHitsCorrect++;
@@ -1769,14 +2164,13 @@
                             word.hits++;
                             word.colorFillMeter = word.hits / word.maxHits;
                             word.scale = 1.15;
-                            audio.playHitCorrect();
+                            audio.playHitCorrect(); 
 
                             if (word.hits >= word.maxHits) {
                                 triggerFireworksExplosion(word.x, word.y);
                                 words.splice(wIdx, 1);
                                 wordHitsCorrect++;
 
-                                // Double points for correct word
                                 let pointsAwarded = word.isPinkBonus ? 1000 : 300;
                                 totalScore += pointsAwarded;
                                 document.getElementById('hudScore').textContent = totalScore.toString().padStart(5, '0');
@@ -1798,43 +2192,28 @@
                                 }
                             }
                         } else {
-                            // Incorrect Word Action: Gains red meter on 1st hit, explodes and costs life on 2nd hit
                             word.hits++;
                             word.colorFillMeter = word.hits / word.maxHits;
                             word.scale = 1.15;
-                            audio.playHitWrong();
+                            audio.playHitWrong(); 
 
                             if (word.hits >= word.maxHits) {
                                 triggerFireworksExplosion(word.x, word.y);
                                 words.splice(wIdx, 1);
-                                damagePlayer(); // Lose 1 Heart!
+                                damagePlayer(); 
                             }
                         }
                         break;
                     }
                 }
             }
-
-            // UFO direct physical collision with falling words
-            for (let wIdx = words.length - 1; wIdx >= 0; wIdx--) {
-                let word = words[wIdx];
-                const padX = word.width / 2 + 15;
-                const padY = word.height / 2 + 15;
-
-                if (player.invulnTimer <= 0 && Math.abs(player.x - word.x) < padX && Math.abs(player.y - word.y) < padY) {
-                    damagePlayer();
-                    words.splice(wIdx, 1);
-                }
-            }
         }
 
-        // SPECIAL EVENT: Blue Narwhal Word destroys all targets on screen
         function triggerNarwhalScreenWipe(nx, ny) {
             audio.playNarwhalExplode();
             triggerFireworksExplosion(nx, ny);
-            earthquakeTimer = 1.5; // Strong shake screen
+            earthquakeTimer = 1.5; 
 
-            // Explode all correct words
             for (let i = words.length - 1; i >= 0; i--) {
                 let w = words[i];
                 if (w.isCorrect && !w.isNarwhalWord) {
@@ -1843,13 +2222,11 @@
                     correctWordsDestroyedCount++;
                     words.splice(i, 1);
                 } else if (!w.isCorrect) {
-                    // Vaporize incorrect words without self-destruction
                     triggerFireworksExplosion(w.x, w.y);
                     words.splice(i, 1);
                 }
             }
 
-            // Clear obstacles
             obstacles = [];
             updateHUDProgress();
             document.getElementById('hudScore').textContent = totalScore.toString().padStart(5, '0');
@@ -1868,7 +2245,9 @@
             const dt = Math.min((time - lastTime) / 1000, 0.1);
             lastTime = time;
 
-            update(dt);
+            if (state !== 'PAUSED') {
+                update(dt);
+            }
             render();
 
             requestAnimationFrame(gameLoop);
@@ -1886,6 +2265,10 @@
 
             drawBackground();
 
+            if (selectedDifficulty === 'hard' || selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown') {
+                drawZigZagBarriers();
+            }
+
             for (let strike of lightningStrikes) {
                 drawLightningBolt(strike.x, strike.alpha);
             }
@@ -1902,8 +2285,15 @@
                 drawObstacleElement(o);
             }
 
-            if (enemyUfo) {
-                drawAnnoyingEnemyUfo();
+            if (emerald) {
+                drawGlowingEmerald(emerald);
+            }
+            if (greenSpaceship) {
+                drawGreenShip(greenSpaceship);
+            }
+
+            for (let shape of electrifiedShapes) {
+                drawElectrifiedGeometricBarrier(shape);
             }
 
             if (player.invulnTimer <= 0 || Math.floor(Date.now() / 100) % 2 === 0) {
@@ -1911,7 +2301,7 @@
             }
 
             for (let b of bullets) {
-                drawHeartBullet(b);
+                drawCustomBulletProj(b);
             }
 
             if (boss) {
@@ -1922,48 +2312,37 @@
                 p.draw(ctx);
             }
 
+            // Laser scanner graphics on transition or victory overlays
+            if (state === 'VICTORY' || state === 'TRANSITION') {
+                drawVictoryLasers();
+            }
+
+            if (state === 'PAUSED') {
+                ctx.fillStyle = 'rgba(0,0,0,0.65)';
+                ctx.fillRect(0, 0, 800, 1000);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 36px "Orbitron", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText("MISSION PAUSED", 400, 500);
+            }
+
             ctx.restore();
         }
 
         function drawBackground() {
             const factor = currentLevelIdx / 6; 
+            const baseCol = '#000000'; 
             
-            // Background is bright daylight in 1st stage, transitions to pitch dark in final stage
-            const skyColor1 = interpolateColor('#0ea5e9', '#020617', factor); // Cyan Sky to deep black space
-            const skyColor2 = interpolateColor('#0284c7', '#030712', factor); 
-
-            const grad = ctx.createLinearGradient(0, 0, 0, 1000);
-            grad.addColorStop(0, skyColor1);
-            grad.addColorStop(1, skyColor2);
-            ctx.fillStyle = grad;
+            ctx.fillStyle = baseCol;
             ctx.fillRect(0, 0, 800, 1000);
 
-            // Blinking background stars get brighter as level gets darker
-            if (currentLevelIdx >= 1) {
-                ctx.fillStyle = `rgba(255, 255, 255, ${factor * 0.85})`;
-                for (let i = 0; i < 40; i++) {
-                    const x = (Math.sin(i * 12345.67) + 1) / 2 * 800;
-                    const y = ((Math.cos(i * 98765.43) + 1) / 2 * 1000 + Date.now() * 0.05) % 1000;
-                    const size = ((Math.sin(i + Date.now() * 0.002) + 1) / 2) * 2 + 1;
-                    ctx.fillRect(x, y, size, size);
-                }
+            ctx.fillStyle = `rgba(255, 255, 255, ${1 - factor * 0.45})`;
+            for (let i = 0; i < 40; i++) {
+                const x = (Math.sin(i * 12345.67) + 1) / 2 * 800;
+                const y = ((Math.cos(i * 98765.43) + 1) / 2 * 1000 + Date.now() * 0.05) % 1000;
+                const size = ((Math.sin(i + Date.now() * 0.002) + 1) / 2) * 2 + 1;
+                ctx.fillRect(x, y, size, size);
             }
-        }
-
-        function interpolateColor(color1, color2, factor) {
-            const r1 = parseInt(color1.substring(1, 3), 16);
-            const g1 = parseInt(color1.substring(3, 5), 16);
-            const b1 = parseInt(color1.substring(5, 7), 16);
-
-            const r2 = parseInt(color2.substring(1, 3), 16);
-            const g2 = parseInt(color2.substring(3, 5), 16);
-            const b2 = parseInt(color2.substring(5, 7), 16);
-
-            const r = Math.round(r1 + factor * (r2 - r1));
-            const g = Math.round(g1 + factor * (g2 - g1));
-            const b = Math.round(b1 + factor * (b2 - b1));
-
-            return `rgb(${r}, ${g}, ${b})`;
         }
 
         function drawLightningBolt(startX, alpha) {
@@ -1987,113 +2366,291 @@
             ctx.restore();
         }
 
+        function drawZigZagBarriers() {
+            ctx.save();
+            ctx.strokeStyle = '#22d3ee';
+            ctx.shadowColor = '#22d3ee';
+            ctx.shadowBlur = 8;
+            ctx.lineWidth = 3;
+
+            ctx.beginPath();
+            ctx.moveTo(60, 0);
+            for (let y = 0; y <= 1000; y += 40) {
+                let x = 60 + (Math.sin(y / 10 + Date.now() * 0.01) * 15);
+                ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(740, 0);
+            for (let y = 0; y <= 1000; y += 40) {
+                let x = 740 + (Math.cos(y / 10 + Date.now() * 0.01) * 15);
+                ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function drawElectrifiedGeometricBarrier(s) {
+            ctx.save();
+            ctx.translate(s.x, s.y);
+            ctx.rotate(s.angle);
+            
+            ctx.strokeStyle = '#a855f7';
+            ctx.shadowColor = '#d946ef';
+            ctx.shadowBlur = 12;
+            ctx.lineWidth = 4;
+
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                let angle = (i * Math.PI) / 3;
+                let px = Math.cos(angle) * (s.size / 2);
+                let py = Math.sin(angle) * (s.size / 2);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.stroke();
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(-15, 0);
+            ctx.lineTo(0, -25);
+            ctx.lineTo(15, 0);
+            ctx.lineTo(-10, 5);
+            ctx.lineTo(5, 30);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
         function drawUFOPlayer() {
             ctx.save();
             ctx.translate(player.x, player.y);
 
-            // Engine thruster spark glowing underneath
-            const thrusterGrad = ctx.createRadialGradient(0, 15, 2, 0, 22, 10);
-            thrusterGrad.addColorStop(0, '#38bdf8');
-            thrusterGrad.addColorStop(0.5, '#f43f5e');
-            thrusterGrad.addColorStop(1, 'transparent');
-            ctx.fillStyle = thrusterGrad;
-            ctx.beginPath();
-            ctx.arc(0, 15, 12, 0, Math.PI * 2);
-            ctx.fill();
+            if (activeSkinType === 'skin_sheep') {
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(0, 0, 22, 0, Math.PI*2);
+                ctx.arc(-14, -5, 14, 0, Math.PI*2);
+                ctx.arc(14, -5, 14, 0, Math.PI*2);
+                ctx.arc(0, -18, 16, 0, Math.PI*2);
+                ctx.fill();
 
-            // Main Metal UFO Saucer body disc
-            const saucerGrad = ctx.createLinearGradient(0, -20, 0, 15);
-            saucerGrad.addColorStop(0, '#64748b');
-            saucerGrad.addColorStop(0.5, '#475569');
-            saucerGrad.addColorStop(1, '#1e293b');
-            
-            ctx.fillStyle = saucerGrad;
-            ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.ellipse(0, 4, 34, 13, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
+                ctx.fillStyle = '#fecdd3';
+                ctx.beginPath();
+                ctx.ellipse(0, 4, 14, 10, 0, 0, Math.PI*2);
+                ctx.fill();
 
-            // Neon cyan cabin dome glass window
-            const domeGrad = ctx.createRadialGradient(0, -5, 2, 0, -5, 12);
-            domeGrad.addColorStop(0, '#e0f2fe');
-            domeGrad.addColorStop(0.6, '#38bdf8');
-            domeGrad.addColorStop(1, '#0284c7');
-            
-            ctx.fillStyle = domeGrad;
-            ctx.strokeStyle = '#bae6fd';
-            ctx.beginPath();
-            ctx.arc(0, -6, 14, Math.PI, 0); 
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
+                ctx.fillStyle = '#000000';
+                ctx.beginPath();
+                ctx.arc(-5, 2, 2, 0, Math.PI*2);
+                ctx.arc(5, 2, 2, 0, Math.PI*2);
+                ctx.fill();
+            } 
+            else if (activeSkinType === 'skin_robot') {
+                ctx.fillStyle = '#94a3b8';
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 2;
+                ctx.fillRect(-22, -22, 44, 44);
+                ctx.strokeRect(-22, -22, 44, 44);
 
-            // UFO Peripheral blinking lights
-            ctx.fillStyle = (Math.floor(Date.now() / 250) % 2 === 0) ? '#10b981' : '#f43f5e';
-            ctx.beginPath();
-            ctx.arc(-22, 4, 2, 0, Math.PI * 2);
-            ctx.arc(22, 4, 2, 0, Math.PI * 2);
-            ctx.arc(0, 9, 2, 0, Math.PI * 2);
-            ctx.fill();
+                ctx.fillStyle = '#06b6d4';
+                ctx.shadowColor = '#06b6d4';
+                ctx.shadowBlur = 8;
+                ctx.fillRect(-14, -10, 10, 6);
+                ctx.fillRect(4, -10, 10, 6);
+                ctx.shadowBlur = 0;
+
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(-12, 10, 24, 4);
+            }
+            else if (activeSkinType === 'skin_fly') {
+                ctx.fillStyle = '#0284c7';
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 15, 25, 0, 0, Math.PI*2);
+                ctx.fill();
+                
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.beginPath();
+                ctx.ellipse(-24, -5, 24, 12, -Math.PI/6, 0, Math.PI*2);
+                ctx.ellipse(24, -5, 24, 12, Math.PI/6, 0, Math.PI*2);
+                ctx.fill();
+            }
+            else if (activeSkinType === 'skin_beetle') {
+                ctx.fillStyle = '#22c55e';
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 18, 26, 0, 0, Math.PI*2);
+                ctx.fill();
+                ctx.strokeStyle = '#15803d';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(-8, -12, 5, 0, Math.PI*2);
+                ctx.arc(8, -12, 5, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = '#000000';
+                ctx.beginPath();
+                ctx.arc(-8, -12, 2, 0, Math.PI*2);
+                ctx.arc(8, -12, 2, 0, Math.PI*2);
+                ctx.fill();
+            }
+            else if (activeSkinType === 'skin_bear') {
+                ctx.fillStyle = '#b45309';
+                ctx.beginPath();
+                ctx.arc(0, 0, 22, 0, Math.PI*2);
+                ctx.arc(-18, -18, 10, 0, Math.PI*2);
+                ctx.arc(18, -18, 10, 0, Math.PI*2);
+                ctx.fill();
+
+                ctx.fillStyle = '#fbcfe8';
+                ctx.beginPath();
+                ctx.arc(-18, -18, 5, 0, Math.PI*2);
+                ctx.arc(18, -18, 5, 0, Math.PI*2);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.ellipse(0, 4, 10, 7, 0, 0, Math.PI*2);
+                ctx.fill();
+            }
+            else {
+                const thrusterGrad = ctx.createRadialGradient(0, 15, 2, 0, 22, 10);
+                thrusterGrad.addColorStop(0, '#38bdf8');
+                thrusterGrad.addColorStop(0.5, '#f43f5e');
+                thrusterGrad.addColorStop(1, 'transparent');
+                ctx.fillStyle = thrusterGrad;
+                ctx.beginPath();
+                ctx.arc(0, 15, 12, 0, Math.PI * 2);
+                ctx.fill();
+
+                const saucerGrad = ctx.createLinearGradient(0, -20, 0, 15);
+                saucerGrad.addColorStop(0, '#64748b');
+                saucerGrad.addColorStop(0.5, '#475569');
+                saucerGrad.addColorStop(1, '#1e293b');
+                ctx.fillStyle = saucerGrad;
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.ellipse(0, 4, 34, 13, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                const domeGrad = ctx.createRadialGradient(0, -5, 2, 0, -5, 12);
+                domeGrad.addColorStop(0, '#e0f2fe');
+                domeGrad.addColorStop(0.6, '#38bdf8');
+                domeGrad.addColorStop(1, '#0284c7');
+                ctx.fillStyle = domeGrad;
+                ctx.strokeStyle = '#bae6fd';
+                ctx.beginPath();
+                ctx.arc(0, -6, 14, Math.PI, 0); 
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = (Math.floor(Date.now() / 250) % 2 === 0) ? '#10b981' : '#f43f5e';
+                ctx.beginPath();
+                ctx.arc(-22, 4, 2, 0, Math.PI * 2);
+                ctx.arc(22, 4, 2, 0, Math.PI * 2);
+                ctx.arc(0, 9, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
 
             ctx.restore();
         }
 
-        function drawAnnoyingEnemyUfo() {
-            ctx.save();
-            ctx.translate(enemyUfo.x, enemyUfo.y);
-
-            // Red menacing cabin glow
-            const cabinGrad = ctx.createRadialGradient(0, -3, 2, 0, -3, 10);
-            cabinGrad.addColorStop(0, '#fee2e2');
-            cabinGrad.addColorStop(0.6, '#ef4444');
-            cabinGrad.addColorStop(1, '#991b1b');
-            ctx.fillStyle = cabinGrad;
-            ctx.beginPath();
-            ctx.arc(0, -4, 12, Math.PI, 0);
-            ctx.closePath();
-            ctx.fill();
-
-            // Dark space steel saucer hull
-            ctx.fillStyle = '#334155';
-            ctx.strokeStyle = '#f43f5e';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.ellipse(0, 4, 26, 9, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-
-            // Text tag above it
-            ctx.fillStyle = '#ef4444';
-            ctx.font = '9px "Orbitron", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText("CHASER", 0, -16);
-
-            ctx.restore();
-        }
-
-        function drawHeartBullet(b) {
+        function drawCustomBulletProj(b) {
             ctx.save();
             ctx.translate(b.x, b.y);
-            
-            ctx.fillStyle = '#f43f5e';
-            ctx.shadowColor = '#f43f5e';
-            ctx.shadowBlur = 10;
 
-            ctx.beginPath();
-            ctx.moveTo(0, -b.size / 2);
-            ctx.bezierCurveTo(-b.size, -b.size * 1.5, -b.size * 1.5, -b.size / 3, 0, b.size * 1.2);
-            ctx.bezierCurveTo(b.size * 1.5, -b.size / 3, b.size, -b.size * 1.5, 0, -b.size / 2);
-            ctx.fill();
+            if (b.type === 'bullet_pizza') {
+                ctx.fillStyle = '#f59e0b';
+                ctx.beginPath();
+                ctx.moveTo(-10, 10);
+                ctx.lineTo(10, 10);
+                ctx.lineTo(0, -12);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(-4, 6, 2, 0, Math.PI*2);
+                ctx.arc(4, 4, 2.5, 0, Math.PI*2);
+                ctx.fill();
+            }
+            else if (b.type === 'bullet_emoji') {
+                ctx.fillStyle = '#eab308';
+                ctx.beginPath();
+                ctx.arc(0, 0, 10, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = '#000000';
+                ctx.beginPath();
+                ctx.arc(-4, -3, 1.5, 0, Math.PI*2);
+                ctx.arc(4, -3, 1.5, 0, Math.PI*2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(0, 2, 5, 0, Math.PI);
+                ctx.stroke();
+            }
+            else if (b.type === 'bullet_cookie') {
+                ctx.fillStyle = '#d97706';
+                ctx.beginPath();
+                ctx.arc(0, 0, 9, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = '#451a03';
+                ctx.beginPath();
+                ctx.arc(-3, -3, 2, 0, Math.PI*2);
+                ctx.arc(3, 2, 1.5, 0, Math.PI*2);
+                ctx.arc(-1, 4, 2, 0, Math.PI*2);
+                ctx.fill();
+            }
+            else if (b.type === 'bullet_baseball') {
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(0, 0, 10, 0, Math.PI*2);
+                ctx.fill();
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(-10, 0, 8, -Math.PI/3, Math.PI/3);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(10, 0, 8, Math.PI - Math.PI/3, Math.PI + Math.PI/3);
+                ctx.stroke();
+            }
+            else if (b.type === 'bullet_note') {
+                ctx.fillStyle = '#c084fc';
+                ctx.font = 'bold 20px "Inter", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("♫", 0, 0);
+            }
+            else {
+                ctx.fillStyle = '#ef4444';
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(0, -5);
+                ctx.bezierCurveTo(-5, -10, -11, -10, -11, -4);
+                ctx.bezierCurveTo(-11, 3, -3, 9, 0, 12);
+                ctx.bezierCurveTo(3, 9, 11, 3, 11, -4);
+                ctx.bezierCurveTo(11, -10, 5, -10, 0, -5);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(-3, -5, 2, 2);
+            }
 
             ctx.restore();
         }
 
         function drawVocabularyWord(w) {
             ctx.save();
-            
-            ctx.font = 'bold 15px "Orbitron", sans-serif';
+            ctx.font = 'bold 18px "Orbitron", sans-serif'; 
             const textWidth = ctx.measureText(w.text).width;
             w.width = textWidth + 24; 
 
@@ -2106,23 +2663,21 @@
             ctx.translate(w.x, w.y);
             ctx.scale(w.scale, w.scale);
 
-            // Upside Down Mode rotation
-            if (selectedDifficulty === 'upsidedown' || w.pattern === 'upside_down') {
+            if (selectedDifficulty === 'eagle' || w.pattern === 'upside_down') {
                 ctx.rotate(Math.PI);
             }
 
-            const boxHeight = 28;
+            const boxHeight = 36; 
             const rx = -w.width / 2;
             const ry = -boxHeight / 2;
 
-            // COLOR BORDERS: Special fast pink bonus, special Narwhal, incorrect red fill metrics, or standard slate
-            let borderCol = '#475569'; // Slate base
+            let borderCol = '#475569'; 
             if (w.isNarwhalWord) {
-                borderCol = '#38bdf8'; // Electric blue
-                ctx.shadowColor = '#06b6d4';
+                borderCol = '#0284c7'; 
+                ctx.shadowColor = '#0284c7';
                 ctx.shadowBlur = 12;
             } else if (w.isPinkBonus) {
-                borderCol = '#ec4899'; // Bright pink bonus outline
+                borderCol = '#ec4899'; 
                 ctx.shadowColor = '#f472b6';
                 ctx.shadowBlur = 10;
             }
@@ -2136,7 +2691,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // Progress meters (Left-to-right filling of words)
             if (w.colorFillMeter > 0) {
                 ctx.save();
                 ctx.beginPath();
@@ -2145,11 +2699,9 @@
 
                 const fillGrad = ctx.createLinearGradient(rx, 0, rx + w.width, 0);
                 if (w.isCorrect) {
-                    // Standard correct words fill blue or purple instead of green borders
                     fillGrad.addColorStop(0, '#6366f1');
                     fillGrad.addColorStop(1, '#a855f7');
                 } else {
-                    // INCORRECT words fill with a distinct red danger progress bar
                     fillGrad.addColorStop(0, '#ef4444');
                     fillGrad.addColorStop(1, '#991b1b');
                 }
@@ -2158,7 +2710,6 @@
                 ctx.restore();
             }
 
-            // Word text string drawing
             ctx.fillStyle = '#ffffff';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -2171,13 +2722,71 @@
             ctx.restore();
         }
 
+        function drawGlowingEmerald(e) {
+            ctx.save();
+            ctx.translate(e.x, e.y);
+            
+            const glow = 22 + Math.sin(Date.now() * 0.01) * 6;
+            ctx.fillStyle = 'rgba(16, 185, 129, 0.25)';
+            ctx.beginPath();
+            ctx.arc(0, 0, glow, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#10b981';
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(0, -18);
+            ctx.lineTo(15, 0);
+            ctx.lineTo(0, 18);
+            ctx.lineTo(-15, 0);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 13px "Orbitron", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("+1", 0, 0);
+
+            ctx.restore();
+        }
+
+        function drawGreenShip(s) {
+            ctx.save();
+            ctx.translate(s.x, s.y);
+
+            ctx.fillStyle = '#22c55e';
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            
+            ctx.beginPath();
+            ctx.moveTo(-28, -14);
+            ctx.lineTo(28, -14);
+            ctx.lineTo(0, 26);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.moveTo(0, -5);
+            ctx.bezierCurveTo(-4, -9, -8, -9, -8, -4);
+            ctx.bezierCurveTo(-8, 1, -2, 5, 0, 8);
+            ctx.bezierCurveTo(2, 5, 8, 1, 8, -4);
+            ctx.bezierCurveTo(8, -9, 4, -9, 0, -5);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.restore();
+        }
+
         function drawPowerup(p) {
             ctx.save();
             ctx.translate(p.x, p.y);
 
             const bounce = Math.sin(p.pulse) * 4;
-
-            // Outer emerald aura ring
             const rGrad = ctx.createRadialGradient(0, bounce, 2, 0, bounce, p.width / 2 + 5);
             rGrad.addColorStop(0, '#10b981');
             rGrad.addColorStop(0.5, 'rgba(16, 185, 129, 0.35)');
@@ -2187,7 +2796,6 @@
             ctx.arc(0, bounce, p.width / 2 + 5, 0, Math.PI * 2);
             ctx.fill();
 
-            // Power diamond core
             ctx.fillStyle = '#059669';
             ctx.strokeStyle = '#a7f3d0';
             ctx.lineWidth = 3;
@@ -2200,9 +2808,8 @@
             ctx.fill();
             ctx.stroke();
 
-            // Bold "P" indicator
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 16px "Orbitron", sans-serif';
+            ctx.font = 'bold 22px "Orbitron", sans-serif'; 
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText("P", 0, bounce);
@@ -2288,47 +2895,12 @@
                 ctx.beginPath();
                 ctx.arc(0, 0, 14, 0, Math.PI * 2);
                 ctx.fill();
-                
-                ctx.fillStyle = '#f43f5e';
-                ctx.beginPath();
-                ctx.moveTo(-14, 0);
-                ctx.lineTo(-22, -8);
-                ctx.lineTo(-22, 8);
-                ctx.closePath();
-                ctx.moveTo(14, 0);
-                ctx.lineTo(22, -8);
-                ctx.lineTo(22, 8);
-                ctx.closePath();
-                ctx.fill();
-            } else if (o.type === 'eiffel') {
-                ctx.strokeStyle = '#cbd5e1';
-                ctx.lineWidth = 2.5;
-                ctx.beginPath();
-                ctx.moveTo(0, -22);
-                ctx.lineTo(0, -18);
-                ctx.lineTo(-12, 20);
-                ctx.moveTo(0, -18);
-                ctx.lineTo(12, 20);
-                ctx.moveTo(-6, 4);
-                ctx.lineTo(6, 4);
-                ctx.moveTo(-10, 12);
-                ctx.lineTo(10, 12);
-                ctx.stroke();
             } else if (o.type === 'shoes') {
                 ctx.fillStyle = '#fda4af';
                 ctx.beginPath();
                 ctx.ellipse(-6, 2, 7, 14, Math.PI / 8, 0, Math.PI * 2);
                 ctx.ellipse(6, 2, 7, 14, -Math.PI / 8, 0, Math.PI * 2);
                 ctx.fill();
-                
-                ctx.strokeStyle = '#f43f5e';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(-6, -10);
-                ctx.lineTo(6, -4);
-                ctx.moveTo(6, -10);
-                ctx.lineTo(-6, -4);
-                ctx.stroke();
             } else if (o.type === 'mask') {
                 ctx.fillStyle = '#fef08a';
                 ctx.beginPath();
@@ -2340,12 +2912,6 @@
                 ctx.arc(-5, -3, 3, 0, Math.PI * 2);
                 ctx.arc(5, -3, 3, 0, Math.PI * 2);
                 ctx.fill();
-                
-                ctx.strokeStyle = '#0f172a';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.arc(0, 10, 5, Math.PI, 0);
-                ctx.stroke();
             } else {
                 ctx.fillStyle = '#64748b';
                 ctx.strokeStyle = '#475569';
@@ -2365,11 +2931,40 @@
             ctx.restore();
         }
 
+        // Custom laser background scanner animations during victory transitions
+        function drawVictoryLasers() {
+            ctx.save();
+            ctx.globalAlpha = 0.35;
+            const laserCount = 8;
+            const speedFactor = Date.now() * 0.003;
+            ctx.lineWidth = 5;
+
+            for (let i = 0; i < laserCount; i++) {
+                const angle = (i * Math.PI / 4) + Math.sin(speedFactor + i) * 0.4;
+                const r = 900;
+                const px = 400 + Math.cos(angle) * r;
+                const py = 500 + Math.sin(angle) * r;
+
+                const grad = ctx.createLinearGradient(400, 500, px, py);
+                grad.addColorStop(0, '#f43f5e');
+                grad.addColorStop(0.5, '#6366f1');
+                grad.addColorStop(1, 'transparent');
+
+                ctx.strokeStyle = grad;
+                ctx.beginPath();
+                ctx.moveTo(400, 500);
+                ctx.lineTo(px, py);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        // Distinct, thematic drawings of each Boss as indicated by their names
         function drawBossCharacter() {
             ctx.save();
             ctx.translate(boss.x, boss.y);
 
-            // Red aura warning pulsing around cyber boss
+            // Red glowing energy fields
             const pulseSize = 100 + Math.sin(Date.now() * 0.008) * 15;
             const auraGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, pulseSize);
             auraGrad.addColorStop(0, 'rgba(239, 68, 68, 0.45)');
@@ -2380,36 +2975,251 @@
             ctx.arc(0, 0, pulseSize, 0, Math.PI * 2);
             ctx.fill();
 
-            const hullGrad = ctx.createLinearGradient(0, -50, 0, 40);
-            hullGrad.addColorStop(0, '#475569');
-            hullGrad.addColorStop(0.5, '#1e293b');
-            hullGrad.addColorStop(1, '#0f172a');
-            ctx.fillStyle = hullGrad;
-            ctx.strokeStyle = '#ef4444';
-            ctx.lineWidth = 3;
+            // Render customized thematic face details
+            if (boss.subjectType === 'math') {
+                // "Math Max": Digital grid layout & floating math operators
+                ctx.fillStyle = '#0f172a';
+                ctx.strokeStyle = '#22d3ee';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.roundRect(-60, -40, 120, 80, 12);
+                ctx.fill();
+                ctx.stroke();
 
+                // Math digital eyes
+                ctx.fillStyle = '#22d3ee';
+                ctx.font = 'bold 24px monospace';
+                ctx.fillText("+", -30, -5);
+                ctx.fillText("-", 15, -5);
+
+                // Math max symbol pattern inside mouth
+                ctx.strokeStyle = '#eab308';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-20, 20); ctx.lineTo(20, 20);
+                ctx.stroke();
+            } 
+            else if (boss.subjectType === 'social') {
+                // "Great Lakes Leela": Organic liquid drop head & wavy aquatic eyes
+                ctx.fillStyle = '#0284c7';
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 65, 50, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Water ripples and droplet eyes
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(-20, -10, 10, 0, Math.PI * 2);
+                ctx.arc(20, -10, 10, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#0369a1';
+                ctx.beginPath();
+                ctx.arc(-20, -10, 4, 0, Math.PI * 2);
+                ctx.arc(20, -10, 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            else if (boss.subjectType === 'language') {
+                // "Fast Forward": Glowing futuristic aerodynamic shield & FF play visor
+                ctx.fillStyle = '#312e81';
+                ctx.strokeStyle = '#ec4899';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(-70, -35);
+                ctx.lineTo(70, -35);
+                ctx.lineTo(40, 40);
+                ctx.lineTo(-40, 40);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Visual FF Arrow shapes
+                ctx.fillStyle = '#ec4899';
+                ctx.beginPath();
+                ctx.moveTo(-25, -10); ctx.lineTo(-10, -20); ctx.lineTo(-10, 0); ctx.closePath(); ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(-10, -10); ctx.lineTo(5, -20); ctx.lineTo(5, 0); ctx.closePath(); ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(10, -10); ctx.lineTo(25, -20); ctx.lineTo(25, 0); ctx.closePath(); ctx.fill();
+            }
+            else if (boss.subjectType === 'art') {
+                // "Australian Izzy": Rainbow paint splat perimeter & artistic colors
+                ctx.fillStyle = '#eab308';
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                for (let i = 0; i < 10; i++) {
+                    let angle = i * Math.PI / 5;
+                    let r = i % 2 === 0 ? 55 : 35;
+                    let px = Math.cos(angle) * r;
+                    let py = Math.sin(angle) * r;
+                    if (i === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Eyes with rainbow iris splashes
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(-15, -5, 8, 0, Math.PI*2);
+                ctx.arc(15, -5, 8, 0, Math.PI*2);
+                ctx.fill();
+
+                ctx.fillStyle = '#a855f7';
+                ctx.beginPath();
+                ctx.arc(-15, -5, 3, 0, Math.PI*2);
+                ctx.arc(15, -5, 3, 0, Math.PI*2);
+                ctx.fill();
+            }
+            else if (boss.subjectType === 'health') {
+                // "Mad Caramel": Sticky angry brown caramel blob
+                ctx.fillStyle = '#b45309';
+                ctx.strokeStyle = '#78350f';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 60, 45, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Angry brow shapes
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(-25, -20); ctx.lineTo(-5, -10);
+                ctx.moveTo(25, -20); ctx.lineTo(5, -10);
+                ctx.stroke();
+
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(-15, -5, 6, 0, Math.PI * 2);
+                ctx.arc(15, -5, 6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            else if (boss.subjectType === 'physed') {
+                // "La Velcro": Fuzzy cross-stitched geometric mesh face
+                ctx.fillStyle = '#334155';
+                ctx.strokeStyle = '#64748b';
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.roundRect(-55, -45, 110, 90, 24);
+                ctx.fill();
+                ctx.stroke();
+
+                // Fuzzy Velcro stitching pattern lines
+                ctx.strokeStyle = '#1e293b';
+                ctx.lineWidth = 2;
+                for (let i = -40; i <= 40; i += 15) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, -30);
+                    ctx.lineTo(i, 30);
+                    ctx.stroke();
+                }
+
+                ctx.fillStyle = '#e2e8f0';
+                ctx.beginPath();
+                ctx.arc(-15, -10, 9, 0, Math.PI*2);
+                ctx.arc(15, -10, 9, 0, Math.PI*2);
+                ctx.fill();
+            }
+            else if (boss.subjectType === 'science') {
+                // "Earthquake": Cracked tectonic stone plates
+                ctx.fillStyle = '#451a03';
+                ctx.strokeStyle = '#78350f';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(-60, -30);
+                ctx.lineTo(60, -35);
+                ctx.lineTo(50, 45);
+                ctx.lineTo(-50, 40);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Cracked lines
+                ctx.strokeStyle = '#f59e0b';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-40, -10); ctx.lineTo(-10, 10); ctx.lineTo(30, -5);
+                ctx.stroke();
+
+                ctx.fillStyle = '#eab308';
+                ctx.fillRect(-22, -15, 12, 6);
+                ctx.fillRect(10, -15, 12, 6);
+            }
+            else if (boss.subjectType === 'drama') {
+                // "Thunder Kirby": Star crown with dramatic mask contours
+                ctx.fillStyle = '#ec4899';
+                ctx.strokeStyle = '#db2777';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(0, 0, 50, 0, Math.PI*2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Kirby dramatic blush
+                ctx.fillStyle = '#f43f5e';
+                ctx.beginPath();
+                ctx.ellipse(-30, 10, 8, 4, 0, 0, Math.PI*2);
+                ctx.ellipse(30, 10, 8, 4, 0, 0, Math.PI*2);
+                ctx.fill();
+
+                ctx.fillStyle = '#000000';
+                ctx.beginPath();
+                ctx.ellipse(-15, -10, 5, 12, 0, 0, Math.PI*2);
+                ctx.ellipse(15, -10, 5, 12, 0, 0, Math.PI*2);
+                ctx.fill();
+            }
+            else if (boss.subjectType === 'dance') {
+                // "Whisper": Ethereal swirling purple ribbons & ribbon laces
+                ctx.fillStyle = '#a855f7';
+                ctx.strokeStyle = '#d946ef';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 55, 30, Math.PI / 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(-10, -2, 6, 0, Math.PI*2);
+                ctx.arc(10, -2, 6, 0, Math.PI*2);
+                ctx.fill();
+            }
+            else {
+                // Fallback default Boss drawing logic
+                const hullGrad = ctx.createLinearGradient(0, -50, 0, 40);
+                hullGrad.addColorStop(0, '#e11d48');
+                hullGrad.addColorStop(0.5, '#4c0519');
+                hullGrad.addColorStop(1, '#0f172a');
+                ctx.fillStyle = hullGrad;
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 3;
+
+                ctx.beginPath();
+                ctx.moveTo(0, -45); 
+                ctx.lineTo(55, -20);
+                ctx.lineTo(75, 20); 
+                ctx.lineTo(35, 45);
+                ctx.lineTo(-35, 45);
+                ctx.lineTo(-75, 20); 
+                ctx.lineTo(-55, -20);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            // Word spit launcher mouth overlay (Unified across all custom boss styles)
+            ctx.fillStyle = '#000000';
             ctx.beginPath();
-            ctx.moveTo(0, -45); 
-            ctx.lineTo(55, -20);
-            ctx.lineTo(75, 20); 
-            ctx.lineTo(35, 45);
-            ctx.lineTo(-35, 45);
-            ctx.lineTo(-75, 20); 
-            ctx.lineTo(-55, -20);
-            ctx.closePath();
+            ctx.ellipse(0, 20, 15, 10, 0, 0, Math.PI * 2);
             ctx.fill();
-            ctx.stroke();
 
-            // Glowing cockpit visor
-            ctx.fillStyle = '#ef4444';
-            ctx.shadowColor = '#ef4444';
-            ctx.shadowBlur = 12;
-            ctx.beginPath();
-            ctx.roundRect(-30, -10, 60, 12, 4);
-            ctx.fill();
-            ctx.shadowBlur = 0; 
-
-            // Boss HP meter bar
+            // HP Meter
             const barW = 120;
             const barH = 8;
             const bx = -barW / 2;
