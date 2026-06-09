@@ -16,7 +16,7 @@
             background-color: #03030c;
             user-select: none;
             -webkit-user-select: none;
-            touch-action: manipulation;
+            touch-action: none; /* Prevents mobile scrolling issues */
         }
         .arcade-font {
             font-family: 'Orbitron', sans-serif;
@@ -35,7 +35,6 @@
         .neon-pink-label {
             animation: neon-pink-flash 1.2s infinite;
         }
-        /* High-fidelity 30% larger metallic shine for Title */
         @keyframes titleShine {
             0% { background-position: 200% center; }
             100% { background-position: -200% center; }
@@ -48,9 +47,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: titleShine 3s linear infinite;
-            text-shadow: 0 0 10px rgba(239, 68, 68, 0.95), 0 0 20px rgba(239, 68, 68, 0.75), 0 0 40px rgba(244, 63, 94, 0.55);
         }
-        /* Space UFO Swooshing Title Animation */
         @keyframes ufo-swoosh {
             0% { transform: translate(-100px, 30px) scale(0.6) rotate(-15deg); opacity: 0; }
             10% { opacity: 1; }
@@ -65,12 +62,20 @@
         .meter-segment.active { background-color: #10b981; box-shadow: 0 0 6px rgba(16, 185, 129, 0.7); }
         .meter-segment.glow { background-color: #ec4899; box-shadow: 0 0 12px rgba(236, 72, 153, 1); animation: pulse-segment 1s infinite alternate; }
         @keyframes pulse-segment { from { opacity: 0.6; } to { opacity: 1; } }
-        canvas { image-rendering: pixelated; }
+        canvas { image-rendering: pixelated; } /* Ensures pixel art stays sharp */
+        
+        .card-slot { transition: transform 0.2s; }
+        .card-slot:hover { transform: scale(1.05); z-index: 10; }
+        .foil-shine {
+            background: linear-gradient(125deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 70%);
+            background-size: 200% 200%;
+            animation: foilShineAnim 4s infinite linear;
+        }
+        @keyframes foilShineAnim { 0% { background-position: 200% 0%; } 100% { background-position: -200% 0%; } }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 overflow-hidden min-h-screen max-h-screen flex flex-col items-center justify-center">
 
-    <!-- Main Outer Container -->
     <div class="relative w-full max-w-6xl h-screen flex flex-col md:flex-row items-center justify-center p-2 gap-4">
         
         <!-- Left Side: Informative Side Panel -->
@@ -142,7 +147,7 @@
         <div class="relative flex-1 flex flex-col items-center justify-center w-full max-w-2xl h-full">
             
             <div id="hudBar" class="hidden w-full absolute top-4 left-0 right-0 z-20 px-4 flex justify-between items-center pointer-events-none font-mono">
-                <div class="flex items-center gap-1.5 bg-slate-900/95 border border-slate-800 px-3 py-1.5 rounded-full pointer-events-auto shadow-lg backdrop-blur shadow-indigo-500/5">
+                <div class="flex items-center gap-1.5 bg-slate-900/95 border border-slate-800 px-3 py-1.5 rounded-full pointer-events-auto shadow-lg backdrop-blur">
                     <span class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Stage</span>
                     <span id="hudLevel" class="text-xs font-bold text-cyan-400 tracking-wider">1/7</span>
                     <span id="hudSubject" class="text-[9px] bg-cyan-950 text-cyan-300 border border-cyan-800 px-2 py-0.5 rounded-full capitalize">Science</span>
@@ -177,17 +182,16 @@
                 </div>
             </div>
 
-            <div id="canvasContainer" class="relative w-full aspect-[4/5] bg-black border border-slate-800 rounded-3xl overflow-hidden shadow-2xl shadow-indigo-500/10 flex flex-col items-center justify-center max-h-full">
+            <div id="canvasContainer" class="relative w-full aspect-[4/5] bg-black border border-slate-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col items-center justify-center max-h-full">
                 
                 <canvas id="gameCanvas" class="w-full h-full block bg-transparent"></canvas>
 
-                <!-- Screen 1: Splash/Subject Selector Menu (Vertical scrolling enabled on mobile to access choice lists & launch triggers) -->
+                <!-- Screen 1: Splash/Subject Selector Menu -->
                 <div id="menuScreen" class="absolute inset-0 bg-slate-950 flex flex-col p-4 text-center z-40 overflow-y-auto md:overflow-hidden justify-between w-full h-full">
                     <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-950/40 via-transparent to-transparent opacity-60 pointer-events-none"></div>
 
                     <div class="relative z-50 max-w-lg mx-auto flex flex-col items-center w-full py-2">
                         
-                        <!-- Main Game Title with spacious margins -->
                         <div class="relative w-full h-28 flex items-center justify-center mb-10 mt-6 shrink-0">
                             <div class="ufo-swoosh-anim absolute top-1/2 left-0 w-24 h-12 pointer-events-none z-10 opacity-80 flex items-center justify-center">
                                 <div class="absolute right-full top-1/2 -translate-y-1/2 w-28 h-4 bg-gradient-to-r from-transparent via-cyan-500/20 to-cyan-400/80 blur-xs rounded-full"></div>
@@ -210,16 +214,20 @@
                             </h1>
                         </div>
 
-                        <!-- Spaced lower block for game layout -->
-                        <div class="flex gap-2.5 w-full mt-2 justify-center shrink-0">
-                            <button id="tabStagesBtn" class="px-5 py-3 text-xs md:text-sm font-black bg-[#4f46e5] text-white rounded-xl border border-[#6366f1]/40 transition-all flex items-center gap-2 shadow-lg shadow-indigo-500/15">
-                                <i class="fa-solid fa-play"></i> LAUNCH MISSION
+                        <!-- Menu Tabs -->
+                        <div class="flex flex-wrap gap-2.5 w-full mt-2 justify-center shrink-0">
+                            <button id="tabStagesBtn" class="px-3 py-2 md:px-5 md:py-3 text-[10px] md:text-sm font-black bg-[#4f46e5] text-white rounded-xl border border-[#6366f1]/40 transition-all flex items-center gap-2 shadow-lg">
+                                <i class="fa-solid fa-play"></i> MISSION
                             </button>
-                            <button id="tabShopBtn" class="px-5 py-3 text-xs md:text-sm font-black bg-[#13182b] border border-[#232e52]/70 text-[#94a3b8] hover:text-white rounded-xl transition-all flex items-center gap-2 shadow-lg">
-                                <i class="fa-solid fa-shopping-cart"></i> UFO UPGRADE SHOP
+                            <button id="tabShopBtn" class="px-3 py-2 md:px-5 md:py-3 text-[10px] md:text-sm font-black bg-[#13182b] border border-[#232e52]/70 text-[#94a3b8] hover:text-white rounded-xl transition-all flex items-center gap-2 shadow-lg">
+                                <i class="fa-solid fa-shopping-cart"></i> UPGRADES
+                            </button>
+                            <button id="tabBinderBtn" class="px-3 py-2 md:px-5 md:py-3 text-[10px] md:text-sm font-black bg-[#13182b] border border-[#232e52]/70 text-[#94a3b8] hover:text-white rounded-xl transition-all flex items-center gap-2 shadow-lg">
+                                <i class="fa-solid fa-book-open"></i> CARD BINDER
                             </button>
                         </div>
 
+                        <!-- Stages Panel -->
                         <div id="panelStages" class="w-full flex flex-col gap-3 mt-4">
                             <div id="wizardStep1" class="w-full text-left bg-slate-900/60 border border-slate-800 p-3 rounded-xl transition-all step-active-neon">
                                 <div class="flex justify-between items-center mb-1.5">
@@ -276,10 +284,17 @@
                             </button>
                         </div>
 
-                        <div id="panelShop" class="hidden w-full flex flex-col gap-2 mt-4 w-full">
-                            <div class="bg-indigo-950/25 border border-indigo-500/20 p-2 rounded-xl flex justify-between items-center w-full">
-                                <span class="text-xs font-semibold text-slate-300">Your Current Points:</span>
-                                <span id="shopPointsBalance" class="text-yellow-400 font-extrabold text-sm arcade-font">5000</span>
+                        <!-- Shop Panel -->
+                        <div id="panelShop" class="hidden w-full flex flex-col gap-2 mt-4">
+                            <div class="flex justify-between gap-2 w-full">
+                                <div class="bg-indigo-950/25 border border-indigo-500/20 p-2 rounded-xl flex-1 flex justify-between items-center">
+                                    <span class="text-xs font-semibold text-slate-300">Points:</span>
+                                    <span id="shopPointsBalance" class="text-yellow-400 font-extrabold text-sm arcade-font">5000</span>
+                                </div>
+                                <div class="bg-slate-900 border border-slate-700 p-1 rounded-xl flex flex-col items-center justify-center shrink-0 w-24">
+                                    <span class="text-[8px] text-slate-400 uppercase tracking-widest font-bold mb-1">Preview</span>
+                                    <canvas id="shopPreviewCanvas" width="60" height="60" class="block rounded-lg"></canvas>
+                                </div>
                             </div>
 
                             <div class="text-left w-full">
@@ -299,11 +314,26 @@
                                 <div class="grid grid-cols-2 gap-1 w-full">
                                     <button data-shop-item="skin_ufo" class="shop-btn flex justify-between items-center bg-indigo-950/40 border border-indigo-500/50 text-white p-1.5 rounded-lg text-xs font-bold"><span>Classic UFO</span><span class="text-emerald-400 font-mono text-[9px]">Owned</span></button>
                                     <button data-shop-item="skin_fly" data-cost="4300" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-xs font-bold hover:bg-slate-850"><span>Nebula Fly</span><span class="text-yellow-400 font-mono text-[9px]">4300 pts</span></button>
-                                    <button data-shop-item="skin_falcon" data-cost="8500" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-xs font-bold hover:bg-slate-850"><span>Falcon (1/3 Wide)</span><span class="text-yellow-400 font-mono text-[9px]">8500 pts</span></button>
+                                    <button data-shop-item="skin_falcon" data-cost="8500" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-xs font-bold hover:bg-slate-850"><span>The Millionaire Falcon</span><span class="text-yellow-400 font-mono text-[9px]">8500 pts</span></button>
                                     <button data-shop-item="skin_beetle" data-cost="12800" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-xs font-bold hover:bg-slate-850"><span>Green Beetle</span><span class="text-yellow-400 font-mono text-[9px]">12800 pts</span></button>
-                                    <button data-shop-item="skin_bear" data-cost="17000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-xs font-bold hover:bg-slate-850"><span>Teddy Bear</span><span class="text-yellow-400 font-mono text-[9px]">17000 pts</span></button>
-                                    <button data-shop-item="skin_toaster" data-cost="21300" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-xs font-bold hover:bg-slate-850"><span>Toaster Cream</span><span class="text-yellow-400 font-mono text-[9px]">21300 pts</span></button>
+                                    <button data-shop-item="skin_ruxpin" data-cost="17000" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-xs font-bold hover:bg-slate-850"><span>Ruxpin Bear</span><span class="text-yellow-400 font-mono text-[9px]">17000 pts</span></button>
+                                    <button data-shop-item="skin_toaster" data-cost="21300" class="shop-btn flex justify-between items-center bg-slate-900 border border-slate-800 text-slate-400 p-1.5 rounded-lg text-xs font-bold hover:bg-slate-850"><span>Space Toaster</span><span class="text-yellow-400 font-mono text-[9px]">21300 pts</span></button>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Binder Panel -->
+                        <div id="panelBinder" class="hidden w-full flex flex-col gap-2 mt-4">
+                            <div class="bg-indigo-950/25 border border-indigo-500/20 p-3 rounded-xl flex justify-between items-center w-full">
+                                <div class="text-left">
+                                    <span class="text-xs font-semibold text-slate-300 block">Total Bosses Defeated</span>
+                                    <span class="text-[10px] text-slate-500">Earn a new card with each 3 bosses you defeat!</span>
+                                </div>
+                                <span id="binderBossKills" class="text-pink-400 font-extrabold text-2xl arcade-font">0</span>
+                            </div>
+                            
+                            <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 md:gap-3 p-2 w-full" id="binderCardGrid">
+                                <!-- Cards injected here via JS -->
                             </div>
                         </div>
 
@@ -312,6 +342,23 @@
                     <div class="bg-indigo-950/30 border border-indigo-500/10 p-2 rounded-xl text-left w-full relative z-30 mb-1 mt-2 shrink-0">
                         <span class="text-[10px] font-bold text-indigo-400 tracking-wider uppercase block mb-1"><i class="fa-solid fa-trophy text-yellow-500"></i> Classroom Top Scores (Local Hub)</span>
                         <div id="leaderboardContainer" class="grid grid-cols-3 gap-2 text-[11px]"></div>
+                    </div>
+                </div>
+
+                <!-- Card Unlock Overlay -->
+                <div id="cardUnlockOverlay" class="hidden absolute inset-0 bg-slate-950/98 flex flex-col items-center justify-center p-6 text-center z-50 overflow-y-auto w-full h-full">
+                    <div class="absolute inset-0 foil-shine pointer-events-none opacity-20"></div>
+                    <div class="relative z-10 max-w-sm flex flex-col items-center gap-4 w-full">
+                        <div class="px-4 py-1.5 bg-yellow-950 border border-yellow-500 rounded-full text-xs text-yellow-400 font-bold uppercase tracking-widest animate-pulse shadow-[0_0_15px_rgba(234,179,8,0.5)]">NEW TRADING CARD UNLOCKED!</div>
+                        
+                        <div class="relative group mt-4 mb-2">
+                            <canvas id="unlockedCardCanvas" width="220" height="310" class="rounded-xl shadow-[0_0_40px_rgba(236,72,153,0.6)] transform transition-transform scale-110"></canvas>
+                        </div>
+
+                        <h2 id="unlockedCardName" class="text-3xl font-black text-white tracking-tight leading-none uppercase font-orbitron mt-2 neon-pink-label">Card Name</h2>
+                        <p class="text-xs text-slate-300 font-semibold mb-4">Added to your Card Binder!</p>
+
+                        <button id="cardUnlockContinueBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl tracking-wider text-xs uppercase shadow-md transition-all">CONTINUE MISSION <i class="fa-solid fa-chevron-right ml-1"></i></button>
                     </div>
                 </div>
 
@@ -420,9 +467,9 @@
 
             </div>
 
-            <!-- Mobile UI Handlers: Features off-screen virtual joystick to prevent thumb coverage on game screen -->
+            <!-- Mobile UI Handlers: Added touch-action none in CSS and explicit touchstart for perfect response -->
             <div id="touchControllers" class="relative mt-3 w-full grid grid-cols-2 gap-4 h-24 px-1 md:hidden pointer-events-auto shrink-0">
-                <div id="joystickZone" class="relative bg-slate-900/60 border border-slate-800 rounded-2xl flex items-center justify-center p-2 select-none touch-none h-full">
+                <div id="joystickZone" class="relative bg-slate-900/60 border border-slate-800 rounded-2xl flex items-center justify-center p-2 select-none h-full">
                     <div id="joystickTrack" class="relative w-16 h-16 bg-slate-950/80 border border-slate-700 rounded-full flex items-center justify-center">
                         <div id="joystickHandle" class="absolute w-8 h-8 bg-indigo-500 border border-indigo-400 rounded-full shadow-lg transition-transform duration-75"></div>
                     </div>
@@ -555,7 +602,6 @@
             startMidiSequencer() {
                 const interval = 60000 / this.midiTempo / 2;
                 setInterval(() => {
-                    // REPAIRED: Removed the state === 'PLAYING' check to make sure synth music plays actively during gameplay!
                     if (this.musicMuted || this.muted) return;
                     this.playMidiStep();
                 }, interval);
@@ -608,268 +654,424 @@
         });
 
         const VOCABULARY_BANK = {
+art: [
+                { ok: "colour", bad: "coler" }, { ok: "line", bad: "lyne" }, { ok: "shape", bad: "shaipe" },
+                { ok: "space", bad: "spase" }, { ok: "texture", bad: "texstur" }, { ok: "form", bad: "fourm" },
+                { ok: "primary", bad: "primery" }, { ok: "secondary", bad: "secandary" }, { ok: "neutral", bad: "nutral" },
+                { ok: "warm", bad: "warme" }, { ok: "cool", bad: "cole" }, { ok: "symmetrical", bad: "symetrical" },
+                { ok: "asymmetrical", bad: "asymetrical" }, { ok: "dark", bad: "darke" }, { ok: "light", bad: "lyte" },
+                { ok: "shade", bad: "shaid" }, { ok: "paint", bad: "paynt" }, { ok: "paintbrush", bad: "paintbruss" },
+                { ok: "pencil", bad: "pensil" }, { ok: "crayon", bad: "craion" }, { ok: "clay", bad: "clai" },
+                { ok: "scissors", bad: "sizzors" }, { ok: "glue", bad: "gloo" }, { ok: "paper", bad: "papr" },
+                { ok: "canvas", bad: "canvass" }, { ok: "medium", bad: "medeum" }, { ok: "draw", bad: "drawe" },
+                { ok: "sketch", bad: "skeche" }, { ok: "blend", bad: "blennd" }, { ok: "mix", bad: "miks" },
+                { ok: "splatter", bad: "splater" }, { ok: "print", bad: "prinnt" }, { ok: "carve", bad: "carvee" },
+                { ok: "mould", bad: "mold" }, { ok: "fold", bad: "foldd" }, { ok: "trace", bad: "trayce" },
+                { ok: "portrait", bad: "portrate" }, { ok: "landscape", bad: "landscap" }, { ok: "foreground", bad: "foregrownd" },
+                { ok: "background", bad: "bakground" }, { ok: "middleground", bad: "midelground" }, { ok: "pattern", bad: "paturn" },
+                { ok: "design", bad: "dezign" }, { ok: "sculptor", bad: "sculpter" }, { ok: "artist", bad: "artisst" },
+                { ok: "artwork", bad: "artwerk" }, { ok: "gallery", bad: "galery" }, { ok: "creator", bad: "creater" },
+                { ok: "detail", bad: "detale" }, { ok: "observe", bad: "obzerve" }
+            ],
             sightwords: [
                 { ok: "after", bad: "aftr" }, { ok: "again", bad: "agen" }, { ok: "always", bad: "alwayes" },
                 { ok: "around", bad: "arownd" }, { ok: "before", bad: "befor" }, { ok: "first", bad: "furst" },
                 { ok: "over", bad: "ovre" }, { ok: "then", bad: "thn" }, { ok: "these", bad: "theese" },
-                { ok: "those", bad: "thos" }, { ok: "today", bad: "to-day" }, { ok: "under", bad: "undr" },
-                { ok: "upon", bad: "uppon" }, { ok: "another", bad: "anotherr" }, { ok: "both", bad: "boath" },
-                { ok: "each", bad: "ech" }, { ok: "every", bad: "evry" }, { ok: "many", bad: "meni" },
-                { ok: "other", bad: "othr" }, { ok: "people", bad: "peopel" }, { ok: "their", bad: "thier" },
-                { ok: "your", bad: "yore" }, { ok: "almost", bad: "allmost" }, { ok: "because", bad: "becoz" },
-                { ok: "best", bad: "bestt" }, { ok: "better", bad: "bettr" }, { ok: "clean", bad: "cleen" },
-                { ok: "does", bad: "dus" }, { ok: "don't", bad: "dont" }, { ok: "fast", bad: "faste" },
-                { ok: "found", bad: "fownd" }, { ok: "gave", bad: "gaive" }, { ok: "goes", bad: "gose" },
-                { ok: "green", bad: "grene" }, { ok: "its", bad: "itz" }, { ok: "made", bad: "maide" },
-                { ok: "much", bad: "murch" }, { ok: "off", bad: "of" }, { ok: "only", bad: "onlie" },
-                { ok: "pull", bad: "pule" }, { ok: "read", bad: "reed" }, { ok: "right", bad: "rite" },
-                { ok: "sing", bad: "sinng" }, { ok: "sit", bad: "sitt" }, { ok: "sleep", bad: "slepe" },
-                { ok: "small", bad: "smal" }, { ok: "tell", bad: "tel" }, { ok: "very", bad: "verry" },
-                { ok: "wash", bad: "wosh" }, { ok: "which", bad: "wich" }, { ok: "wish", bad: "wiss" },
-                { ok: "work", bad: "wurk" }, { ok: "would", bad: "wud" }, { ok: "write", bad: "rite" },
-                { ok: "animal", bad: "animle" }, { ok: "book", bad: "boke" }, { ok: "city", bad: "citie" },
-                { ok: "day", bad: "daie" }, { ok: "door", bad: "dore" }, { ok: "family", bad: "famly" },
-                { ok: "feet", bad: "fete" }, { ok: "land", bad: "lannd" }, { ok: "line", bad: "lyne" },
-                { ok: "morning", bad: "mornin" }, { ok: "name", bad: "naime" }, { ok: "page", bad: "paige" },
-                { ok: "part", bad: "parrt" }, { ok: "picture", bad: "piture" }, { ok: "place", bad: "plaice" },
-                { ok: "school", bad: "scool" }, { ok: "sound", bad: "sownd" }, { ok: "study", bad: "studie" },
-                { ok: "thing", bad: "thynng" }, { ok: "water", bad: "wattr" }, { ok: "way", bad: "waie" },
-                { ok: "world", bad: "werld" }, { ok: "year", bad: "yere" }, { ok: "been", bad: "bene" },
-                { ok: "buy", bad: "bie" }, { ok: "call", bad: "cal" }, { ok: "cold", bad: "colde" },
-                { ok: "five", bad: "fiv" }, { ok: "or", bad: "ore" }, { ok: "why", bad: "whie" }
+                { ok: "those", bad: "thoz" }, { ok: "today", bad: "to-day" }, { ok: "under", bad: "undr" },
+                { ok: "upon", bad: "uipon" }, { ok: "another", bad: "anuther" }, { ok: "both", bad: "boath" },
+                { ok: "each", bad: "eech" }, { ok: "every", bad: "evry" }, { ok: "many", bad: "meny" },
+                { ok: "other", bad: "othr" }, { ok: "people", bad: "peoplee" }, { ok: "their", bad: "thier" },
+                { ok: "us", bad: "uss" }, { ok: "your", bad: "yore" }, { ok: "almost", bad: "allmost" },
+                { ok: "because", bad: "becuase" }, { ok: "best", bad: "besst" }, { ok: "better", bad: "beter" },
+                { ok: "clean", bad: "cleen" }, { ok: "does", bad: "duz" }, { ok: "don't", bad: "dont" },
+                { ok: "fast", bad: "fasst" }, { ok: "found", bad: "fownd" }, { ok: "gave", bad: "gav" },
+                { ok: "goes", bad: "gose" }, { ok: "green", bad: "grene" }, { ok: "its", bad: "ittz" },
+                { ok: "made", bad: "maid" }, { ok: "much", bad: "mutch" }, { ok: "off", bad: "of" },
+                { ok: "only", bad: "onlie" }, { ok: "pull", bad: "puhl" }, { ok: "read", bad: "reed" },
+                { ok: "right", bad: "rite" }, { ok: "sing", bad: "sinng" }, { ok: "sit", bad: "sitt" },
+                { ok: "sleep", bad: "slepe" }, { ok: "small", bad: "smal" }, { ok: "tell", bad: "tel" },
+                { ok: "use", bad: "yuse" }, { ok: "very", bad: "verry" }, { ok: "wash", bad: "wosh" },
+                { ok: "which", bad: "wich" }, { ok: "wish", bad: "wissh" }, { ok: "work", bad: "werk" },
+                { ok: "would", bad: "wud" }, { ok: "write", bad: "rite" }, { ok: "animal", bad: "animle" },
+                { ok: "book", bad: "buk" }, { ok: "city", bad: "citey" }, { ok: "day", bad: "daie" },
+                { ok: "door", bad: "dore" }, { ok: "family", bad: "famly" }, { ok: "feet", bad: "fete" },
+                { ok: "land", bad: "lannd" }, { ok: "line", bad: "lyne" }, { ok: "morning", bad: "mornyng" },
+                { ok: "name", bad: "naym" }, { ok: "page", bad: "payge" }, { ok: "part", bad: "parrt" },
+                { ok: "picture", bad: "piktar" }, { ok: "place", bad: "plaice" }, { ok: "school", bad: "skool" },
+                { ok: "sound", bad: "sownd" }, { ok: "study", bad: "studdy" }, { ok: "thing", bad: "thinng" },
+                { ok: "water", bad: "wauter" }, { ok: "way", bad: "wai" }, { ok: "world", bad: "warld" },
+                { ok: "year", bad: "yeer" }, { ok: "been", bad: "bene" }, { ok: "buy", bad: "bie" },
+                { ok: "call", bad: "cal" }, { ok: "cold", bad: "coald" }, { ok: "five", bad: "fyve" },
+                { ok: "or", bad: "orr" }, { ok: "why", bad: "whie" }
             ],
             math: [
-                { ok: "addition", bad: "addision" }, { ok: "subtraction", bad: "subtration" },
-                { ok: "triangle", bad: "triangel" }, { ok: "number", bad: "nomber" },
-                { ok: "fraction", bad: "fracktion" }, { ok: "pattern", bad: "patternn" },
-                { ok: "measure", bad: "meazure" }, { ok: "graph", bad: "graf" },
-                { ok: "multiply", bad: "multipli" }, { ok: "divide", bad: "devide" },
-                { ok: "shape", bad: "shaipe" }, { ok: "circle", bad: "sircle" },
-                { ok: "square", bad: "skuare" }, { ok: "equal", bad: "equall" },
-                { ok: "centre", bad: "center" }, { ok: "decimal", bad: "decimel" },
-                { ok: "digit", bad: "diget" }, { ok: "ones", bad: "onz" }, { ok: "tens", bad: "tenz" },
-                { ok: "hundreds", bad: "hundreeds" }, { ok: "thousands", bad: "thousands" },
-                { ok: "place value", bad: "place valew" }, { ok: "base-ten", bad: "baseten" },
+                { ok: "digit", bad: "dijit" }, { ok: "ones", bad: "wuns" }, { ok: "tens", bad: "tenz" },
+                { ok: "hundreds", bad: "hundrads" }, { ok: "thousands", bad: "thowsands" },
+                { ok: "place value", bad: "plaise value" }, { ok: "base-ten", bad: "bace-ten" },
                 { ok: "compare", bad: "compair" }, { ok: "greater than", bad: "grater than" },
-                { ok: "less than", bad: "les than" }, { ok: "equal to", bad: "equall to" },
-                { ok: "even number", bad: "evin number" }, { ok: "odd number", bad: "od number" },
+                { ok: "less than", bad: "les than" }, { ok: "equal to", bad: "equel to" },
+                { ok: "even number", bad: "eving number" }, { ok: "odd number", bad: "od number" },
                 { ok: "ordinal number", bad: "ordinel number" }, { ok: "cardinal number", bad: "cardinel number" },
-                { ok: "standard form", bad: "standerd form" }, { ok: "expanded form", bad: "expannded form" },
-                { ok: "word form", bad: "wurd form" }, { ok: "skip count", bad: "skyp count" },
-                { ok: "round", bad: "rownd" }, { ok: "add", bad: "addd" }, { ok: "plus", bad: "pluss" },
-                { ok: "addend", bad: "adend" }, { ok: "sum", bad: "summ" }, { ok: "subtract", bad: "substract" },
-                { ok: "minus", bad: "mynes" }, { ok: "difference", bad: "diffrence" },
+                { ok: "standard form", bad: "standerd form" }, { ok: "expanded form", bad: "expended form" },
+                { ok: "word form", bad: "werd form" }, { ok: "skip count", bad: "skyp count" },
+                { ok: "round", bad: "rownd" }, { ok: "add", bad: "ad" }, { ok: "plus", bad: "pluss" },
+                { ok: "addend", bad: "adend" }, { ok: "sum", bad: "somm" }, { ok: "subtract", bad: "subtration" },
+                { ok: "minus", bad: "mynes" }, { ok: "difference", bad: "diference" },
                 { ok: "regroup", bad: "regrowp" }, { ok: "equation", bad: "equasion" },
-                { ok: "expression", bad: "expresion" }, { ok: "number sentence", bad: "number sentense" },
-                { ok: "fact family", bad: "fact famly" }, { ok: "mental math", bad: "mentel math" },
-                { ok: "estimate", bad: "estimat" }, { ok: "multiply", bad: "multiplie" },
-                { ok: "times", bad: "tymz" }, { ok: "factor", bad: "factr" }, { ok: "product", bad: "prodict" },
-                { ok: "array", bad: "aray" }, { ok: "equal groups", bad: "equall groups" },
-                { ok: "divide", bad: "devide" }, { ok: "dividend", bad: "dividand" },
-                { ok: "divisor", bad: "devisor" }, { ok: "quotient", bad: "quotant" },
+                { ok: "expression", bad: "expreshun" }, { ok: "number sentence", bad: "nomber sentence" },
+                { ok: "fact family", bad: "fakt family" }, { ok: "mental math", bad: "mentle math" },
+                { ok: "estimate", bad: "estamate" }, { ok: "multiply", bad: "multeply" },
+                { ok: "times", bad: "tymez" }, { ok: "factor", bad: "facter" }, { ok: "product", bad: "prodict" },
+                { ok: "array", bad: "aray" }, { ok: "equal groups", bad: "equel groups" },
+                { ok: "divide", bad: "devide" }, { ok: "dividend", bad: "devidend" },
+                { ok: "divisor", bad: "devisor" }, { ok: "quotient", bad: "quoshunt" },
                 { ok: "remainder", bad: "remaindr" }, { ok: "twice", bad: "twyce" },
-                { ok: "fraction", bad: "fraktion" }, { ok: "whole", bad: "hole" },
-                { ok: "half", bad: "haf" }, { ok: "halves", bad: "havs" }, { ok: "thirds", bad: "therds" },
-                { ok: "fourths", bad: "forths" }, { ok: "quarters", bad: "quartrs" },
-                { ok: "numerator", bad: "numerater" }, { ok: "denominator", bad: "denominater" }
+                { ok: "fraction", bad: "fracktion" }, { ok: "whole", bad: "hole" }, { ok: "half", bad: "haf" },
+                { ok: "halves", bad: "havs" }, { ok: "thirds", bad: "therds" }, { ok: "fourths", bad: "forths" },
+                { ok: "quarters", bad: "quaters" }, { ok: "numerator", bad: "numorator" },
+                { ok: "denominator", bad: "denominater" }, { ok: "unit fraction", bad: "unite fraction" },
+                { ok: "equivalent fractions", bad: "equivilent fractions" }, { ok: "2d shape", bad: "2d shaipe" },
+                { ok: "3d shape", bad: "3d shaipe" }, { ok: "side", bad: "syde" }, { ok: "vertex", bad: "vertexe" },
+                { ok: "vertices", bad: "vertises" }, { ok: "edge", bad: "edg" }, { ok: "face", bad: "fase" },
+                { ok: "circle", bad: "sercle" }, { ok: "triangle", bad: "triangel" },
+                { ok: "square", bad: "squair" }, { ok: "rectangle", bad: "rectangel" },
+                { ok: "rhombus", bad: "rombus" }, { ok: "quadrilateral", bad: "quadrilateril" },
+                { ok: "pentagon", bad: "pentigon" }, { ok: "hexagon", bad: "hexigon" },
+                { ok: "octagon", bad: "octigon" }, { ok: "cube", bad: "coob" }, { ok: "sphere", bad: "sfere" },
+                { ok: "cylinder", bad: "silinder" }, { ok: "cone", bad: "coan" }, { ok: "pyramid", bad: "piramid" },
+                { ok: "angle", bad: "angel" }, { ok: "right angle", bad: "rite angle" },
+                { ok: "symmetry", bad: "symetry" }, { ok: "length", bad: "lenth" }, { ok: "width", bad: "with" },
+                { ok: "height", bad: "hight" }, { ok: "perimeter", bad: "perimeteur" },
+                { ok: "area", bad: "aria" }, { ok: "inches", bad: "inchis" }, { ok: "feet", bad: "fete" },
+                { ok: "yards", bad: "yairds" }, { ok: "centimeters", bad: "sentimeters" },
+                { ok: "meters", bad: "meeters" }, { ok: "weight", bad: "wate" }, { ok: "mass", bad: "masse" },
+                { ok: "capacity", bad: "capasity" }, { ok: "liters", bad: "leeters" },
+                { ok: "milliliters", bad: "milileeters" }, { ok: "temperature", bad: "temparature" },
+                { ok: "clock", bad: "clok" }, { ok: "hour", bad: "owr" }, { ok: "minute", bad: "minit" }
             ],
             language: [
-                { ok: "alphabet", bad: "alfabat" }, { ok: "sentence", bad: "sentanse" },
-                { ok: "reading", bad: "reeding" }, { ok: "writing", bad: "writeing" },
-                { ok: "grammar", bad: "grammer" }, { ok: "phonics", bad: "fonics" },
-                { ok: "spelling", bad: "speling" }, { ok: "letter", bad: "lettr" },
-                { ok: "behaviour", bad: "behavior" }, { ok: "honour", bad: "honor" }
+                { ok: "the", bad: "teh" }, { ok: "and", bad: "annd" }, { ok: "a", bad: "ay" },
+                { ok: "is", bad: "iz" }, { ok: "in", bad: "inn" }, { ok: "it", bad: "itt" },
+                { ok: "you", bad: "yoo" }, { ok: "that", bad: "thhat" }, { ok: "to", bad: "tooo" },
+                { ok: "was", bad: "wuz" }, { ok: "are", bad: "arr" }, { ok: "missing", bad: "miseing" },
+                { ok: "said", bad: "sed" }, { ok: "they", bad: "thay" }, { ok: "because", bad: "becuase" },
+                { ok: "people", bad: "peaple" }, { ok: "friend", bad: "frend" }, { ok: "mother", bad: "muther" },
+                { ok: "father", bad: "fater" }, { ok: "brother", bad: "bruther" }, { ok: "sister", bad: "sizzter" },
+                { ok: "school", bad: "skool" }, { ok: "teacher", bad: "techur" }, { ok: "book", bad: "buk" },
+                { ok: "letter", bad: "lettur" }, { ok: "word", bad: "werd" }, { ok: "sentence", bad: "sentanse" },
+                { ok: "read", bad: "reed" }, { ok: "write", bad: "ryte" }, { ok: "story", bad: "storie" },
+                { ok: "line", bad: "lyne" }, { ok: "name", bad: "naym" }, { ok: "learn", bad: "lern" },
+                { ok: "look", bad: "luke" }, { ok: "like", bad: "lyke" }, { ok: "come", bad: "cum" },
+                { ok: "here", bad: "heer" }, { ok: "went", bad: "wennt" }, { ok: "came", bad: "caym" },
+                { ok: "home", bad: "hoam" }, { ok: "house", bad: "howse" }, { ok: "where", bad: "ware" },
+                { ok: "what", bad: "wot" }, { ok: "when", bad: "wen" }, { ok: "why", bad: "whie" },
+                { ok: "who", bad: "hoo" }, { ok: "standard", bad: "standerd" }, { ok: "neighbour", bad: "neighbor" },
+                { ok: "favourite", bad: "favorite" }, { ok: "colour", bad: "coler" }
             ],
             social: [
-                { ok: "map", bad: "mapp" }, { ok: "community", bad: "comuniti" },
-                { ok: "globe", bad: "gloab" }, { ok: "Canada", bad: "Kanada" },
-                { ok: "neighbour", bad: "neighbor" }, { ok: "favour", bad: "favor" },
-                { ok: "parliament", bad: "parliment" }, { ok: "province", bad: "provins" },
-                { ok: "identity", bad: "identety" }, { ok: "responsibility", bad: "responsibiletie" },
-                { ok: "rule", bad: "rool" }, { ok: "relationship", bad: "relationshyp" },
-                { ok: "respect", bad: "respeckt" }, { ok: "tradition", bad: "tradision" },
-                { ok: "celebration", bad: "celebrasion" }, { ok: "heritage", bad: "heritige" },
-                { ok: "environment", bad: "environmint" }, { ok: "landform", bad: "lanform" },
+                { ok: "community", bad: "comuniti" }, { ok: "identity", bad: "identaty" },
+                { ok: "responsibility", bad: "responsability" }, { ok: "rule", bad: "rool" },
+                { ok: "relationship", bad: "relasionship" }, { ok: "respect", bad: "respeckt" },
+                { ok: "tradition", bad: "tradision" }, { ok: "celebration", bad: "celebrasion" },
+                { ok: "heritage", bad: "heritige" }, { ok: "environment", bad: "enviroment" },
+                { ok: "map", bad: "mapp" }, { ok: "globe", bad: "gloab" }, { ok: "landform", bad: "landfourm" },
                 { ok: "natural resource", bad: "naturel resource" }, { ok: "weather", bad: "wether" },
-                { ok: "season", bad: "seezon" }, { ok: "settlement", bad: "settlemint" },
-                { ok: "territory", bad: "teritoy" }, { ok: "Ontario", bad: "Ontariow" },
-                { ok: "indigenous", bad: "indigenos" }, { ok: "First Nations", bad: "First Nasians" },
-                { ok: "Métis", bad: "Metis" }, { ok: "Inuit", bad: "Inuite" },
-                { ok: "ancestor", bad: "ancester" }, { ok: "culture", bad: "culcher" },
-                { ok: "diversity", bad: "diversety" }, { ok: "pioneer", bad: "pionere" },
+                { ok: "season", bad: "seazon" }, { ok: "settlement", bad: "settelment" },
+                { ok: "province", bad: "provence" }, { ok: "territory", bad: "teritory" },
+                { ok: "canada", bad: "kanada" }, { ok: "ontario", bad: "ontaryo" },
+                { ok: "indigenous", bad: "indigenis" }, { ok: "first nations", bad: "first nasions" },
+                { ok: "metis", bad: "matees" }, { ok: "inuit", bad: "innuit" },
+                { ok: "ancestor", bad: "ansestor" }, { ok: "culture", bad: "culcher" },
+                { ok: "diversity", bad: "diversety" }, { ok: "pioneer", bad: "pioner" },
                 { ok: "timeline", bad: "tymeline" }, { ok: "citizenship", bad: "citizanship" },
-                { ok: "society", bad: "sociaty" }, { ok: "government", bad: "governmint" },
-                { ok: "mayor", bad: "mayer" }, { ok: "premier", bad: "premeir" },
-                { ok: "Prime Minister", bad: "Prime Minester" }, { ok: "rights", bad: "rytes" },
-                { ok: "law", bad: "lawe" }, { ok: "trade", bad: "traid" },
-                { ok: "service", bad: "servise" }, { ok: "job", bad: "jobe" },
-                { ok: "climate", bad: "clymate" }, { ok: "continent", bad: "continint" },
-                { ok: "ocean", bad: "oshan" }, { ok: "compass", bad: "compas" },
-                { ok: "legend", bad: "legind" }, { ok: "scale", bad: "scail" },
-                { ok: "boundary", bad: "boundry" }, { ok: "physical region", bad: "physicel region" },
-                { ok: "political region", bad: "politicel region" }
+                { ok: "society", bad: "sosietey" }, { ok: "government", bad: "goverment" },
+                { ok: "mayor", bad: "maier" }, { ok: "premier", bad: "premeer" },
+                { ok: "prime minister", bad: "prime minester" }, { ok: "rights", bad: "rites" },
+                { ok: "law", bad: "lawe" }, { ok: "trade", bad: "traid" }, { ok: "service", bad: "servise" },
+                { ok: "job", bad: "jobe" }, { ok: "climate", bad: "climite" }, { ok: "continent", bad: "contanent" },
+                { ok: "ocean", bad: "oshan" }, { ok: "compass", bad: "compas" }, { ok: "legend", bad: "legand" },
+                { ok: "scale", bad: "scail" }, { ok: "boundary", bad: "boundry" },
+                { ok: "physical region", bad: "phisical region" }, { ok: "political region", bad: "politicle region" }
             ],
             science: [
-                { ok: "animal", bad: "animle" }, { ok: "plant", bad: "plaint" },
-                { ok: "energy", bad: "energe" }, { ok: "force", bad: "forse" },
-                { ok: "weather", bad: "wether" }, { ok: "gravity", bad: "gravety" },
-                { ok: "magnet", bad: "magnett" }, { ok: "colour", bad: "color" },
-                { ok: "living thing", bad: "livin thing" }, { ok: "environment", bad: "environmint" },
-                { ok: "growth", bad: "growthe" }, { ok: "change", bad: "chainge" },
-                { ok: "nutrient", bad: "nutriant" }, { ok: "habitat", bad: "habytat" },
-                { ok: "adaptation", bad: "adaptasion" }, { ok: "seed", bad: "sead" },
-                { ok: "root", bad: "roote" }, { ok: "stem", bad: "stemm" },
+                { ok: "living thing", bad: "liveing thing" }, { ok: "environment", bad: "enviroment" },
+                { ok: "plant", bad: "plaint" }, { ok: "animal", bad: "animle" }, { ok: "growth", bad: "growthe" },
+                { ok: "change", bad: "chainge" }, { ok: "nutrient", bad: "nutreint" },
+                { ok: "habitat", bad: "habtat" }, { ok: "adaptation", bad: "adaptasion" },
+                { ok: "seed", bad: "sead" }, { ok: "root", bad: "rut" }, { ok: "stem", bad: "stimm" },
                 { ok: "leaf", bad: "lefe" }, { ok: "camouflage", bad: "camoflage" },
-                { ok: "producer", bad: "producor" }, { ok: "consumer", bad: "consumor" },
-                { ok: "decomposer", bad: "decomposor" }, { ok: "structure", bad: "structur" },
-                { ok: "stability", bad: "stabilety" }, { ok: "motion", bad: "moshian" },
-                { ok: "friction", bad: "fricsion" }, { ok: "push", bad: "puss" },
-                { ok: "pull", bad: "pule" }, { ok: "sun", bad: "sunn" },
-                { ok: "heat", bad: "hete" }, { ok: "light", bad: "lyte" },
-                { ok: "sound", bad: "sownd" }, { ok: "vibration", bad: "vibrasion" },
-                { ok: "state of matter", bad: "state of mattre" }, { ok: "solid", bad: "solyd" },
-                { ok: "liquid", bad: "liquyd" }, { ok: "gas", bad: "gass" },
-                { ok: "property", bad: "propertey" }, { ok: "texture", bad: "textur" },
-                { ok: "mass", bad: "mas" }, { ok: "volume", bad: "volum" },
-                { ok: "soil", bad: "soyle" }, { ok: "rock", bad: "roke" },
-                { ok: "mineral", bad: "minerel" }, { ok: "erosion", bad: "erosian" },
-                { ok: "weathering", bad: "wethering" }, { ok: "cycle", bad: "sycle" },
-                { ok: "conservation", bad: "conservasion" }, { ok: "recycling", bad: "recyclyng" },
-                { ok: "machine", bad: "masheen" }, { ok: "tool", bad: "toole" }
+                { ok: "producer", bad: "prodooser" }, { ok: "consumer", bad: "consoomer" },
+                { ok: "decomposer", bad: "decompouser" }, { ok: "structure", bad: "structur" },
+                { ok: "stability", bad: "stabelity" }, { ok: "force", bad: "forse" },
+                { ok: "motion", bad: "moshun" }, { ok: "gravity", bad: "gravety" },
+                { ok: "friction", bad: "fricshun" }, { ok: "push", bad: "pusshe" }, { ok: "pull", bad: "puhl" },
+                { ok: "energy", bad: "energe" }, { ok: "sun", bad: "sonne" }, { ok: "heat", bad: "hete" },
+                { ok: "light", bad: "lyte" }, { ok: "sound", bad: "sownd" }, { ok: "vibration", bad: "vibrasion" },
+                { ok: "state of matter", bad: "state of maddter" }, { ok: "solid", bad: "sollid" },
+                { ok: "liquid", bad: "lickwid" }, { ok: "gas", bad: "gass" }, { ok: "property", bad: "proparty" },
+                { ok: "texture", bad: "texsture" }, { ok: "mass", bad: "masse" }, { ok: "volume", bad: "volum" },
+                { ok: "soil", bad: "soyl" }, { ok: "rock", bad: "rok" }, { ok: "mineral", bad: "mineril" },
+                { ok: "erosion", bad: "eroshun" }, { ok: "weathering", bad: "wethering" },
+                { ok: "cycle", bad: "sycle" }, { ok: "season", bad: "seazon" },
+                { ok: "conservation", bad: "conservasion" }, { ok: "recycling", bad: "recykling" },
+                { ok: "machine", bad: "masheen" }, { ok: "tool", bad: "tule" }
             ],
             music: [
-                { ok: "rhythm", bad: "rythm" }, { ok: "melody", bad: "mellody" },
-                { ok: "beat", bad: "beet" }, { ok: "tempo", bad: "temppo" },
-                { ok: "programme", bad: "program" }, { ok: "theatre", bad: "theater" }
+                { ok: "song", bad: "sonng" }, { ok: "sing", bad: "sinng" }, { ok: "beat", bad: "beet" },
+                { ok: "drum", bad: "drumm" }, { ok: "bell", bad: "bel" }, { ok: "horn", bad: "horne" },
+                { ok: "flute", bad: "floot" }, { ok: "piano", bad: "peano" }, { ok: "violin", bad: "violen" },
+                { ok: "guitar", bad: "gitar" }, { ok: "recorder", bad: "recordur" }, { ok: "voice", bad: "voyce" },
+                { ok: "sound", bad: "sownd" }, { ok: "music", bad: "musik" }, { ok: "note", bad: "noat" },
+                { ok: "rest", bad: "resst" }, { ok: "pitch", bad: "pich" }, { ok: "tone", bad: "toan" },
+                { ok: "tempo", bad: "temppo" }, { ok: "fast", bad: "fasst" }, { ok: "slow", bad: "slo" },
+                { ok: "loud", bad: "lowd" }, { ok: "soft", bad: "softe" }, { ok: "high", bad: "hie" },
+                { ok: "low", bad: "loe" }, { ok: "rhythm", bad: "rythm" }, { ok: "lyric", bad: "liric" },
+                { ok: "verse", bad: "vers" }, { ok: "chorus", bad: "corus" }, { ok: "band", bad: "bannd" },
+                { ok: "choir", bad: "quire" }, { ok: "concert", bad: "consert" }, { ok: "stage", bad: "staige" },
+                { ok: "show", bad: "shoe" }, { ok: "dance", bad: "danse" }, { ok: "listen", bad: "lissen" },
+                { ok: "hear", bad: "heer" }, { ok: "play", bad: "plaie" }, { ok: "practice", bad: "practis" },
+                { ok: "lesson", bad: "leson" }, { ok: "scale", bad: "scail" }, { ok: "chord", bad: "cord" },
+                { ok: "melody", bad: "melodey" }, { ok: "harmony", bad: "harmoney" }, { ok: "dynamic", bad: "dynameic" },
+                { ok: "instrument", bad: "instrament" }, { ok: "musician", bad: "muzician" }, { ok: "conductor", bad: "conducter" },
+                { ok: "performance", bad: "performence" }, { ok: "theatre", bad: "theater" }
             ],
             physed: [
-                { ok: "active", bad: "activ" }, { ok: "fitness", bad: "fitnes" },
-                { ok: "exercise", bad: "exersise" }, { ok: "stretch", bad: "strech" },
-                { ok: "soccer", bad: "socker" }, { ok: "hockey", bad: "hoki" },
                 { ok: "movement", bad: "movemint" }, { ok: "balance", bad: "balence" },
-                { ok: "coordination", bad: "coordinasion" }, { ok: "stability", bad: "stabilety" },
-                { ok: "agility", bad: "agilety" }, { ok: "flexibility", bad: "flexibilety" },
-                { ok: "strength", bad: "strenth" }, { ok: "endurance", bad: "endurans" },
-                { ok: "fitness", bad: "fytness" }, { ok: "speed", bad: "spede" },
-                { ok: "rhythm", bad: "rythm" }, { ok: "spatial awareness", bad: "spasial awareness" },
-                { ok: "safety", bad: "saftey" }, { ok: "teamwork", bad: "temewurk" },
+                { ok: "coordination", bad: "coordinasion" }, { ok: "stability", bad: "stabelity" },
+                { ok: "agility", bad: "agilety" }, { ok: "flexibility", bad: "flexability" },
+                { ok: "strength", bad: "strenth" }, { ok: "endurance", bad: "endurince" },
+                { ok: "fitness", bad: "fitnes" }, { ok: "speed", bad: "spede" },
+                { ok: "rhythm", bad: "rythm" }, { ok: "spatial awareness", bad: "spacial awareness" },
+                { ok: "safety", bad: "saftey" }, { ok: "teamwork", bad: "teemwork" },
                 { ok: "fair play", bad: "fare play" }, { ok: "respect", bad: "respeckt" },
-                { ok: "cooperation", bad: "cooperasion" }, { ok: "communication", bad: "communicasion" },
-                { ok: "strategy", bad: "strategie" }, { ok: "tactic", bad: "tactyc" },
-                { ok: "target", bad: "targit" }, { ok: "goal", bad: "gole" },
-                { ok: "field", bad: "feild" }, { ok: "tracking", bad: "traking" },
-                { ok: "intercept", bad: "intersept" }, { ok: "transition", bad: "transisian" },
-                { ok: "warmup", bad: "warmewp" }, { ok: "cooldown", bad: "cooldowne" },
-                { ok: "pulse", bad: "puls" }, { ok: "breathing", bad: "brething" },
-                { ok: "heart rate", bad: "hart rate" }, { ok: "hydration", bad: "hydrasion" },
-                { ok: "nutrition", bad: "nutrisian" }, { ok: "health", bad: "helth" },
-                { ok: "safety rules", bad: "saftey rules" }, { ok: "body awareness", bad: "body awarness" },
-                { ok: "locomotor", bad: "locomotr" }, { ok: "non-locomotor", bad: "nonlocomotor" },
-                { ok: "manipulate", bad: "manipulat" }, { ok: "send", bad: "sennd" },
-                { ok: "receive", bad: "recieve" }, { ok: "retain", bad: "retayn" },
-                { ok: "skip", bad: "skyp" }, { ok: "hop", bad: "hopp" },
-                { ok: "jump", bad: "jumpe" }, { ok: "gallop", bad: "galop" },
-                { ok: "run", bad: "runn" }, { ok: "throw", bad: "throwe" },
-                { ok: "catch", bad: "catche" }, { ok: "kick", bad: "kicke" }
+                { ok: "cooperation", bad: "cooperasion" }, { ok: "communication", bad: "comunicasion" },
+                { ok: "strategy", bad: "strategye" }, { ok: "tactic", bad: "tactick" },
+                { ok: "target", bad: "targit" }, { ok: "goal", bad: "gole" }, { ok: "field", bad: "feeld" },
+                { ok: "tracking", bad: "traking" }, { ok: "intercept", bad: "interssept" },
+                { ok: "transition", bad: "transision" }, { ok: "warmup", bad: "warm-opp" },
+                { ok: "cooldown", bad: "cooldowne" }, { ok: "pulse", bad: "puls" },
+                { ok: "breathing", bad: "breatheing" }, { ok: "heart rate", bad: "hart rate" },
+                { ok: "hydration", bad: "hydrasion" }, { ok: "nutrition", bad: "nutrishun" },
+                { ok: "health", bad: "helth" }, { ok: "safety rules", bad: "saftey rules" },
+                { ok: "body awareness", bad: "boddy awareness" }, { ok: "locomotor", bad: "locomoter" },
+                { ok: "non-locomotor", bad: "non-locomoter" }, { ok: "manipulate", bad: "manipulait" },
+                { ok: "send", bad: "sennd" }, { ok: "receive", bad: "recieve" }, { ok: "retain", bad: "reteen" },
+                { ok: "skip", bad: "skipp" }, { ok: "hop", bad: "hopp" }, { ok: "jump", bad: "jumpe" },
+                { ok: "gallop", bad: "galop" }, { ok: "run", bad: "runn" }, { ok: "throw", bad: "throwe" },
+                { ok: "catch", bad: "cach" }, { ok: "kick", bad: "kik" }
             ],
             drama: [
-                { ok: "theatre", bad: "theater" }, { ok: "script", bad: "skript" },
-                { ok: "acting", bad: "acteing" }, { ok: "dialogue", bad: "dialog" },
-                { ok: "costume", bad: "costum" }, { ok: "character", bad: "caracter" },
-                { ok: "drama", bad: "dramah" }, { ok: "role", bad: "roal" },
-                { ok: "tableau", bad: "tablo" }, { ok: "setting", bad: "seting" },
-                { ok: "plot", bad: "plote" }, { ok: "conflict", bad: "conflicte" },
-                { ok: "resolution", bad: "resolusian" }, { ok: "audience", bad: "audiens" },
-                { ok: "stage", bad: "staige" }, { ok: "focus", bad: "fokus" },
-                { ok: "tension", bad: "tensian" }, { ok: "space", bad: "spase" },
-                { ok: "voice", bad: "voyce" }, { ok: "expression", bad: "expresion" },
-                { ok: "tone", bad: "toan" }, { ok: "pitch", bad: "pytch" },
-                { ok: "volume", bad: "volum" }, { ok: "pace", bad: "paice" },
-                { ok: "gesture", bad: "gestur" }, { ok: "body language", bad: "body languige" },
+                { ok: "drama", bad: "dramah" }, { ok: "role", bad: "roal" }, { ok: "character", bad: "caracter" },
+                { ok: "tableau", bad: "tablo" }, { ok: "setting", bad: "seting" }, { ok: "plot", bad: "plott" },
+                { ok: "conflict", bad: "conflikt" }, { ok: "resolution", bad: "resolusion" },
+                { ok: "audience", bad: "audiense" }, { ok: "stage", bad: "staige" },
+                { ok: "focus", bad: "fokus" }, { ok: "tension", bad: "tencion" },
+                { ok: "space", bad: "spase" }, { ok: "voice", bad: "voyce" },
+                { ok: "expression", bad: "expreshun" }, { ok: "tone", bad: "toan" },
+                { ok: "pitch", bad: "pich" }, { ok: "volume", bad: "volum" }, { ok: "pace", bad: "paice" },
+                { ok: "gesture", bad: "jester" }, { ok: "body language", bad: "boddy language" },
                 { ok: "movement", bad: "movemint" }, { ok: "mime", bad: "myme" },
-                { ok: "improvisation", bad: "improvisasion" }, { ok: "freeze-frame", bad: "freezframe" },
-                { ok: "rehearsal", bad: "rehersal" }, { ok: "performance", bad: "performans" },
-                { ok: "prop", bad: "prope" }, { ok: "scenery", bad: "seenery" },
-                { ok: "sound effect", bad: "sownd effect" }, { ok: "lighting", bad: "lyghting" },
-                { ok: "emotion", bad: "emosian" }, { ok: "mood", bad: "moode" },
+                { ok: "improvisation", bad: "improvisasion" }, { ok: "freeze-frame", bad: "freze-frame" },
+                { ok: "rehearsal", bad: "rehersal" }, { ok: "performance", bad: "performence" },
+                { ok: "costume", bad: "costum" }, { ok: "prop", bad: "propp" }, { ok: "scenery", bad: "seenery" },
+                { ok: "sound effect", bad: "sownd effect" }, { ok: "lighting", bad: "lyting" },
+                { ok: "emotion", bad: "emoshun" }, { ok: "mood", bad: "moode" },
                 { ok: "atmosphere", bad: "atmosfere" }, { ok: "story", bad: "storie" },
-                { ok: "sequence", bad: "sequens" }, { ok: "monologue", bad: "monolog" },
-                { ok: "pantomime", bad: "pantomyme" }, { ok: "narration", bad: "narrasian" },
-                { ok: "mask", bad: "maske" }, { ok: "puppet", bad: "pupet" },
-                { ok: "transformation", bad: "transformasion" }, { ok: "reflection", bad: "reflecsian" },
-                { ok: "critique", bad: "critic" }, { ok: "audience etiquette", bad: "audiens etiquette" },
-                { ok: "collaboration", bad: "collaborasion" }, { ok: "concentration", bad: "concentrasian" },
-                { ok: "imagination", bad: "imaginasian" }
+                { ok: "sequence", bad: "sequense" }, { ok: "dialogue", bad: "dialog" },
+                { ok: "monologue", bad: "monolog" }, { ok: "pantomime", bad: "pantomyme" },
+                { ok: "narration", bad: "narrasion" }, { ok: "mask", bad: "masque" },
+                { ok: "puppet", bad: "pupet" }, { ok: "transformation", bad: "transformasion" },
+                { ok: "reflection", bad: "reflecshun" }, { ok: "critique", bad: "critic" },
+                { ok: "audience etiquette", bad: "audiense etiquette" }, { ok: "collaboration", bad: "colaborasion" },
+                { ok: "concentration", bad: "concentrasion" }, { ok: "imagination", bad: "imaginasion" }
             ],
             dance: [
-                { ok: "movement", bad: "movemint" }, { ok: "rhythm", bad: "rythm" },
-                { ok: "energy", bad: "energe" }, { ok: "spin", bad: "spynn" },
-                { ok: "balance", bad: "balence" }, { ok: "routine", bad: "routin" },
-                { ok: "dance", bad: "dans" }, { ok: "body", bad: "bodie" },
-                { ok: "space", bad: "spase" }, { ok: "time", bad: "tyme" },
-                { ok: "shape", bad: "shaipe" }, { ok: "level", bad: "levle" },
-                { ok: "pathway", bad: "pathwaie" }, { ok: "direction", bad: "direcsian" },
-                { ok: "size", bad: "syze" }, { ok: "pace", bad: "paice" },
-                { ok: "tempo", bad: "temppo" }, { ok: "beat", bad: "beet" },
-                { ok: "duration", bad: "durasion" }, { ok: "phrase", bad: "frase" },
-                { ok: "pattern", bad: "pattern" }, { ok: "sequence", bad: "sequens" },
-                { ok: "speed", bad: "spede" }, { ok: "force", bad: "forse" },
-                { ok: "weight", bad: "waite" }, { ok: "quality", bad: "qualety" },
-                { ok: "flow", bad: "floe" }, { ok: "coordination", bad: "coordinasion" },
-                { ok: "flexibility", bad: "flexibilety" }, { ok: "strongest", bad: "strongist" }
+                { ok: "dance", bad: "danse" }, { ok: "movement", bad: "movemint" }, { ok: "body", bad: "boddy" },
+                { ok: "space", bad: "spase" }, { ok: "time", bad: "tyme" }, { ok: "energy", bad: "energe" },
+                { ok: "shape", bad: "shaipe" }, { ok: "level", bad: "levle" }, { ok: "pathway", bad: "pathwai" },
+                { ok: "direction", bad: "direcshun" }, { ok: "size", bad: "syze" }, { ok: "pace", bad: "paice" },
+                { ok: "rhythm", bad: "rythm" }, { ok: "tempo", bad: "temppo" }, { ok: "beat", bad: "beet" },
+                { ok: "duration", bad: "durasion" }, { ok: "phrase", bad: "fraise" }, { ok: "pattern", bad: "paturn" },
+                { ok: "sequence", bad: "sequense" }, { ok: "speed", bad: "spede" }, { ok: "force", bad: "forse" },
+                { ok: "weight", bad: "wayt" }, { ok: "quality", bad: "qualety" }, { ok: "flow", bad: "flo" },
+                { ok: "balance", bad: "balence" }, { ok: "coordination", bad: "coordinasion" },
+                { ok: "flexibility", bad: "flexability" }, { ok: "strength", bad: "strenth" },
+                { ok: "locomotor", bad: "locomoter" }, { ok: "non-locomotor", bad: "non-locomoter" },
+                { ok: "jump", bad: "jumpe" }, { ok: "hop", bad: "hopp" }, { ok: "skip", bad: "skipp" },
+                { ok: "leap", bad: "leepe" }, { ok: "gallop", bad: "galop" }, { ok: "turn", bad: "terne" },
+                { ok: "twist", bad: "twisst" }, { ok: "stretch", bad: "strech" }, { ok: "bend", bad: "bennd" },
+                { ok: "swing", bad: "swinng" }, { ok: "slide", bad: "slyde" }, { ok: "stillness", bad: "stilness" },
+                { ok: "formation", bad: "formasion" }, { ok: "relationship", bad: "relasionship" },
+                { ok: "performance", bad: "performence" }, { ok: "choreography", bad: "coriography" },
+                { ok: "improvisation", bad: "improvisasion" }, { ok: "expression", bad: "expreshun" },
+                { ok: "mood", bad: "moode" }, { ok: "audience", bad: "audiense" }
             ],
             health: [
-                { ok: "healthy", bad: "helthy" }, { ok: "teeth", bad: "teethe" },
-                { ok: "brush", bad: "bruss" }, { ok: "wash", bad: "wosh" },
-                { ok: "behaviour", bad: "behavior" }, { ok: "favour", bad: "favor" },
-                { ok: "health", bad: "helthe" }, { ok: "wellbeing", bad: "welbeing" },
-                { ok: "nutrition", bad: "nutrisian" }, { ok: "food guide", bad: "fode guide" },
+                { ok: "health", bad: "helth" }, { ok: "wellbeing", bad: "welbeing" },
+                { ok: "nutrition", bad: "nutrishun" }, { ok: "food guide", bad: "fude guide" },
                 { ok: "healthy eating", bad: "helthy eating" }, { ok: "snack", bad: "snacke" },
-                { ok: "physical activity", bad: "physicel activity" }, { ok: "safety", bad: "saftey" },
+                { ok: "physical activity", bad: "phisical activity" }, { ok: "safety", bad: "saftey" },
                 { ok: "injury prevention", bad: "injurey prevention" }, { ok: "symptom", bad: "simptom" },
                 { ok: "illness", bad: "ilness" }, { ok: "hygiene", bad: "hygene" },
-                { ok: "dental health", bad: "dentel health" }, { ok: "mental health", bad: "mentel health" }
+                { ok: "dental health", bad: "dentle health" }, { ok: "mental health", bad: "mentle health" },
+                { ok: "emotion", bad: "emoshun" }, { ok: "feeling", bad: "feeleing" },
+                { ok: "respect", bad: "respeckt" }, { ok: "relationship", bad: "relasionship" },
+                { ok: "communication", bad: "comunicasion" }, { ok: "peer pressure", bad: "pere pressure" },
+                { ok: "bullying", bad: "bullyng" }, { ok: "inclusion", bad: "inclushun" },
+                { ok: "diversity", bad: "diversety" }, { ok: "boundary", bad: "boundry" },
+                { ok: "consent", bad: "consant" }, { ok: "personal safety", bad: "personnal safety" },
+                { ok: "trust", bad: "trusst" }, { ok: "trusted adult", bad: "trussted adult" },
+                { ok: "support", bad: "suport" }, { ok: "decision making", bad: "decishun making" },
+                { ok: "goal setting", bad: "gole setting" }, { ok: "self-concept", bad: "self-consept" },
+                { ok: "body image", bad: "boddy image" }, { ok: "substance", bad: "substanse" },
+                { ok: "medicine", bad: "medisin" }, { ok: "hazard", bad: "hazerd" },
+                { ok: "medicine safety", bad: "medisin saftey" }, { ok: "emergency", bad: "emergensy" },
+                { ok: "community helper", bad: "comuniti helper" }, { ok: "physical change", bad: "phisical change" },
+                { ok: "growth", bad: "growthe" }, { ok: "development", bad: "developement" },
+                { ok: "care", bad: "cair" }, { ok: "mindfulness", bad: "mindfulnes" },
+                { ok: "resilience", bad: "resilyence" }, { ok: "sleep", bad: "slepe" },
+                { ok: "hydration", bad: "hydrasion" }, { ok: "protective equipment", bad: "protectiv equipment" },
+                { ok: "online safety", bad: "on-line saftey" }, { ok: "conflict resolution", bad: "conflikt resolusion" }
             ],
             prefixes: [
                 { ok: "un", bad: "une" }, { ok: "dis", bad: "dys" }, { ok: "re", bad: "ree" },
-                { ok: "unhappy", bad: "unhapie" }, { ok: "replay", bad: "replayy" },
-                { ok: "dislike", bad: "dislyke" }, { ok: "preview", bad: "preveiw" },
-                { ok: "misspell", bad: "mispel" }, { ok: "subway", bad: "subwaye" },
-                { ok: "coexist", bad: "coexyst" }, { ok: "decode", bad: "decodd" },
-                { ok: "pre", bad: "pree" }, { ok: "mis", bad: "mys" }, { ok: "sub", bad: "subb" },
-                { ok: "co", bad: "coe" }, { ok: "de", bad: "dee" }, { ok: "inter", bad: "intr" },
-                { ok: "semi", bad: "semy" }, { ok: "super", bad: "supr" }, { ok: "anti", bad: "anty" }
+                { ok: "prepay", bad: "pree-pay" }, { ok: "misspell", bad: "mispel" },
+                { ok: "nonstop", bad: "non-stopp" }, { ok: "overact", bad: "ovreact" },
+                { ok: "subway", bad: "sub-wai" }, { ok: "undergo", bad: "undrego" },
+                { ok: "bicycle", bad: "bycycle" }, { ok: "tricycle", bad: "trycycle" },
+                { ok: "multitask", bad: "multeetask" }, { ok: "antisocial", bad: "antysocial" },
+                { ok: "semicircle", bad: "semycircle" }, { ok: "midway", bad: "midwai" },
+                { ok: "forecast", bad: "forcast" }, { ok: "devalue", bad: "dee-value" },
+                { ok: "interstate", bad: "intrstate" }, { ok: "transport", bad: "tranzport" },
+                { ok: "supermarket", bad: "suupermarket" }, { ok: "cooperate", bad: "co-operate" },
+                { ok: "ex-president", bad: "expresident" }, { ok: "counteract", bad: "conteract" },
+                { ok: "autopilot", bad: "awtopilot" }, { ok: "biodegradable", bad: "byodegradable" },
+                { ok: "teleport", bad: "telaport" }, { ok: "megaphone", bad: "megga-phone" },
+                { ok: "microscope", bad: "mycroscope" }, { ok: "polygon", bad: "pollygon" },
+                { ok: "hyperactive", bad: "hiperactive" }, { ok: "monologue", bad: "monologg" },
+                { ok: "uniform", bad: "yuniform" }, { ok: "triangle", bad: "triangel" },
+                { ok: "interact", bad: "inter-act" }, { ok: "preview", bad: "preeview" },
+                { ok: "disconnect", bad: "dysconnect" }, { ok: "recycle", bad: "re-cycle" },
+                { ok: "unhappy", bad: "un-happy" }, { ok: "misbehave", bad: "mis-behave" },
+                { ok: "nonsense", bad: "non-sense" }, { ok: "overdue", bad: "over-due" },
+                { ok: "subzero", bad: "sub-zero" }, { ok: "underground", bad: "under-grownd" },
+                { ok: "bilingual", bad: "bilinguel" }, { ok: "midterm", bad: "mid-term" },
+                { ok: "superman", bad: "suuperman" }, { ok: "outrun", bad: "owtrun" },
+                { ok: "proactive", bad: "pro-active" }, { ok: "rebuild", bad: "re-build" },
+                { ok: "unlocked", bad: "unlocked" }
             ],
             suffixes: [
                 { ok: "helpful", bad: "helpfull" }, { ok: "careless", bad: "careles" },
-                { ok: "quickly", bad: "quicklie" }, { ok: "sadness", bad: "sadnes" },
-                { ok: "raining", bad: "rainnig" }, { ok: "happiness", bad: "happyness" },
-                { ok: "beautiful", bad: "beautifull" }, { ok: "ful", bad: "full" },
-                { ok: "less", bad: "les" }, { ok: "ly", bad: "lie" }, { ok: "ness", bad: "nes" },
-                { ok: "ing", bad: "yng" }, { ok: "able", bad: "abel" }, { ok: "ment", bad: "mint" },
-                { ok: "er", bad: "err" }, { ok: "est", bad: "estt" }
+                { ok: "quickly", bad: "quickley" }, { ok: "slowly", bad: "slowlie" },
+                { ok: "happiness", bad: "happyness" }, { ok: "sadness", bad: "sadnes" },
+                { ok: "beautiful", bad: "beautyful" }, { ok: "painful", bad: "painfull" },
+                { ok: "harmless", bad: "harme-less" }, { ok: "endless", bad: "endles" },
+                { ok: "teacher", bad: "teachur" }, { ok: "actor", bad: "acter" },
+                { ok: "singer", bad: "singar" }, { ok: "visitor", bad: "visiter" },
+                { ok: "building", bad: "buildyng" }, { ok: "running", bad: "runing" },
+                { ok: "swimming", bad: "swiming" }, { ok: "biggest", bad: "bigest" },
+                { ok: "tallest", bad: "tallest" }, { ok: "shorter", bad: "shortur" },
+                { ok: "faster", bad: "fastur" }, { ok: "playable", bad: "playible" },
+                { ok: "readable", bad: "readible" }, { ok: "enjoyable", bad: "enjoyible" },
+                { ok: "terrible", bad: "terrable" }, { ok: "sensible", bad: "sensable" },
+                { ok: "activity", bad: "activeety" }, { ok: "creative", bad: "creativ" },
+                { ok: "talkative", bad: "talkativ" }, { ok: "darkness", bad: "darknes" },
+                { ok: "softness", bad: "softnes" }, { ok: "brightness", bad: "brightnes" },
+                { ok: "movement", bad: "movemint" }, { ok: "payment", bad: "paymint" },
+                { ok: "excitement", bad: "excitemint" }, { ok: "agreement", bad: "agreemint" },
+                { ok: "hopeless", bad: "hopeles" }, { ok: "fearless", bad: "fearles" },
+                { ok: "wonderful", bad: "wonderfull" }, { ok: "peaceful", bad: "peacefull" },
+                { ok: "thankful", bad: "thankfull" }, { ok: "badly", bad: "badley" },
+                { ok: "softly", bad: "softlie" }, { ok: "happily", bad: "happylie" },
+                { ok: "easily", bad: "easylie" }, { ok: "famous", bad: "fameous" },
+                { ok: "dangerous", bad: "dangerus" }, { ok: "poisonous", bad: "poisonus" },
+                { ok: "golden", bad: "goldin" }, { ok: "wooden", bad: "woodin" }
             ],
             basewords: [
                 { ok: "happy", bad: "happie" }, { ok: "friend", bad: "frend" },
-                { ok: "agree", bad: "agrie" }, { ok: "write", bad: "rite" },
-                { ok: "build", bad: "bild" }, { ok: "create", bad: "creayt" },
-                { ok: "hope", bad: "hopee" }, { ok: "care", bad: "caire" }, { ok: "quick", bad: "qwick" },
-                { ok: "sad", bad: "sadd" }, { ok: "rain", bad: "rane" }, { ok: "beauty", bad: "beautie" }
+                { ok: "believe", bad: "beleive" }, { ok: "write", bad: "rite" },
+                { ok: "play", bad: "plaie" }, { ok: "jump", bad: "jumpe" },
+                { ok: "walk", bad: "walke" }, { ok: "create", bad: "creait" },
+                { ok: "spell", bad: "spel" }, { ok: "learn", bad: "lern" },
+                { ok: "school", bad: "skool" }, { ok: "house", bad: "howse" },
+                { ok: "child", bad: "childe" }, { ok: "animal", bad: "animle" },
+                { ok: "light", bad: "lyte" }, { ok: "dark", bad: "darke" },
+                { ok: "night", bad: "nite" }, { ok: "day", bad: "daie" },
+                { ok: "sleep", bad: "slepe" }, { ok: "dream", bad: "dreme" },
+                { ok: "smile", bad: "smyle" }, { ok: "laugh", bad: "laf" },
+                { ok: "think", bad: "thinck" }, { ok: "grow", bad: "groe" },
+                { ok: "build", bad: "bild" }, { ok: "earth", bad: "erth" },
+                { ok: "water", bad: "wauter" }, { ok: "fire", bad: "fyre" },
+                { ok: "wind", bad: "winnd" }, { ok: "stone", bad: "stoan" },
+                { ok: "grass", bad: "gras" }, { ok: "flower", bad: "flowr" },
+                { ok: "river", bad: "rivr" }, { ok: "ocean", bad: "oshan" },
+                { ok: "cloud", bad: "clowd" }, { ok: "storm", bad: "storme" },
+                { ok: "heart", bad: "hart" }, { ok: "brain", bad: "brane" },
+                { ok: "voice", bad: "voyce" }, { ok: "music", bad: "musik" },
+                { ok: "dance", bad: "danse" }, { ok: "paint", bad: "paynt" },
+                { ok: "cloth", bad: "clothe" }, { ok: "paper", bad: "papr" },
+                { ok: "metal", bad: "metle" }, { ok: "glass", bad: "glas" },
+                { ok: "wood", bad: "wud" }, { ok: "bread", bad: "bred" },
+                { ok: "fruit", bad: "frute" }, { ok: "honey", bad: "hunny" }
             ],
             foods: [
-                { ok: "yoghurt", bad: "yogert" }, { ok: "cheddar", bad: "cheder" },
-                { ok: "maple syrup", bad: "mapel sirup" }, { ok: "sandwich", bad: "sanwich" },
-                { ok: "potato", bad: "potatoe" }, { ok: "tomato", bad: "tomatoe" }
+                { ok: "apple", bad: "apel" }, { ok: "banana", bad: "bnana" }, { ok: "berry", bad: "berey" },
+                { ok: "fruit", bad: "frute" }, { ok: "carrot", bad: "carot" }, { ok: "potato", bad: "potatoe" },
+                { ok: "onion", bad: "unyon" }, { ok: "tomato", bad: "tomatoe" }, { ok: "lettuce", bad: "lettis" },
+                { ok: "grape", bad: "grayp" }, { ok: "bread", bad: "bred" }, { ok: "rice", bad: "ryse" },
+                { ok: "pasta", bad: "passtah" }, { ok: "cereal", bad: "serial" }, { ok: "cheese", bad: "cheeze" },
+                { ok: "butter", bad: "buter" }, { ok: "milk", bad: "milck" }, { ok: "yogurt", bad: "yogert" },
+                { ok: "egg", bad: "eg" }, { ok: "meat", bad: "mete" }, { ok: "chicken", bad: "chiken" },
+                { ok: "fish", bad: "fissh" }, { ok: "water", bad: "wauter" }, { ok: "juice", bad: "joose" },
+                { ok: "sugar", bad: "shuger" }, { ok: "salt", bad: "solt" }, { ok: "pepper", bad: "peper" },
+                { ok: "honey", bad: "hunny" }, { ok: "syrup", bad: "sirup" }, { ok: "flour", bad: "flower" },
+                { ok: "breakfast", bad: "brekfast" }, { ok: "lunch", bad: "luntch" }, { ok: "dinner", bad: "diner" },
+                { ok: "supper", bad: "superr" }, { ok: "snack", bad: "snak" }, { ok: "dessert", bad: "desert" },
+                { ok: "recipe", bad: "resipe" }, { ok: "kitchen", bad: "kichen" }, { ok: "flavour", bad: "flaver" },
+                { ok: "savoury", bad: "savory" }, { ok: "sweet", bad: "swete" }, { ok: "sour", bad: "sowr" },
+                { ok: "bitter", bad: "biter" }, { ok: "spicy", bad: "spycey" }, { ok: "healthy", bad: "helthy" },
+                { ok: "nutrition", bad: "nutrishun" }, { ok: "vitamin", bad: "vite-amin" }, { ok: "energy", bad: "energe" },
+                { ok: "grocery", bad: "gocerye" }, { ok: "restaurant", bad: "restarant" }
             ],
             sports: [
-                { ok: "basketball", bad: "basketbal" }, { ok: "badminton", bad: "badmiton" },
-                { ok: "gymnastics", bad: "gymnastic" }, { ok: "swimming", bad: "swiming" },
-                { ok: "volleyball", bad: "volyball" }, { ok: "lacrosse", bad: "lacrose" }
+                { ok: "run", bad: "runn" }, { ok: "jump", bad: "jumpe" }, { ok: "skip", bad: "skipp" },
+                { ok: "hop", bad: "hopp" }, { ok: "kick", bad: "kik" }, { ok: "catch", bad: "cach" },
+                { ok: "throw", bad: "throwe" }, { ok: "pass", bad: "pas" }, { ok: "shot", bad: "shott" },
+                { ok: "goal", bad: "gole" }, { ok: "ball", bad: "bal" }, { ok: "team", bad: "teem" },
+                { ok: "game", bad: "gaym" }, { ok: "play", bad: "plaie" }, { ok: "win", bad: "winn" },
+                { ok: "lose", bad: "loose" }, { ok: "race", bad: "rayce" }, { ok: "fast", bad: "fasst" },
+                { ok: "slow", bad: "slo" }, { ok: "rule", bad: "rool" }, { ok: "coach", bad: "coche" },
+                { ok: "sport", bad: "sporte" }, { ok: "soccer", bad: "socker" }, { ok: "hockey", bad: "hocky" },
+                { ok: "tennis", bad: "tenis" }, { ok: "rugby", bad: "rugbey" }, { ok: "cricket", bad: "crickit" },
+                { ok: "curling", bad: "curlling" }, { ok: "ringette", bad: "ringet" }, { ok: "baseball", bad: "baceball" },
+                { ok: "track", bad: "trak" }, { ok: "field", bad: "feeld" }, { ok: "gym", bad: "jim" },
+                { ok: "park", bad: "parke" }, { ok: "ice", bad: "yce" }, { ok: "rink", bad: "rinck" },
+                { ok: "court", bad: "cort" }, { ok: "whistle", bad: "wissel" }, { ok: "jersey", bad: "jerseye" },
+                { ok: "medal", bad: "medle" }, { ok: "trophy", bad: "trofey" }, { ok: "player", bad: "playur" },
+                { ok: "referee", bad: "referree" }, { ok: "captain", bad: "capten" }, { ok: "score", bad: "scor" },
+                { ok: "points", bad: "poynts" }, { ok: "fitness", bad: "fitnes" }, { ok: "defence", bad: "defense" },
+                { ok: "favourite", bad: "favorite" }
             ],
             videogames: [
-                { ok: "Pac-Man", bad: "Packman" }, { ok: "Donkey Kong", bad: "Donky Kong" },
-                { ok: "Space Invaders", bad: "Space Invaderz" }, { ok: "Frogger", bad: "Froger" },
-                { ok: "Tetris", bad: "Tetrys" }, { ok: "Dig Dug", bad: "Digdug" }
+                { ok: "Pac-Man", bad: "Packman" }, { ok: "Ms. Pac-Man", bad: "Miz Packman" }, { ok: "Donkey Kong", bad: "Donky Kong" },
+                { ok: "Mario Bros.", bad: "Mario Broz" }, { ok: "Super Mario Bros.", bad: "Super Mario Broz" },
+                { ok: "Super Mario Bros. 2", bad: "Super Mario Broz 2" }, { ok: "Super Mario Bros. 3", bad: "Super Mario Broz 3" },
+                { ok: "The Legend of Zelda", bad: "The Legand of Zelda" }, { ok: "Zelda II: The Adventure of Link", bad: "Zelda II: The Adventur of Link" },
+                { ok: "Metroid", bad: "Metroidd" }, { ok: "Mega Man", bad: "Megaman" }, { ok: "Mega Man 2", bad: "Megaman 2" },
+                { ok: "Contra", bad: "Conntra" }, { ok: "Tetris", bad: "Tetress" }, { ok: "Space Invaders", bad: "Spase Invaders" },
+                { ok: "Asteroids", bad: "Asteroyds" }, { ok: "Missile Command", bad: "Missle Command" }, { ok: "Centipede", bad: "Sentipede" },
+                { ok: "Galaga", bad: "Gallaga" }, { ok: "Frogger", bad: "Froger" }, { ok: "Dig Dug", bad: "Digdug" },
+                { ok: "Q*bert", bad: "Qbert" }, { ok: "Joust", bad: "Jowst" }, { ok: "Pitfall!", bad: "Pitfal" },
+                { ok: "Duck Hunt", bad: "Duk Hunt" }, { ok: "Mike Tyson's Punch-Out!!", bad: "Mike Tysons Punchout" },
+                { ok: "Castlevania", bad: "Castelvania" }, { ok: "Castlevania III: Dracula's Curse", bad: "Castelvania III: Draculas Curse" },
+                { ok: "Final Fantasy", bad: "Finel Fantasy" }, { ok: "Dragon Quest", bad: "Dragen Quest" },
+                { ok: "Phantasy Star", bad: "Fantasy Star" }, { ok: "SimCity", bad: "Simcitey" }, { ok: "Prince of Persia", bad: "Pris of Persia" },
+                { ok: "Ultima IV: Quest of the Avatar", bad: "Ultima IV: Quest of the Avater" }, { ok: "King's Quest", bad: "Kings Quest" },
+                { ok: "Maniac Mansion", bad: "Maneac Mansion" }, { ok: "Out Run", bad: "Owt Run" }, { ok: "Pole Position", bad: "Pole Posision" },
+                { ok: "Double Dragon", bad: "Doble Dragon" }, { ok: "Golden Axe", bad: "Goldin Axe" }, { ok: "Final Fight", bad: "Finel Fight" },
+                { ok: "Street Fighter", bad: "Strete Fighter" }, { ok: "Shinobi", bad: "Shinoby" }, { ok: "Gauntlet", bad: "Gontlet" },
+                { ok: "R-Type", bad: "Rtype" }, { ok: "Gradius", bad: "Graydius" }, { ok: "Bubble Bobble", bad: "Bubbel Bobbel" },
+                { ok: "Paperboy", bad: "Paperboi" }, { ok: "Excitebike", bad: "Excitebyke" }, { ok: "Defender", bad: "Defendur" }
             ]
         };
 
@@ -894,8 +1096,18 @@
             all: { name: "Darth Ruggiero", obstacle: "stone", desc: "Beware the dark coffee of Darth Ruggiero!" }
         };
 
-        // REPAIRED: Added global required boss hits list to prevent ReferenceErrors on spawn transition freeze!
         const BOSS_REQ_HITS = [4, 5, 6, 7, 8, 9, 10];
+
+        // --- Card Data System ---
+        const CARDS_DATA = [
+            { req: 3, id: "c_aijack", name: "AI Jack", title: "AI Jack", desc: "AI Jack is the most intelligent AI there is!" },
+            { req: 6, id: "c_madelex", name: "Madelex", title: "Madelex", desc: "The coolest letter of the alphabet is X." },
+            { req: 9, id: "c_izzy", name: "Australian Izzy Thanksgiving", title: "Aus. Izzy", desc: "A smiling, happy faced friend." },
+            { req: 12, id: "c_djfinn", name: "DJ Finn", title: "DJ Finn", desc: "A RocknRoll DJ with excellent dance skills!" },
+            { req: 15, id: "c_happy", name: "Happy Face", title: "Happy Face", desc: "A large 32-bit happy face emoji who loves sardines! Mmm!" },
+            { req: 18, id: "c_mind", name: "The Mind Reader", title: "Mind Reader", desc: "He knows what you're thinking." },
+            { req: 21, id: "c_pokemiron", name: "Pokemiron", title: "Pokemiron", desc: "The world's greatest card collector!" }
+        ];
 
         let canvas, ctx;
         let lastTime = 0;
@@ -916,6 +1128,10 @@
         let activeBulletType = 'bullet_hearts';
         let activeSkinType = 'skin_ufo';
         let walletPoints = 5000; 
+        
+        // Persistent Boss Defeats Tracking
+        let totalBossesDefeated = 0;
+        let currentCardUnlock = null; 
 
         let continuesRemaining = 3;
 
@@ -957,7 +1173,7 @@
                 this.vy = (Math.random() - 0.5) * 8 - 2;
                 this.color = color;
                 this.alpha = 1;
-                this.decay = Math.random() * 0.03 + 0.01;
+                this.decay = Math.random() * 0.04 + 0.01; // Faster decay for performance
                 this.size = Math.random() * 3 + 2;
             }
             update() {
@@ -966,7 +1182,8 @@
             draw(ctx) {
                 ctx.save();
                 ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+                // Optimization: Draw rectangle instead of arc for particles for speed on Chromebooks
+                ctx.fillRect(this.x, this.y, this.size, this.size);
                 ctx.restore();
             }
         }
@@ -975,8 +1192,12 @@
             canvas = document.getElementById('gameCanvas');
             ctx = canvas.getContext('2d');
             
+            // Disable native image smoothing for true pixel art crispness
+            ctx.imageSmoothingEnabled = false;
+
             loadLeaderboard();
             loadShopData();
+            loadCardData();
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
             checkUnlockedModes();
@@ -1030,6 +1251,7 @@
                 if (e.key === 'Enter') {
                     if (state === 'TRANSITION') { enterNextSector(); e.preventDefault(); }
                     else if (state === 'CONTINUE') { triggerContinueAction(); e.preventDefault(); }
+                    else if (state === 'CARD_UNLOCK') { triggerCardUnlockContinue(); e.preventDefault(); }
                 }
                 if ((e.key === 'Control' || e.key === ' ') && state === 'PLAYING') {
                     fireHeartBullet(); e.preventDefault();
@@ -1058,10 +1280,13 @@
             document.getElementById('confirmHomeExitBtn').addEventListener('click', executeHomeReturn);
             document.getElementById('cancelHomeExitBtn').addEventListener('click', cancelHomeReturn);
             document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
+            document.getElementById('cardUnlockContinueBtn').addEventListener('click', triggerCardUnlockContinue);
 
             setupTouchSupport();
-            setupShopTabs();
+            setupMenuTabs();
             setupVirtualJoystick();
+            initPreviewPane(); // Set initial preview
+            renderBinderCards();
             requestAnimationFrame(gameLoop);
         });
 
@@ -1147,6 +1372,14 @@
             try { fetch(GOOGLE_SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }); } catch (e) {}
         }
 
+        function loadCardData() {
+            try {
+                if (SafeStorage.getItem('ufo_boss_kills') !== null) totalBossesDefeated = parseInt(SafeStorage.getItem('ufo_boss_kills'));
+                else SafeStorage.setItem('ufo_boss_kills', totalBossesDefeated);
+            } catch(e) { totalBossesDefeated = 0; }
+            document.getElementById('binderBossKills').textContent = totalBossesDefeated;
+        }
+
         function loadShopData() {
             try {
                 if (SafeStorage.getItem('ufo_wallet_v2') !== null) walletPoints = parseInt(SafeStorage.getItem('ufo_wallet_v2'));
@@ -1191,27 +1424,291 @@
                     btn.querySelector('span:nth-child(2)').textContent = `${cost} pts`;
                 }
             });
+            drawShopPreviewPane();
         }
 
-        function setupShopTabs() {
+        function initPreviewPane() {
+            const previewCanvas = document.getElementById('shopPreviewCanvas');
+            if(previewCanvas) drawShopPreviewPane();
+        }
+
+        function drawShopPreviewPane() {
+            const previewCanvas = document.getElementById('shopPreviewCanvas');
+            if(!previewCanvas) return;
+            const pCtx = previewCanvas.getContext('2d');
+            pCtx.imageSmoothingEnabled = false;
+            pCtx.clearRect(0, 0, 60, 60);
+
+            pCtx.save();
+            pCtx.translate(30, 30);
+            
+            // Draw Player Skin in preview
+            pCtx.save();
+            // Scale appropriately to fit 60x60
+            pCtx.scale(0.5, 0.5);
+            
+            // Temporary override for rendering just in preview
+            let originalSkin = activeSkinType;
+            let originalPower = player.powerStreak;
+            
+            // Draw Skin
+            drawUFOPlayerToContext(pCtx, activeSkinType);
+            
+            pCtx.restore();
+
+            // Draw Projectile Example
+            pCtx.save();
+            pCtx.scale(0.6, 0.6);
+            pCtx.translate(0, -25);
+            drawCustomBulletProjToContext(pCtx, { type: activeBulletType }, 0);
+            pCtx.restore();
+
+            pCtx.restore();
+        }
+
+        // --- 32-bit Pixel Art Generation Engine ---
+        function renderPixelSprite(ctx, cardId) {
+            // Draw 32x32 art that will be scaled by canvas
+            ctx.clearRect(0,0,32,32);
+            
+            if(cardId === 'c_aijack') {
+                // AI Jack (80s Computer)
+                ctx.fillStyle = '#1e293b'; ctx.fillRect(2,4,28,24); // monitor base
+                ctx.fillStyle = '#334155'; ctx.fillRect(4,6,24,20); // bezel
+                ctx.fillStyle = '#064e3b'; ctx.fillRect(6,8,20,16); // dark green screen
+                // Smile like La Velcro
+                ctx.fillStyle = '#4ade80'; // bright green phosphor
+                ctx.fillRect(10,12,2,4); ctx.fillRect(20,12,2,4); // eyes
+                ctx.fillRect(10,19,12,2); ctx.fillRect(8,17,2,2); ctx.fillRect(22,17,2,2); // smile
+            } 
+            else if(cardId === 'c_madelex') {
+                // Madelex (Neon Pink X)
+                ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,32,32); // dark space
+                ctx.fillStyle = '#f43f5e';
+                for(let i=4; i<28; i++) {
+                    ctx.fillRect(i, i, 4, 4);
+                    ctx.fillRect(32-i-4, i, 4, 4);
+                }
+                ctx.fillStyle = '#fbcfe8';
+                for(let i=6; i<26; i++) {
+                    ctx.fillRect(i+1, i+1, 2, 2);
+                    ctx.fillRect(32-i-3, i+1, 2, 2);
+                }
+            }
+            else if(cardId === 'c_izzy') {
+                // Australian Izzy (Kangaroo)
+                ctx.fillStyle = '#84cc16'; ctx.fillRect(0,0,32,32); // grass bg
+                ctx.fillStyle = '#b45309'; // tan head
+                ctx.fillRect(10,12,12,14); // head box
+                ctx.fillRect(12,16,14,8); // snout
+                ctx.fillStyle = '#78350f'; // ears
+                ctx.fillRect(8,4,4,8); ctx.fillRect(20,4,4,8);
+                ctx.fillStyle = '#000000'; // eyes/nose
+                ctx.fillRect(14,14,2,2); ctx.fillRect(20,14,2,2);
+                ctx.fillRect(24,18,2,2); // nose
+                ctx.fillStyle = '#ffffff'; ctx.fillRect(15,14,1,1); ctx.fillRect(21,14,1,1); // glint
+                ctx.fillStyle = '#000000'; ctx.fillRect(16,21,6,1); ctx.fillRect(22,20,1,1); // smile
+            }
+            else if(cardId === 'c_djfinn') {
+                // DJ Finn
+                ctx.fillStyle = '#171717'; ctx.fillRect(0,0,32,32); // club dark
+                // Neon lasers
+                ctx.fillStyle = '#06b6d4'; ctx.fillRect(0,10,32,2); ctx.fillRect(16,0,2,32);
+                ctx.fillStyle = '#d946ef'; ctx.fillRect(0,20,32,2); ctx.fillRect(8,0,2,32);
+                // DJ Head
+                ctx.fillStyle = '#fcd34d'; ctx.fillRect(10,10,12,12); // face
+                ctx.fillStyle = '#000000'; ctx.fillRect(10,12,12,4); // shades
+                ctx.fillStyle = '#f43f5e'; ctx.fillRect(12,13,8,2); // shades glare
+                // Headphones
+                ctx.fillStyle = '#e2e8f0'; ctx.fillRect(8,8,16,2); // band
+                ctx.fillStyle = '#475569'; ctx.fillRect(6,10,4,8); ctx.fillRect(22,10,4,8); // cups
+                // Shirt
+                ctx.fillStyle = '#3b82f6'; ctx.fillRect(8,22,16,10);
+            }
+            else if(cardId === 'c_happy') {
+                // Happy Face
+                ctx.fillStyle = '#3b82f6'; ctx.fillRect(0,0,32,32); // blue bg
+                ctx.fillStyle = '#eab308'; // yellow circle approx
+                ctx.beginPath(); ctx.arc(16,16,12,0,Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(11,12,2,4); ctx.fillRect(19,12,2,4); // eyes
+                ctx.fillRect(10,20,12,2); ctx.fillRect(8,18,2,2); ctx.fillRect(22,18,2,2); // smile
+            }
+            else if(cardId === 'c_mind') {
+                // The Mind Reader
+                ctx.fillStyle = '#2e1065'; ctx.fillRect(0,0,32,32); // deep purple bg
+                // Lightning
+                ctx.fillStyle = '#38bdf8'; 
+                ctx.fillRect(4,4,2,6); ctx.fillRect(6,8,2,6); ctx.fillRect(4,12,2,6);
+                ctx.fillRect(26,18,2,6); ctx.fillRect(24,22,2,6); ctx.fillRect(26,26,2,6);
+                // Brain
+                ctx.fillStyle = '#db2777';
+                ctx.beginPath(); ctx.ellipse(16,16,10,8,0,0,Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(12,18,6,6,0,0,Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(20,18,6,6,0,0,Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#fbcfe8'; // folds
+                ctx.fillRect(12,12,8,2); ctx.fillRect(10,16,12,2); ctx.fillRect(14,20,4,2);
+                // Zen face
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(11,15,3,1); ctx.fillRect(18,15,3,1); // closed eyes
+                ctx.fillRect(15,19,2,1); // tiny mouth
+            }
+            else if(cardId === 'c_pokemiron') {
+                // Pokemiron (Angry Blastoise-ish)
+                ctx.fillStyle = '#0c4a6e'; ctx.fillRect(0,0,32,32); // dark water bg
+                // Shell
+                ctx.fillStyle = '#78350f'; ctx.beginPath(); ctx.arc(16,18,14,Math.PI, 0); ctx.fill();
+                ctx.fillStyle = '#fcd34d'; ctx.fillRect(2,18,28,4); // rim
+                // Body
+                ctx.fillStyle = '#3b82f6'; ctx.fillRect(10,14,12,10); // head
+                ctx.fillStyle = '#60a5fa'; ctx.fillRect(10,22,12,10); // torso
+                // Angry Eyes
+                ctx.fillStyle = '#ffffff'; ctx.fillRect(11,16,3,2); ctx.fillRect(18,16,3,2);
+                ctx.fillStyle = '#ef4444'; ctx.fillRect(12,16,1,1); ctx.fillRect(19,16,1,1);
+                ctx.fillStyle = '#000000'; // angry brow
+                ctx.fillRect(10,15,4,1); ctx.fillRect(11,16,1,1);
+                ctx.fillRect(18,15,4,1); ctx.fillRect(20,16,1,1);
+            }
+        }
+
+        function drawTradingCard(canvasId, cardData, isUnlocked, isLarge = false) {
+            const c = document.getElementById(canvasId);
+            if(!c) return;
+            const ctx = c.getContext('2d');
+            const w = c.width;
+            const h = c.height;
+            
+            ctx.imageSmoothingEnabled = false;
+            ctx.clearRect(0,0,w,h);
+
+            if (!isUnlocked) {
+                // Greyed out backing
+                ctx.fillStyle = '#1e293b'; ctx.beginPath(); ctx.roundRect(0,0,w,h,8); ctx.fill();
+                ctx.strokeStyle = '#334155'; ctx.lineWidth = 4; ctx.stroke();
+                ctx.fillStyle = '#475569'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.font = isLarge ? 'bold 24px Inter' : 'bold 12px Inter';
+                ctx.fillText("LOCKED", w/2, h/2);
+                ctx.font = isLarge ? '12px Inter' : '9px Inter';
+                ctx.fillText(`Req: ${cardData.req} Kills`, w/2, h/2 + 20);
+                return;
+            }
+
+            // Card Base (Pokemon Yellow/Gold styling)
+            const baseGrad = ctx.createLinearGradient(0,0,w,h);
+            baseGrad.addColorStop(0, '#fef08a');
+            baseGrad.addColorStop(0.5, '#eab308');
+            baseGrad.addColorStop(1, '#a16207');
+            ctx.fillStyle = baseGrad;
+            ctx.beginPath(); ctx.roundRect(0,0,w,h,8); ctx.fill();
+            
+            // Inner Border
+            ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.roundRect(6,6,w-12,h-12,4); ctx.stroke();
+
+            // Image Frame
+            const imgBoxW = w - 24;
+            const imgBoxH = isLarge ? 160 : 60;
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(12, isLarge ? 30 : 20, imgBoxW, imgBoxH);
+            ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
+            ctx.strokeRect(12, isLarge ? 30 : 20, imgBoxW, imgBoxH);
+
+            // Draw Pixel Art
+            const tmpCanvas = document.createElement('canvas');
+            tmpCanvas.width = 32; tmpCanvas.height = 32;
+            const tmpCtx = tmpCanvas.getContext('2d');
+            renderPixelSprite(tmpCtx, cardData.id);
+            
+            // Draw scaled pixel art into frame
+            ctx.drawImage(tmpCanvas, 12, isLarge ? 30 : 20, imgBoxW, imgBoxH);
+
+            // Card Title
+            ctx.fillStyle = '#000000';
+            ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+            ctx.font = isLarge ? '900 18px "Orbitron"' : '900 10px "Orbitron"';
+            ctx.fillText(cardData.title, 12, 10);
+
+            // Card HP/Stats area
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#dc2626';
+            ctx.fillText(`100 HP`, w-12, 10);
+
+            // Description
+            ctx.fillStyle = '#000000';
+            ctx.textAlign = 'center';
+            ctx.font = isLarge ? 'bold 12px Inter' : 'bold 8px Inter';
+            // Simple word wrap
+            const textY = isLarge ? 200 : 85;
+            if(isLarge) {
+                const words = cardData.desc.split(' ');
+                let line = ''; let yOff = textY;
+                for(let i=0; i<words.length; i++) {
+                    const testLine = line + words[i] + ' ';
+                    if (ctx.measureText(testLine).width > w-20 && i > 0) {
+                        ctx.fillText(line, w/2, yOff);
+                        line = words[i] + ' '; yOff += 16;
+                    } else { line = testLine; }
+                }
+                ctx.fillText(line, w/2, yOff);
+            } else {
+                ctx.fillText(cardData.name, w/2, textY);
+            }
+            
+            // 2.5D Shading / Dynamic lighting overlay (glossy look)
+            const glossGrad = ctx.createLinearGradient(0,0,w,h);
+            glossGrad.addColorStop(0, 'rgba(255,255,255,0.4)');
+            glossGrad.addColorStop(0.3, 'rgba(255,255,255,0)');
+            glossGrad.addColorStop(1, 'rgba(0,0,0,0.2)');
+            ctx.fillStyle = glossGrad;
+            ctx.beginPath(); ctx.roundRect(0,0,w,h,8); ctx.fill();
+        }
+
+        function renderBinderCards() {
+            const grid = document.getElementById('binderCardGrid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            CARDS_DATA.forEach((card, idx) => {
+                const isUnlocked = totalBossesDefeated >= card.req;
+                const canvasId = `binder_card_${idx}`;
+                grid.innerHTML += `
+                    <div class="card-slot flex flex-col items-center justify-center">
+                        <canvas id="${canvasId}" width="90" height="130" class="rounded-lg shadow-md"></canvas>
+                        <span class="text-[8px] text-slate-400 mt-1 font-bold">${isUnlocked ? card.title : '???'}</span>
+                    </div>
+                `;
+            });
+            
+            // Draw to the canvases after inserting to DOM
+            setTimeout(() => {
+                CARDS_DATA.forEach((card, idx) => {
+                    const isUnlocked = totalBossesDefeated >= card.req;
+                    drawTradingCard(`binder_card_${idx}`, card, isUnlocked, false);
+                });
+            }, 50);
+        }
+
+        function setupMenuTabs() {
             const stagesBtn = document.getElementById('tabStagesBtn');
             const shopBtn = document.getElementById('tabShopBtn');
+            const binderBtn = document.getElementById('tabBinderBtn');
             const panelStages = document.getElementById('panelStages');
             const panelShop = document.getElementById('panelShop');
+            const panelBinder = document.getElementById('panelBinder');
 
-            stagesBtn.addEventListener('click', () => {
-                stagesBtn.className = "px-5 py-3 text-xs md:text-sm font-black bg-[#4f46e5] text-white rounded-xl border border-[#6366f1]/40 transition-all flex items-center gap-2 shadow-lg shadow-indigo-500/15";
-                shopBtn.className = "px-5 py-3 text-xs md:text-sm font-black bg-[#13182b] border border-[#232e52]/70 text-[#94a3b8] hover:text-white rounded-xl transition-all flex items-center gap-2 shadow-lg";
-                panelStages.classList.remove('hidden'); panelShop.classList.add('hidden');
+            const activateTab = (activeBtn, activePanel) => {
+                [stagesBtn, shopBtn, binderBtn].forEach(b => {
+                    b.className = "px-3 py-2 md:px-5 md:py-3 text-[10px] md:text-sm font-black bg-[#13182b] border border-[#232e52]/70 text-[#94a3b8] hover:text-white rounded-xl transition-all flex items-center gap-2 shadow-lg";
+                });
+                activeBtn.className = "px-3 py-2 md:px-5 md:py-3 text-[10px] md:text-sm font-black bg-[#4f46e5] text-white rounded-xl border border-[#6366f1]/40 transition-all flex items-center gap-2 shadow-lg shadow-indigo-500/15";
+                
+                [panelStages, panelShop, panelBinder].forEach(p => p.classList.add('hidden'));
+                activePanel.classList.remove('hidden');
                 audio.playTone(300, 'sine', 0.1, 0.05);
-            });
+            };
 
-            shopBtn.addEventListener('click', () => {
-                shopBtn.className = "px-5 py-3 text-xs md:text-sm font-black bg-[#4f46e5] text-white rounded-xl hover:bg-[#4338ca] border border-[#6366f1]/40 transition-all flex items-center gap-2 shadow-lg shadow-indigo-500/15";
-                stagesBtn.className = "px-5 py-3 text-xs md:text-sm font-black bg-[#13182b] border border-[#232e52]/70 text-[#94a3b8] hover:text-white rounded-xl transition-all flex items-center gap-2 shadow-lg";
-                panelShop.classList.remove('hidden'); panelStages.classList.add('hidden');
-                audio.playTone(350, 'sine', 0.1, 0.05);
-            });
+            stagesBtn.addEventListener('click', () => activateTab(stagesBtn, panelStages));
+            shopBtn.addEventListener('click', () => { activateTab(shopBtn, panelShop); drawShopPreviewPane(); });
+            binderBtn.addEventListener('click', () => { activateTab(binderBtn, panelBinder); renderBinderCards(); });
 
             const buttons = document.querySelectorAll('.shop-btn');
             buttons.forEach(btn => {
@@ -1344,6 +1841,20 @@
         }
 
         function setupTouchSupport() {
+            const touchFireBtn = document.getElementById('touchFireBtn');
+            
+            // Explicit touchstart guarantees immediate response on mobile/tablets
+            touchFireBtn.addEventListener('touchstart', (e) => {
+                if (state === 'PLAYING') { fireHeartBullet(); }
+                e.preventDefault(); 
+            }, { passive: false });
+
+            // Ensure mouse works perfectly too
+            touchFireBtn.addEventListener('mousedown', (e) => {
+                if (state === 'PLAYING') { fireHeartBullet(); }
+                e.preventDefault();
+            });
+
             let isDraggingCanvas = false;
             canvas.addEventListener('touchstart', (e) => {
                 if (state !== 'PLAYING') return;
@@ -1435,6 +1946,7 @@
                 levelOrder.push(temp.splice(randIdx, 1)[0]);
             }
             currentLevelIdx = 0; totalScore = 0; gameTimeElapsed = 0; wordHitsAttempted = 0; wordHitsCorrect = 0; continuesRemaining = 3; 
+            currentCardUnlock = null;
             initLevel();
         }
 
@@ -1490,6 +2002,7 @@
             document.getElementById('continueScreen').classList.add('hidden');
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('victoryScreen').classList.add('hidden');
+            document.getElementById('cardUnlockOverlay').classList.add('hidden');
             state = 'PLAYING';
         }
 
@@ -1640,7 +2153,6 @@
             greenSpaceship = { x: 850, y: Math.random() * 300 + 150, vx: -120, vy: 0, size: 65, active: true, chaseTimer: 0 };
         }
 
-        // Modified: Size of toaster skin increased by 15%. Toast projectiles increased by 15%.
         function spawnPowerup(x, y) {
             activePowerups.push({ x: x, y: y, vy: (selectedDifficulty === 'eagle' || selectedDifficulty === 'upsidedown') ? -80 : 80, width: 58, height: 58, pulse: 0 });
         }
@@ -1700,7 +2212,47 @@
             document.getElementById('gameOverScreen').classList.remove('hidden'); document.getElementById('hudBar').classList.add('hidden');
         }
 
-        function handleLevelVictory() {
+        function handleBossDefeatedLogic() {
+            totalBossesDefeated++;
+            SafeStorage.setItem('ufo_boss_kills', totalBossesDefeated);
+            document.getElementById('binderBossKills').textContent = totalBossesDefeated;
+
+            // Check if card unlocked
+            let cardUnlocked = CARDS_DATA.find(c => c.req === totalBossesDefeated);
+            
+            if (cardUnlocked) {
+                currentCardUnlock = cardUnlocked;
+                showCardUnlockOverlay(cardUnlocked);
+            } else {
+                handleLevelVictoryStandard();
+            }
+        }
+
+        function showCardUnlockOverlay(card) {
+            state = 'CARD_UNLOCK';
+            document.getElementById('hudBar').classList.add('hidden');
+            document.getElementById('unlockedCardName').textContent = card.name;
+            
+            if(card.id === 'c_pokemiron') {
+                document.getElementById('unlockedCardName').classList.add('animate-bounce');
+            } else {
+                document.getElementById('unlockedCardName').classList.remove('animate-bounce');
+            }
+
+            document.getElementById('cardUnlockOverlay').classList.remove('hidden');
+            
+            // Draw the large card
+            drawTradingCard('unlockedCardCanvas', card, true, true);
+        }
+
+        function triggerCardUnlockContinue() {
+            if (state !== 'CARD_UNLOCK') return;
+            document.getElementById('cardUnlockOverlay').classList.add('hidden');
+            document.getElementById('hudBar').classList.remove('hidden');
+            handleLevelVictoryStandard();
+        }
+
+        function handleLevelVictoryStandard() {
             const levelDuration = Math.round((Date.now() - levelStartRealTime) / 1000);
             gameTimeElapsed += levelDuration;
             transmitResultsToGoogleSheet(totalScore, "Success");
@@ -1718,6 +2270,7 @@
                 document.getElementById('transNextStageTarget').textContent = `${nextBoss.name} (${currentLevelIdx + 1}/7): Collect ${getRequiredWordsForLevel(currentLevelIdx)} Words`;
                 document.getElementById('transStageDesc').textContent = nextBoss.desc;
                 document.getElementById('transitionScreen').classList.remove('hidden');
+                document.getElementById('hudBar').classList.add('hidden'); // hide hud on trans
             } else {
                 state = 'VICTORY';
                 document.getElementById('vicScore').textContent = totalScore.toString().padStart(5, '0');
@@ -1742,6 +2295,7 @@
                 unlockedMsg.textContent = "🦅 NEW UNLOCK: Eagle mode unlocked! (Features upside-down texts)";
             }
             checkUnlockedModes();
+            renderBinderCards(); // update binder state incase they go back
         }
 
         function enterNextSector() { initLevel(); }
@@ -1749,7 +2303,8 @@
         function resetToMenu() {
             state = 'MENU'; currentLevelIdx = 0; totalScore = 0; correctWordsDestroyedCount = 0;
             boss = null; negabor = null; greenSpaceship = null; words = []; obstacles = []; activePowerups = []; particles = []; continuesRemaining = 3;
-            
+            currentCardUnlock = null;
+
             const nameInput = document.getElementById('pilotNameInput');
             let savedName = SafeStorage.getItem('ufo_pilot_name');
             nameInput.value = savedName ? savedName : ""; 
@@ -1766,6 +2321,7 @@
             }
             document.getElementById('gameOverScreen').classList.add('hidden'); document.getElementById('victoryScreen').classList.add('hidden');
             document.getElementById('transitionScreen').classList.add('hidden'); document.getElementById('menuScreen').classList.remove('hidden');
+            renderBinderCards();
         }
 
         function update(dt) {
@@ -1774,12 +2330,12 @@
             if (earthquakeTimer > 0) earthquakeTimer -= dt;
             handleFewerWordsAlert();
 
-            // Mobile virtual joystick steering addition
+            // Mobile virtual joystick steering
             if (joystickInput.x !== 0 || joystickInput.y !== 0) {
                 player.x += joystickInput.x * player.speed * dt;
                 player.y += joystickInput.y * player.speed * dt;
             } else {
-                // Slower keyboard controls fallback
+                // Keyboard controls
                 let dx = 0, dy = 0;
                 if (keys['ArrowLeft'] || keys['a'] || keys['A']) dx = -1;
                 if (keys['ArrowRight'] || keys['d'] || keys['D']) dx = 1;
@@ -1893,7 +2449,7 @@
                 if (boss.hugging) {
                     boss.hugTimer -= dt;
                     if (boss.hugTimer <= 0) {
-                        triggerFireworksExplosion(boss.x, boss.y); totalScore += 10000; boss = null; handleLevelVictory();
+                        triggerFireworksExplosion(boss.x, boss.y); totalScore += 10000; boss = null; handleBossDefeatedLogic();
                     } else if (Math.random() < 0.2) particles.push(new Particle(boss.x + (Math.random()-0.5)*100, boss.y + (Math.random()-0.5)*100, '#f472b6'));
                 }
 
@@ -2004,7 +2560,7 @@
                                 totalScore += word.isPinkBonus ? 1000 : 300; document.getElementById('hudScore').textContent = totalScore.toString().padStart(5, '0');
                                 if (!boss) { correctWordsDestroyedCount++; updateHUDProgress(); } 
                                 else if (boss.subjectType !== 'physed') {
-                                    boss.hp--; if (boss.hp <= 0) { triggerFireworksExplosion(boss.x, boss.y); boss = null; handleLevelVictory(); }
+                                    boss.hp--; if (boss.hp <= 0) { triggerFireworksExplosion(boss.x, boss.y); boss = null; handleBossDefeatedLogic(); }
                                 }
                                 if (Math.random() < 0.3) spawnPowerup(word.x, word.y);
                             }
@@ -2037,12 +2593,13 @@
         function gameLoop(time) {
             const dt = Math.min((time - lastTime) / 1000, 0.1);
             lastTime = time;
-            if (state !== 'PAUSED') update(dt);
+            if (state !== 'PAUSED' && state !== 'CARD_UNLOCK') update(dt);
             render();
             requestAnimationFrame(gameLoop);
         }
 
         function render() {
+            // Optimization: Avoid clearing whole screen if not needed, but required here due to complex backgrounds
             ctx.clearRect(0, 0, 800, 1000);
             ctx.save();
             
@@ -2060,8 +2617,8 @@
             if (greenSpaceship) drawGreenShip(greenSpaceship);
             if (negabor) drawNegaborCharacter();
             for (let shape of electrifiedShapes) drawElectrifiedGeometricBarrier(shape);
-            if (player.invulnTimer <= 0 || Math.floor(Date.now() / 100) % 2 === 0) drawUFOPlayer();
-            for (let b of bullets) drawCustomBulletProj(b);
+            if (player.invulnTimer <= 0 || Math.floor(Date.now() / 100) % 2 === 0) drawUFOPlayerToContext(ctx, activeSkinType);
+            for (let b of bullets) drawCustomBulletProjToContext(ctx, b, player.powerStreak);
 
             if (boss && boss.subjectType === 'physed' && boss.hugging) {
                 ctx.save();
@@ -2083,8 +2640,9 @@
                 ctx.rotate((Math.random() - 0.5) * 0.1); 
                 ctx.font = '900 120px "Orbitron", sans-serif'; 
                 ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.shadowColor = '#ff2a8d'; ctx.shadowBlur = 30; ctx.fillStyle = '#ff2a8d'; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 8;
-                ctx.strokeText("HUG!", 0, 0); ctx.fillText("HUG!", 0, 0);
+                // Optimized shadow alternative
+                ctx.fillStyle = '#ff2a8d'; ctx.fillText("HUG!", 0, 0);
+                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 8; ctx.strokeText("HUG!", 0, 0);
                 ctx.restore();
             }
 
@@ -2104,101 +2662,151 @@
         }
 
         function drawLightningBolt(startX, alpha) {
-            ctx.save(); ctx.strokeStyle = `rgba(165, 180, 252, ${alpha})`; ctx.lineWidth = 4; ctx.shadowColor = '#818cf8'; ctx.shadowBlur = 15;
+            ctx.save(); 
+            // Optimized: Replace shadowBlur with secondary stroke for speed
+            ctx.strokeStyle = `rgba(129, 140, 248, ${alpha * 0.5})`; ctx.lineWidth = 12;
             ctx.beginPath(); let curX = startX, curY = 0; ctx.moveTo(curX, curY);
             while (curY < 1000) { curX += (Math.random() - 0.5) * 40; curY += Math.random() * 80 + 30; ctx.lineTo(curX, curY); }
-            ctx.stroke(); ctx.restore();
+            ctx.stroke();
+
+            ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`; ctx.lineWidth = 4;
+            ctx.stroke(); // Same path
+            ctx.restore();
         }
 
         function drawZigZagBarriers() {
-            ctx.save(); ctx.strokeStyle = '#22d3ee'; ctx.shadowColor = '#22d3ee'; ctx.shadowBlur = 8; ctx.lineWidth = 3;
+            ctx.save(); 
+            // Optimized: Replace shadowBlur with secondary thick line
+            ctx.strokeStyle = 'rgba(34, 211, 238, 0.4)'; ctx.lineWidth = 10;
             ctx.beginPath(); ctx.moveTo(60, 0); for (let y = 0; y <= 1000; y += 40) ctx.lineTo(60 + (Math.sin(y / 10 + Date.now() * 0.01) * 15), y); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(740, 0); for (let y = 0; y <= 1000; y += 40) ctx.lineTo(740 + (Math.cos(y / 10 + Date.now() * 0.01) * 15), y); ctx.stroke(); ctx.restore();
+            ctx.beginPath(); ctx.moveTo(740, 0); for (let y = 0; y <= 1000; y += 40) ctx.lineTo(740 + (Math.cos(y / 10 + Date.now() * 0.01) * 15), y); ctx.stroke(); 
+
+            ctx.strokeStyle = '#22d3ee'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(60, 0); for (let y = 0; y <= 1000; y += 40) ctx.lineTo(60 + (Math.sin(y / 10 + Date.now() * 0.01) * 15), y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(740, 0); for (let y = 0; y <= 1000; y += 40) ctx.lineTo(740 + (Math.cos(y / 10 + Date.now() * 0.01) * 15), y); ctx.stroke(); 
+            ctx.restore();
         }
 
         function drawElectrifiedGeometricBarrier(s) {
-            ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.angle); ctx.strokeStyle = '#a855f7'; ctx.shadowColor = '#d946ef'; ctx.shadowBlur = 12; ctx.lineWidth = 4;
+            ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.angle); 
+            // Optimized
+            ctx.strokeStyle = 'rgba(217, 70, 239, 0.4)'; ctx.lineWidth = 12;
             ctx.beginPath(); for (let i = 0; i < 6; i++) { let px = Math.cos((i * Math.PI) / 3) * (s.size / 2), py = Math.sin((i * Math.PI) / 3) * (s.size / 2); if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); } ctx.closePath(); ctx.stroke();
+            
+            ctx.strokeStyle = '#a855f7'; ctx.lineWidth = 4; ctx.stroke();
+
             ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(-15, 0); ctx.lineTo(0, -25); ctx.lineTo(15, 0); ctx.lineTo(-10, 5); ctx.lineTo(5, 30); ctx.stroke(); ctx.restore();
         }
 
-        function drawUFOPlayer() {
-            ctx.save(); ctx.translate(player.x, player.y);
+        function drawUFOPlayerToContext(cx, skin) {
+            cx.save(); cx.translate(player.x, player.y);
             if (player.shieldHits > 0) {
-                ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)'; ctx.lineWidth = 8; ctx.beginPath(); ctx.arc(0, 0, 50, 0, Math.PI * 2); ctx.stroke();
-                ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2; ctx.stroke();
-                ctx.globalAlpha = 0.12 + Math.sin(Date.now() * 0.01) * 0.04; ctx.fillStyle = '#10b981'; ctx.beginPath(); ctx.arc(0, 0, 50, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1.0;
+                cx.strokeStyle = 'rgba(16, 185, 129, 0.4)'; cx.lineWidth = 8; cx.beginPath(); cx.arc(0, 0, 50, 0, Math.PI * 2); cx.stroke();
+                cx.strokeStyle = '#10b981'; cx.lineWidth = 2; cx.stroke();
+                cx.globalAlpha = 0.12 + Math.sin(Date.now() * 0.01) * 0.04; cx.fillStyle = '#10b981'; cx.beginPath(); cx.arc(0, 0, 50, 0, Math.PI * 2); cx.fill(); cx.globalAlpha = 1.0;
             }
-            if (activeSkinType === 'skin_fly') {
-                ctx.fillStyle = '#0284c7'; ctx.beginPath(); ctx.ellipse(0, 0, 15, 25, 0, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.beginPath(); ctx.ellipse(-24, -5, 24, 12, -Math.PI/6, 0, Math.PI*2); ctx.ellipse(24, -5, 24, 12, Math.PI/6, 0, Math.PI*2); ctx.fill();
-            } else if (activeSkinType === 'skin_falcon') {
-                ctx.save(); ctx.scale(1.33, 1.0);
-                ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.arc(0, 10, 22, 0.2 * Math.PI, 0.8 * Math.PI); ctx.lineWidth = 4; ctx.strokeStyle = '#e0f2fe'; ctx.stroke();
-                ctx.fillStyle = '#cbd5e1'; ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(0, 2, 22, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = '#e2e8f0'; ctx.beginPath(); ctx.moveTo(-16, 2); ctx.lineTo(-14, -28); ctx.lineTo(-4, -28); ctx.lineTo(-4, 2); ctx.closePath(); ctx.fill(); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(4, 2); ctx.lineTo(4, -28); ctx.lineTo(14, -28); ctx.lineTo(16, 2); ctx.closePath(); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = '#94a3b8'; ctx.fillRect(-3, -20, 6, 22); ctx.strokeRect(-3, -20, 6, 22);
-                ctx.fillStyle = '#94a3b8'; ctx.beginPath(); ctx.ellipse(-12, -6, 6, 3, Math.PI/6, 0, Math.PI*2); ctx.fill(); ctx.stroke(); ctx.strokeStyle = '#475569'; ctx.beginPath(); ctx.moveTo(-12, -6); ctx.lineTo(-8, -2); ctx.stroke();
-                ctx.fillStyle = '#cbd5e1'; ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(24, -12); ctx.lineTo(24, -20); ctx.lineTo(18, -20); ctx.lineTo(12, -6); ctx.closePath(); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = '#1e293b'; ctx.fillRect(19, -19, 4, 3);
-                ctx.fillStyle = '#ef4444'; ctx.fillRect(-12, 6, 4, 4); ctx.fillRect(8, 6, 4, 4); ctx.fillRect(-12, -22, 3, 6); 
-                ctx.fillStyle = '#64748b'; ctx.beginPath(); ctx.arc(0, 2, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-                ctx.restore();
-            } else if (activeSkinType === 'skin_toaster') {
-                ctx.save();
-                // Modified: Size of toaster skin increased by 15% via scaling factor
-                ctx.scale(1.15, 1.15);
-                ctx.fillStyle = '#94a3b8'; ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.roundRect(-28, -6, 8, 5, 2); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = '#475569'; ctx.fillRect(-28, -3, 8, 2);
-                ctx.fillStyle = '#475569'; ctx.beginPath(); ctx.arc(-24, 8, 4, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = '#111827'; ctx.fillRect(-18, 18, 6, 4); ctx.fillRect(12, 18, 6, 4);  
-                ctx.fillStyle = '#94a3b8'; ctx.strokeStyle = '#111827'; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect(-22, -4, 44, 22, [0, 0, 4, 4]); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = '#fefaf0'; ctx.beginPath(); ctx.moveTo(-22, -4); ctx.lineTo(22, -4); ctx.bezierCurveTo(22, -18, 15, -24, 0, -24); ctx.bezierCurveTo(-15, -24, -22, -18, -22, -4); ctx.closePath(); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = '#1f2937'; ctx.beginPath(); ctx.roundRect(-16, -20, 32, 3, 1); ctx.roundRect(-16, -14, 32, 3, 1); ctx.fill();
-                ctx.fillStyle = '#1f2937'; ctx.fillRect(10, 6, 8, 2); ctx.fillRect(10, 10, 8, 2);
-                ctx.restore();
+            if (skin === 'skin_fly') {
+                cx.fillStyle = '#0284c7'; cx.beginPath(); cx.ellipse(0, 0, 15, 25, 0, 0, Math.PI*2); cx.fill();
+                cx.fillStyle = 'rgba(255, 255, 255, 0.4)'; cx.beginPath(); cx.ellipse(-24, -5, 24, 12, -Math.PI/6, 0, Math.PI*2); cx.ellipse(24, -5, 24, 12, Math.PI/6, 0, Math.PI*2); cx.fill();
+            } else if (skin === 'skin_falcon') {
+                cx.save(); cx.scale(1.33, 1.0);
+                cx.fillStyle = '#38bdf8'; cx.beginPath(); cx.arc(0, 10, 22, 0.2 * Math.PI, 0.8 * Math.PI); cx.lineWidth = 4; cx.strokeStyle = '#e0f2fe'; cx.stroke();
+                cx.fillStyle = '#cbd5e1'; cx.strokeStyle = '#475569'; cx.lineWidth = 1.5; cx.beginPath(); cx.arc(0, 2, 22, 0, Math.PI * 2); cx.fill(); cx.stroke();
+                cx.fillStyle = '#e2e8f0'; cx.beginPath(); cx.moveTo(-16, 2); cx.lineTo(-14, -28); cx.lineTo(-4, -28); cx.lineTo(-4, 2); cx.closePath(); cx.fill(); cx.stroke();
+                cx.beginPath(); cx.moveTo(4, 2); cx.lineTo(4, -28); cx.lineTo(14, -28); cx.lineTo(16, 2); cx.closePath(); cx.fill(); cx.stroke();
+                cx.fillStyle = '#94a3b8'; cx.fillRect(-3, -20, 6, 22); cx.strokeRect(-3, -20, 6, 22);
+                cx.fillStyle = '#94a3b8'; cx.beginPath(); cx.ellipse(-12, -6, 6, 3, Math.PI/6, 0, Math.PI*2); cx.fill(); cx.stroke(); cx.strokeStyle = '#475569'; cx.beginPath(); cx.moveTo(-12, -6); cx.lineTo(-8, -2); cx.stroke();
+                cx.fillStyle = '#cbd5e1'; cx.beginPath(); cx.moveTo(14, 0); cx.lineTo(24, -12); cx.lineTo(24, -20); cx.lineTo(18, -20); cx.lineTo(12, -6); cx.closePath(); cx.fill(); cx.stroke();
+                cx.fillStyle = '#1e293b'; cx.fillRect(19, -19, 4, 3);
+                cx.fillStyle = '#ef4444'; cx.fillRect(-12, 6, 4, 4); cx.fillRect(8, 6, 4, 4); cx.fillRect(-12, -22, 3, 6); 
+                cx.fillStyle = '#64748b'; cx.beginPath(); cx.arc(0, 2, 6, 0, Math.PI * 2); cx.fill(); cx.stroke();
+                cx.restore();
+            } else if (skin === 'skin_ruxpin') {
+                cx.save();
+                cx.scale(1.2, 1.2);
+                cx.fillStyle = '#b45309'; // Light brown fur
+                cx.beginPath(); cx.arc(-15, -15, 8, 0, Math.PI*2); cx.fill(); // Left ear
+                cx.beginPath(); cx.arc(15, -15, 8, 0, Math.PI*2); cx.fill();  // Right ear
+                cx.beginPath(); cx.arc(0, -5, 18, 0, Math.PI*2); cx.fill();   // Head
+                
+                cx.fillStyle = '#fde68a'; // Snout
+                cx.beginPath(); cx.ellipse(0, 0, 10, 7, 0, 0, Math.PI*2); cx.fill();
+                
+                cx.fillStyle = '#000000'; // Nose
+                cx.beginPath(); cx.arc(0, -2, 3, 0, Math.PI*2); cx.fill();
+                
+                cx.fillStyle = '#ffffff'; // Blank wide-eyed stare
+                cx.beginPath(); cx.arc(-7, -10, 5, 0, Math.PI*2); cx.fill();
+                cx.beginPath(); cx.arc(7, -10, 5, 0, Math.PI*2); cx.fill();
+                cx.fillStyle = '#000000'; // Pupils looking UP
+                cx.beginPath(); cx.arc(-7, -12, 2, 0, Math.PI*2); cx.fill();
+                cx.beginPath(); cx.arc(7, -12, 2, 0, Math.PI*2); cx.fill();
+                
+                cx.fillStyle = '#ef4444'; // Red shirt
+                cx.beginPath(); cx.roundRect(-14, 10, 28, 12, 4); cx.fill();
+                
+                cx.fillStyle = '#3b82f6'; // Blue overalls
+                cx.beginPath(); cx.roundRect(-10, 14, 20, 12, 2); cx.fill();
+                cx.fillRect(-12, 10, 4, 8); // Straps
+                cx.fillRect(8, 10, 4, 8);
+                cx.restore();
+            } else if (skin === 'skin_toaster') {
+                cx.save();
+                cx.scale(1.15, 1.15);
+                cx.fillStyle = '#94a3b8'; cx.strokeStyle = '#1e293b'; cx.lineWidth = 1.5; cx.beginPath(); cx.roundRect(-28, -6, 8, 5, 2); cx.fill(); cx.stroke();
+                cx.fillStyle = '#475569'; cx.fillRect(-28, -3, 8, 2);
+                cx.fillStyle = '#475569'; cx.beginPath(); cx.arc(-24, 8, 4, 0, Math.PI * 2); cx.fill(); cx.stroke();
+                cx.fillStyle = '#111827'; cx.fillRect(-18, 18, 6, 4); cx.fillRect(12, 18, 6, 4);  
+                cx.fillStyle = '#94a3b8'; cx.strokeStyle = '#111827'; cx.lineWidth = 2; cx.beginPath(); cx.roundRect(-22, -4, 44, 22, [0, 0, 4, 4]); cx.fill(); cx.stroke();
+                cx.fillStyle = '#fefaf0'; cx.beginPath(); cx.moveTo(-22, -4); cx.lineTo(22, -4); cx.bezierCurveTo(22, -18, 15, -24, 0, -24); cx.bezierCurveTo(-15, -24, -22, -18, -22, -4); cx.closePath(); cx.fill(); cx.stroke();
+                cx.fillStyle = '#1f2937'; cx.beginPath(); cx.roundRect(-16, -20, 32, 3, 1); cx.roundRect(-16, -14, 32, 3, 1); cx.fill();
+                cx.fillStyle = '#1f2937'; cx.fillRect(10, 6, 8, 2); cx.fillRect(10, 10, 8, 2);
+                cx.restore();
             } else {
-                const thrusterGrad = ctx.createRadialGradient(0, 15, 2, 0, 22, 10); thrusterGrad.addColorStop(0, '#38bdf8'); thrusterGrad.addColorStop(0.5, '#f43f5e'); thrusterGrad.addColorStop(1, 'transparent');
-                ctx.fillStyle = thrusterGrad; ctx.beginPath(); ctx.arc(0, 15, 12, 0, Math.PI * 2); ctx.fill();
-                const saucerGrad = ctx.createLinearGradient(0, -20, 0, 15); saucerGrad.addColorStop(0, '#64748b'); saucerGrad.addColorStop(0.5, '#475569'); saucerGrad.addColorStop(1, '#1e293b');
-                ctx.fillStyle = saucerGrad; ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.ellipse(0, 4, 34, 13, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-                const domeGrad = ctx.createRadialGradient(0, -5, 2, 0, -5, 12); domeGrad.addColorStop(0, '#e0f2fe'); domeGrad.addColorStop(0.6, '#38bdf8'); domeGrad.addColorStop(1, '#0284c7');
-                ctx.fillStyle = domeGrad; ctx.strokeStyle = '#bae6fd'; ctx.beginPath(); ctx.arc(0, -6, 14, Math.PI, 0); ctx.closePath(); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = (Math.floor(Date.now() / 250) % 2 === 0) ? '#10b981' : '#f43f5e'; ctx.beginPath(); ctx.arc(-22, 4, 2, 0, Math.PI * 2); ctx.arc(22, 4, 2, 0, Math.PI * 2); ctx.arc(0, 9, 2, 0, Math.PI * 2); ctx.fill();
+                const thrusterGrad = cx.createRadialGradient(0, 15, 2, 0, 22, 10); thrusterGrad.addColorStop(0, '#38bdf8'); thrusterGrad.addColorStop(0.5, '#f43f5e'); thrusterGrad.addColorStop(1, 'transparent');
+                cx.fillStyle = thrusterGrad; cx.beginPath(); cx.arc(0, 15, 12, 0, Math.PI * 2); cx.fill();
+                const saucerGrad = cx.createLinearGradient(0, -20, 0, 15); saucerGrad.addColorStop(0, '#64748b'); saucerGrad.addColorStop(0.5, '#475569'); saucerGrad.addColorStop(1, '#1e293b');
+                cx.fillStyle = saucerGrad; cx.strokeStyle = '#94a3b8'; cx.lineWidth = 1.5; cx.beginPath(); cx.ellipse(0, 4, 34, 13, 0, 0, Math.PI * 2); cx.fill(); cx.stroke();
+                const domeGrad = cx.createRadialGradient(0, -5, 2, 0, -5, 12); domeGrad.addColorStop(0, '#e0f2fe'); domeGrad.addColorStop(0.6, '#38bdf8'); domeGrad.addColorStop(1, '#0284c7');
+                cx.fillStyle = domeGrad; cx.strokeStyle = '#bae6fd'; cx.beginPath(); cx.arc(0, -6, 14, Math.PI, 0); cx.closePath(); cx.fill(); cx.stroke();
+                cx.fillStyle = (Math.floor(Date.now() / 250) % 2 === 0) ? '#10b981' : '#f43f5e'; cx.beginPath(); cx.arc(-22, 4, 2, 0, Math.PI * 2); cx.arc(22, 4, 2, 0, Math.PI * 2); cx.arc(0, 9, 2, 0, Math.PI * 2); cx.fill();
             }
-            ctx.restore();
+            cx.restore();
         }
 
-        function drawCustomBulletProj(b) {
-            ctx.save(); ctx.translate(b.x, b.y);
-            if (player.powerStreak >= 3 && player.shieldHits > 0) { ctx.shadowColor = '#10b981'; ctx.shadowBlur = 18; }
-            if (activeSkinType === 'skin_toaster') {
-                // Modified: Toast projectiles size increased by 15% via scaling factor
-                ctx.scale(1.15, 1.15);
-                ctx.fillStyle = '#b45309'; ctx.beginPath(); ctx.roundRect(-10, -10, 20, 20, 3); ctx.fill();
-                ctx.fillStyle = '#fef08a'; ctx.beginPath(); ctx.roundRect(-8, -8, 16, 16, 2); ctx.fill();
-                ctx.fillStyle = '#fbbf24'; ctx.fillRect(-3, -3, 6, 6);
-            } else if (b.type === 'bullet_pizza') {
-                ctx.fillStyle = '#f59e0b'; ctx.beginPath(); ctx.moveTo(-10, 10); ctx.lineTo(10, 10); ctx.lineTo(0, -12); ctx.closePath(); ctx.fill();
-                ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(-4, 6, 2, 0, Math.PI*2); ctx.arc(4, 4, 2.5, 0, Math.PI*2); ctx.fill();
-            } else if (b.type === 'bullet_daisies') {
-                ctx.fillStyle = '#ffffff'; for (let i = 0; i < 5; i++) { ctx.rotate(Math.PI * 2 / 5); ctx.beginPath(); ctx.ellipse(0, -6, 4, 7, 0, 0, Math.PI*2); ctx.fill(); }
-                ctx.fillStyle = '#eab308'; ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI*2); ctx.fill();
-            } else if (b.type === 'bullet_cookie') {
-                ctx.fillStyle = '#d97706'; ctx.beginPath(); ctx.arc(0, 0, 11, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = '#451a03'; ctx.beginPath(); ctx.arc(-4, -4, 2, 0, Math.PI*2); ctx.arc(4, 2, 1.5, 0, Math.PI*2); ctx.arc(-1, 5, 2, 0, Math.PI*2); ctx.fill();
-            } else if (b.type === 'bullet_baseball') {
-                ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI*2); ctx.fill();
-                ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(-10, 0, 8, -Math.PI/3, Math.PI/3); ctx.stroke(); ctx.beginPath(); ctx.arc(10, 0, 8, Math.PI - Math.PI/3, Math.PI + Math.PI/3); ctx.stroke();
-            } else if (b.type === 'bullet_note') {
-                ctx.fillStyle = '#c084fc'; ctx.font = 'bold 20px "Inter", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText("♫", 0, 0);
-            } else {
-                ctx.fillStyle = (player.powerStreak >= 3 && player.shieldHits > 0) ? '#10b981' : '#ef4444'; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5;
-                ctx.beginPath(); ctx.moveTo(0, -5); ctx.bezierCurveTo(-5, -10, -11, -10, -11, -4); ctx.bezierCurveTo(-11, 3, -3, 9, 0, 12); ctx.bezierCurveTo(3, 9, 11, 3, 11, -4); ctx.bezierCurveTo(11, -10, 5, -10, 0, -5); ctx.closePath(); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = '#ffffff'; ctx.fillRect(-3, -5, 2, 2);
+        function drawCustomBulletProjToContext(cx, b, pStreak) {
+            cx.save(); cx.translate(b.x, b.y);
+            // Optimized glow for bullets
+            if (pStreak >= 3 && player.shieldHits > 0) {
+                cx.fillStyle = 'rgba(16, 185, 129, 0.4)';
+                cx.beginPath(); cx.arc(0, 0, 15, 0, Math.PI*2); cx.fill();
             }
-            ctx.restore();
+            
+            if (activeSkinType === 'skin_toaster') {
+                cx.scale(1.15, 1.15);
+                cx.fillStyle = '#b45309'; cx.beginPath(); cx.roundRect(-10, -10, 20, 20, 3); cx.fill();
+                cx.fillStyle = '#fef08a'; cx.beginPath(); cx.roundRect(-8, -8, 16, 16, 2); cx.fill();
+                cx.fillStyle = '#fbbf24'; cx.fillRect(-3, -3, 6, 6);
+            } else if (b.type === 'bullet_pizza') {
+                cx.fillStyle = '#f59e0b'; cx.beginPath(); cx.moveTo(-10, 10); cx.lineTo(10, 10); cx.lineTo(0, -12); cx.closePath(); cx.fill();
+                cx.fillStyle = '#ef4444'; cx.beginPath(); cx.arc(-4, 6, 2, 0, Math.PI*2); cx.arc(4, 4, 2.5, 0, Math.PI*2); cx.fill();
+            } else if (b.type === 'bullet_daisies') {
+                cx.fillStyle = '#ffffff'; for (let i = 0; i < 5; i++) { cx.rotate(Math.PI * 2 / 5); cx.beginPath(); cx.ellipse(0, -6, 4, 7, 0, 0, Math.PI*2); cx.fill(); }
+                cx.fillStyle = '#eab308'; cx.beginPath(); cx.arc(0, 0, 5, 0, Math.PI*2); cx.fill();
+            } else if (b.type === 'bullet_cookie') {
+                cx.fillStyle = '#d97706'; cx.beginPath(); cx.arc(0, 0, 11, 0, Math.PI*2); cx.fill();
+                cx.fillStyle = '#451a03'; cx.beginPath(); cx.arc(-4, -4, 2, 0, Math.PI*2); cx.arc(4, 2, 1.5, 0, Math.PI*2); cx.arc(-1, 5, 2, 0, Math.PI*2); cx.fill();
+            } else if (b.type === 'bullet_baseball') {
+                cx.fillStyle = '#ffffff'; cx.beginPath(); cx.arc(0, 0, 10, 0, Math.PI*2); cx.fill();
+                cx.strokeStyle = '#ef4444'; cx.lineWidth = 1; cx.beginPath(); cx.arc(-10, 0, 8, -Math.PI/3, Math.PI/3); cx.stroke(); cx.beginPath(); cx.arc(10, 0, 8, Math.PI - Math.PI/3, Math.PI + Math.PI/3); cx.stroke();
+            } else if (b.type === 'bullet_note') {
+                cx.fillStyle = '#c084fc'; cx.font = 'bold 20px "Inter", sans-serif'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText("♫", 0, 0);
+            } else {
+                cx.fillStyle = (pStreak >= 3 && player.shieldHits > 0) ? '#10b981' : '#ef4444'; cx.strokeStyle = '#ffffff'; cx.lineWidth = 1.5;
+                cx.beginPath(); cx.moveTo(0, -5); cx.bezierCurveTo(-5, -10, -11, -10, -11, -4); cx.bezierCurveTo(-11, 3, -3, 9, 0, 12); cx.bezierCurveTo(3, 9, 11, 3, 11, -4); cx.bezierCurveTo(11, -10, 5, -10, 0, -5); cx.closePath(); cx.fill(); cx.stroke();
+                cx.fillStyle = '#ffffff'; cx.fillRect(-3, -5, 2, 2);
+            }
+            cx.restore();
         }
 
         function drawVocabularyWord(w) {
@@ -2209,9 +2817,20 @@
             if (selectedDifficulty === 'eagle' || w.pattern === 'upside_down') ctx.rotate(Math.PI);
             
             let borderCol = '#475569'; 
-            if (w.isNarwhalWord) { borderCol = '#0284c7'; ctx.shadowColor = '#0284c7'; ctx.shadowBlur = 12; } 
-            else if (w.isPinkBonus) { borderCol = '#ec4899'; ctx.shadowColor = '#f472b6'; ctx.shadowBlur = 10; } 
-            else if (w.isNegaborWord) { borderCol = '#ef4444'; ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 10; }
+            // Optimized glow simulation without shadowBlur
+            if (w.isNarwhalWord) { 
+                borderCol = '#0284c7'; 
+                ctx.fillStyle = 'rgba(2, 132, 199, 0.4)';
+                ctx.beginPath(); ctx.roundRect(-w.width / 2 - 4, -23, w.width + 8, 46, 18); ctx.fill();
+            } else if (w.isPinkBonus) { 
+                borderCol = '#ec4899'; 
+                ctx.fillStyle = 'rgba(244, 114, 182, 0.4)';
+                ctx.beginPath(); ctx.roundRect(-w.width / 2 - 4, -23, w.width + 8, 46, 18); ctx.fill();
+            } else if (w.isNegaborWord) { 
+                borderCol = '#ef4444'; 
+                ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
+                ctx.beginPath(); ctx.roundRect(-w.width / 2 - 4, -23, w.width + 8, 46, 18); ctx.fill();
+            }
 
             ctx.fillStyle = 'rgba(15, 23, 42, 0.9)'; ctx.strokeStyle = borderCol; ctx.lineWidth = (w.isPinkBonus || w.isNarwhalWord || w.isNegaborWord) ? 3 : 1.5;
             ctx.beginPath(); ctx.roundRect(-w.width / 2, -19, w.width, 38, 14); ctx.fill(); ctx.stroke();
@@ -2313,54 +2932,30 @@
                 ctx.fillStyle = '#dc2626'; for(let i=-30; i<=30; i+=10) { ctx.fillRect(i-3, i-3, 6, 6); ctx.fillRect(i-3, -i-3, 6, 6); }
             } 
             else if (boss.subjectType === 'sightwords' || boss.subjectType === 'sight') {
-                // Render Lana Bananas as a 3D yellow banana bunch with 32-bit pixel art precision
-                const pixelSize = 2.6; // Scale grid to fit boss dimensions
+                const pixelSize = 2.6; 
                 const offsetX = -42;
                 const offsetY = -45;
                 const colors = {
-                    'k': '#1c1917', // Dark pixel art outline
-                    'g': '#14532d', // Dark green stem
-                    'l': '#22c55e', // Light green unripe transition
-                    'b': '#451a03', // Brown tip
-                    'd': '#a16207', // Amber shadow yellow
-                    'm': '#ca8a04', // Medium depth yellow
-                    'y': '#eab308', // Bright core yellow
-                    'h': '#fef08a', // Soft highlight yellow
-                    'w': '#ffffff'  // Specular high gloss white shine
+                    'k': '#1c1917', 'g': '#14532d', 'l': '#22c55e', 'b': '#451a03', 
+                    'd': '#a16207', 'm': '#ca8a04', 'y': '#eab308', 'h': '#fef08a', 'w': '#ffffff'  
                 };
                 const lanaMatrix = [
-                    "................................",
-                    ".............kkkkkk.............",
-                    "............kggggggk............",
-                    "............kggggggk............",
-                    "...........kggggggggk...........",
-                    "..........kkllllllllkk..........",
-                    "........kkkkyyyyyyyyyykkk.......",
-                    ".......kkyyyyyyyyyyyyyyyykk.....",
-                    "......kyyyykkkkkkkkkkkyyyyky....",
-                    ".....kyyyykllllllllllkyyyykyy...",
-                    "....kyyyklllmmmmmmmmmkkkyyykyy..",
-                    "...kyykkllmmmmmmmmmmmmmkkkyykyy.",
-                    "..kyyklmmmyyyyyyyyyyyyymmkyykyy.",
-                    "..kyklmmyyyyyyyyyyyyyyyyyykyyky.",
-                    ".kyklmyyyyyhhhhhhhyyyyyyyykyyky.",
-                    ".kykmyyyyhhhhhwwwwhhhyyyyykyyky.",
-                    ".kykmyyyyhhhhwwwwwwhhhyyyykyyky.",
-                    ".kykmyyyyhhhhhwwwwhhhyyyyykyyky.",
-                    ".kykmyyyyyhhhhhhhyyyyyyyykyyky..",
-                    "..kyklmyyyyyyyyyyyyyyyyyykyyky..",
-                    "..kyyklmmyyyyyyyyyyyyyymkyyky...",
-                    "...kyykklllmmmmmmmmmmkkyykyy....",
-                    "....kyyykkkkkkkkkkkkkyykyy......",
-                    ".....kyyyykyyyyyyyykyyyky.......",
-                    "......kyyyykyyyyyykyyyky........",
-                    ".......kbbbykyyyykybbbk.........",
-                    "........kbbkkyyykkybbk..........",
-                    ".........kk..kbyk..kk...........",
-                    "..............kbk...............",
-                    "...............k................",
-                    "................................",
-                    "................................"
+                    "................................", ".............kkkkkk.............",
+                    "............kggggggk............", "............kggggggk............",
+                    "...........kggggggggk...........", "..........kkllllllllkk..........",
+                    "........kkkkyyyyyyyyyykkk.......", ".......kkyyyyyyyyyyyyyyyykk.....",
+                    "......kyyyykkkkkkkkkkkyyyyky....", ".....kyyyykllllllllllkyyyykyy...",
+                    "....kyyyklllmmmmmmmmmkkkyyykyy..", "...kyykkllmmmmmmmmmmmmmkkkyykyy.",
+                    "..kyyklmmmyyyyyyyyyyyyymmkyykyy.", "..kyklmmyyyyyyyyyyyyyyyyyykyyky.",
+                    ".kyklmyyyyyhhhhhhhyyyyyyyykyyky.", ".kykmyyyyhhhhhwwwwhhhyyyyykyyky.",
+                    ".kykmyyyyhhhhwwwwwwhhhyyyykyyky.", ".kykmyyyyhhhhhwwwwhhhyyyyykyyky.",
+                    ".kykmyyyyyhhhhhhhyyyyyyyykyyky..", "..kyklmyyyyyyyyyyyyyyyyyykyyky..",
+                    "..kyyklmmyyyyyyyyyyyyyymkyyky...", "...kyykklllmmmmmmmmmmkkyykyy....",
+                    "....kyyykkkkkkkkkkkkkyykyy......", ".....kyyyykyyyyyyyykyyyky.......",
+                    "......kyyyykyyyyyykyyyky........", ".......kbbbykyyyykybbbk.........",
+                    "........kbbkkyyykkybbk..........", ".........kk..kbyk..kk...........",
+                    "..............kbk...............", "...............k................",
+                    "................................", "................................"
                 ];
                 for (let r = 0; r < lanaMatrix.length; r++) {
                     for (let c = 0; c < lanaMatrix[r].length; c++) {
